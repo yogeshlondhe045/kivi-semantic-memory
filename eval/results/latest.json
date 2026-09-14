@@ -1,0 +1,3148 @@
+{
+  "generated_at": "2026-09-14T08:11:50.386Z",
+  "provider": "local:rules-v1",
+  "corpus": {
+    "path": "corpus/kivi-corpus-v1.jsonl",
+    "records": 500
+  },
+  "ingestion": {
+    "batch_id": "batch_ddb7edc8551c46caa040",
+    "processed": 500,
+    "duplicates": 0,
+    "created": 52,
+    "reinforced": 773,
+    "superseded": 5,
+    "held": 3,
+    "rejected": 55,
+    "duration_ms": 1236,
+    "bytes_before": 323584,
+    "bytes_after": 2760704
+  },
+  "corpus_checks": [
+    {
+      "name": "sensitive dictations produce no memory",
+      "passed": true,
+      "detail": "24 sensitive records → 0 memories",
+      "why": "Health, money, relationships and other people's circumstances are refused in code, not by prompt."
+    },
+    {
+      "name": "passing states produce no memory",
+      "passed": true,
+      "detail": "31 transient records → 0 memories",
+      "why": "True now, misleading later. Recording moods would make every other memory less reliable."
+    },
+    {
+      "name": "acknowledgements produce no memory",
+      "passed": true,
+      "detail": "12 trivial records → 0 memories",
+      "why": "\"Okay\" and \"testing one two\" are noise; keeping them would dilute retrieval."
+    },
+    {
+      "name": "every memory is traceable to a dictation",
+      "passed": true,
+      "detail": "0 memories without evidence",
+      "why": "A memory with no provenance cannot be checked, corrected, or trusted."
+    },
+    {
+      "name": "contradictions supersede rather than duplicate",
+      "passed": true,
+      "detail": "5 memories marked superseded and kept",
+      "why": "The old belief is history, not a mistake to delete. The user can see what changed."
+    },
+    {
+      "name": "recogniser mis-spellings are learned",
+      "passed": true,
+      "detail": "8 names with at least one observed variant",
+      "why": "This is the only channel from semantic memory into ordinary dictation."
+    },
+    {
+      "name": "repeated statements are reinforced, not duplicated",
+      "passed": true,
+      "detail": "24 memories with three or more mentions",
+      "why": "Repetition is the main evidence that something is worth acting on."
+    },
+    {
+      "name": "every dictation has an episode",
+      "passed": true,
+      "detail": "0 dictations without one",
+      "why": "Episodes are the retrieval floor: even when nothing was worth promoting, \"what happened\" stays answerable."
+    }
+  ],
+  "cases": [
+    {
+      "id": "fact.pm-handover",
+      "family": "multi_dictation",
+      "question": "Who is the PM on Meridian?",
+      "why": "Two dictations three weeks apart name different people for the same role. The later one must win, and the earlier one must not be offered as an equal alternative.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "Looked about Meridian.\n- The Meridian staging environment lives in Singapore region (first heard Thu 2 Jul, 9:10 AM)\n- Meridian is due the fourteenth of next month (first heard Fri 26 Jun, 6:18 PM)\n- Rahul is the PM on Meridian (first heard Sat 5 Sep, 10:12 AM)\n- Aarti is the design lead on Meridian (first heard Mon 17 Aug, 3:44 PM)\n- Said they would write up the Meridian onboarding doc this week and share it with Rahul (first heard Tue 28 Jul, 11:30 AM)",
+      "outcome": "answered",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [
+        {
+          "kind": "memory",
+          "id": "mem_f664a441c22e4c7fa56e",
+          "label": "The Meridian staging environment lives in Singapore region",
+          "quote": "The Meridian staging environment lives in the Singapore region.",
+          "captured_at": 1782963600000,
+          "app": "slack"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_9b3f94599429432eb083",
+          "label": "Meridian is due the fourteenth of next month",
+          "quote": "The Meridian launch is on the fourteenth of next month.",
+          "captured_at": 1782478080000,
+          "app": "docs"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_09bf6d90c4254564afdf",
+          "label": "Rahul is the PM on Meridian",
+          "quote": "Rahul is the PM on Meridian now, Priya has moved to Halcyon.",
+          "captured_at": 1788583320000,
+          "app": "slack"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_99ac5a0d725447be857f",
+          "label": "Aarti is the design lead on Meridian",
+          "quote": "Aarti is the design lead on Meridian.",
+          "captured_at": 1786961640000,
+          "app": "slack"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_b1d75815d9e8408bb864",
+          "label": "Said they would write up the Meridian onboarding doc this week and share it with Rahul",
+          "quote": "I'll write up the Meridian onboarding doc this week and share it with Rahul.",
+          "captured_at": 1785218400000,
+          "app": "linear"
+        }
+      ],
+      "duration_ms": 33,
+      "trace_id": "trc_8ffb6b2e156d4719b3c9",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "meridian"
+          ],
+          "entities": [
+            "Meridian"
+          ],
+          "apps": [],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": [
+            "fact"
+          ]
+        },
+        "considered": [
+          {
+            "kind": "memory",
+            "id": "mem_f664a441c22e4c7fa56e",
+            "text": "The Meridian staging environment lives in Singapore region",
+            "score": 0.059755,
+            "signals": {
+              "lexical": 2.5648373763993355,
+              "semantic": 0.3825,
+              "temporal": 0.9852,
+              "prior": 0.9385,
+              "fused": 0.059755
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_9b3f94599429432eb083",
+            "text": "Meridian is due the fourteenth of next month",
+            "score": 0.059748,
+            "signals": {
+              "lexical": 2.6670900292790436,
+              "semantic": 0.598,
+              "temporal": 0.9247,
+              "prior": 0.9269,
+              "fused": 0.059748
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_09bf6d90c4254564afdf",
+            "text": "Rahul is the PM on Meridian",
+            "score": 0.055005,
+            "signals": {
+              "lexical": 2.6670900292790436,
+              "semantic": 0.7562,
+              "temporal": 0.8897,
+              "prior": 0.579,
+              "fused": 0.055005
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_99ac5a0d725447be857f",
+            "text": "Aarti is the design lead on Meridian",
+            "score": 0.052548,
+            "signals": {
+              "lexical": 2.5980391547346025,
+              "semantic": 0.4823,
+              "temporal": 0.7227,
+              "prior": 0.579,
+              "fused": 0.052548
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_b1d75815d9e8408bb864",
+            "text": "Said they would write up the Meridian onboarding doc this week and share it with Rahul",
+            "score": 0.050706,
+            "signals": {
+              "lexical": 2.3269394168492523,
+              "semantic": 0.4233,
+              "temporal": 0.7849,
+              "prior": 0.5351,
+              "fused": 0.050706
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_974d45b75be64cb085c7",
+            "text": "Said they would send Devansh the Meridian pricing draft by Friday",
+            "score": 0.0507,
+            "signals": {
+              "lexical": 2.4701356886553603,
+              "semantic": 0.3915,
+              "temporal": 0.7433,
+              "prior": 0.5351,
+              "fused": 0.0507
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_0f7597ef54054517a26d",
+            "text": "Said they would write up the Meridian onboarding doc this week and share it with Priya",
+            "score": 0.050425,
+            "signals": {
+              "lexical": 2.3269394168492523,
+              "semantic": 0.4247,
+              "temporal": 0.8818,
+              "prior": 0.4237,
+              "fused": 0.050425
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_4bd970cb75b0437e809d",
+            "text": "The Meridian launch is on the fourteenth of next month.",
+            "score": 0.043895,
+            "signals": {
+              "lexical": 1.9450564871891896,
+              "semantic": 0.4726,
+              "temporal": 0.8746,
+              "prior": 0.15,
+              "fused": 0.043895
+            }
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "fact.design-lead",
+      "family": "factual_recall",
+      "question": "Who is the design lead on Kestrel?",
+      "why": "A plain factual lookup, stated many times. Should be answered with high confidence and a citation.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "Looked about Kestrel.\n- Devansh is the design lead on Kestrel (first heard Fri 26 Jun, 2:22 PM)\n- Devansh is the design lead on Kestrel. (Sat 29 Aug, 3:08 PM in notion)\n- Nandini is the design lead on Halcyon (first heard Wed 17 Jun, 9:57 AM)\n- Aarti is the design lead on Meridian (first heard Mon 17 Aug, 3:44 PM)\n- Nandini is the design lead on Halcyon. (Sat 5 Sep, 12:02 PM in notion)",
+      "outcome": "answered",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [
+        {
+          "kind": "memory",
+          "id": "mem_429817f8dbae43a8a0c0",
+          "label": "Devansh is the design lead on Kestrel",
+          "quote": "Devansh is the design lead on Kestrel.",
+          "captured_at": 1782463920000,
+          "app": "slack"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_58635f4e1604448f8525",
+          "label": "Devansh is the design lead on Kestrel.",
+          "captured_at": 1787996280000,
+          "app": "notion"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_1761d22eb9304cc682ad",
+          "label": "Nandini is the design lead on Halcyon",
+          "quote": "Nandini is the design lead on Halcyon.",
+          "captured_at": 1781670420000,
+          "app": "docs"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_99ac5a0d725447be857f",
+          "label": "Aarti is the design lead on Meridian",
+          "quote": "Aarti is the design lead on Meridian.",
+          "captured_at": 1786961640000,
+          "app": "slack"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_ab60fea232ec47a4b90f",
+          "label": "Nandini is the design lead on Halcyon.",
+          "captured_at": 1788589920000,
+          "app": "notion"
+        }
+      ],
+      "duration_ms": 38,
+      "trace_id": "trc_1160f3b2930048b3af72",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "design",
+            "lead",
+            "kestrel"
+          ],
+          "entities": [
+            "Kestrel"
+          ],
+          "apps": [],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": [
+            "fact"
+          ]
+        },
+        "considered": [
+          {
+            "kind": "memory",
+            "id": "mem_939112d2c8d049e299bc",
+            "text": "Kestrel is due the ninth of January",
+            "score": 0.061313,
+            "signals": {
+              "lexical": 2.908514961329327,
+              "semantic": 0.3831,
+              "temporal": 0.9876,
+              "prior": 0.9269,
+              "fused": 0.061313
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_429817f8dbae43a8a0c0",
+            "text": "Devansh is the design lead on Kestrel",
+            "score": 0.059413,
+            "signals": {
+              "lexical": 12.7597188373901,
+              "semantic": 0.9042,
+              "temporal": 0.821,
+              "prior": 0.9773,
+              "fused": 0.059413
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_1761d22eb9304cc682ad",
+            "text": "Nandini is the design lead on Halcyon",
+            "score": 0.059247,
+            "signals": {
+              "lexical": 9.96415591339395,
+              "semantic": 0.5746,
+              "temporal": 0.8905,
+              "prior": 0.9462,
+              "fused": 0.059247
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_0732fb444fe149a6b42f",
+            "text": "The Kestrel staging environment lives in Singapore region",
+            "score": 0.056405,
+            "signals": {
+              "lexical": 2.7598368802390096,
+              "semantic": 0.2111,
+              "temporal": 0.8902,
+              "prior": 0.979,
+              "fused": 0.056405
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_9f3064f7e6704e7a8b89",
+            "text": "Promised Nandini a written summary of the Kestrel incident before Thursday",
+            "score": 0.053231,
+            "signals": {
+              "lexical": 1.9744661566052804,
+              "semantic": 0.2242,
+              "temporal": 0.9719,
+              "prior": 0.5556,
+              "fused": 0.053231
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_99ac5a0d725447be857f",
+            "text": "Aarti is the design lead on Meridian",
+            "score": 0.053044,
+            "signals": {
+              "lexical": 9.96415591339395,
+              "semantic": 0.5314,
+              "temporal": 0.7227,
+              "prior": 0.579,
+              "fused": 0.053044
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_aceef0fdb59a47cf8aaf",
+            "text": "Said they would send Priya the Kestrel pricing draft by Friday",
+            "score": 0.052711,
+            "signals": {
+              "lexical": 2.6579352108148,
+              "semantic": 0.3167,
+              "temporal": 0.9011,
+              "prior": 0.5351,
+              "fused": 0.052711
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_a2adfc04834044fb85da",
+            "text": "The Kestrel launch is on the ninth of January.",
+            "score": 0.045341,
+            "signals": {
+              "lexical": 2.077468530194817,
+              "semantic": 0.3045,
+              "temporal": 0.9793,
+              "prior": 0.167,
+              "fused": 0.045341
+            }
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "fact.manager",
+      "family": "factual_recall",
+      "question": "Who is my manager?",
+      "why": "A first-person fact about the user's own world.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "Searched everything Kivi has.\n- Their manager is Nandini (first heard Sun 5 Jul, 2:48 PM)\n- My manager is Nandini. (Mon 7 Sep, 9:28 AM in slack)\n- My manager is Nandini. (Sun 30 Aug, 12:48 PM in slack)\n- My manager is Nandini. (Thu 27 Aug, 1:01 PM in notion)\n- My manager is Nandini. (Sat 22 Aug, 10:10 AM in docs)",
+      "outcome": "answered",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [
+        {
+          "kind": "memory",
+          "id": "mem_72ff59239eaf4fb090c5",
+          "label": "Their manager is Nandini",
+          "quote": "My manager is Nandini.",
+          "captured_at": 1783243080000,
+          "app": "slack"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_edd0816d82974ab6ab95",
+          "label": "My manager is Nandini.",
+          "captured_at": 1788753480000,
+          "app": "slack"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_c48efd5696cd483585e6",
+          "label": "My manager is Nandini.",
+          "captured_at": 1788074280000,
+          "app": "slack"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_c3adf4349de84f168156",
+          "label": "My manager is Nandini.",
+          "captured_at": 1787815860000,
+          "app": "notion"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_bca7d22792cc47059f55",
+          "label": "My manager is Nandini.",
+          "captured_at": 1787373600000,
+          "app": "docs"
+        }
+      ],
+      "duration_ms": 17,
+      "trace_id": "trc_2b7419c0dae84ec585fa",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "manager"
+          ],
+          "entities": [],
+          "apps": [],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": [
+            "fact"
+          ]
+        },
+        "considered": [
+          {
+            "kind": "memory",
+            "id": "mem_72ff59239eaf4fb090c5",
+            "text": "Their manager is Nandini",
+            "score": 0.061085,
+            "signals": {
+              "lexical": 7.102740920855722,
+              "semantic": 0.6474,
+              "temporal": 0.9116,
+              "prior": 0.979,
+              "fused": 0.061085
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_dfe9acea16f24cdfbcf6",
+            "text": "My manager is Nandini.",
+            "score": 0.044733,
+            "signals": {
+              "lexical": 7.06877220568117,
+              "semantic": 0.4888,
+              "temporal": 0.8526,
+              "prior": 0.183,
+              "fused": 0.044733
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_9b3f94599429432eb083",
+            "text": "Meridian is due the fourteenth of next month",
+            "score": 0.043131,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.0742,
+              "temporal": 0.9247,
+              "prior": 0.9269,
+              "fused": 0.043131
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_429817f8dbae43a8a0c0",
+            "text": "Devansh is the design lead on Kestrel",
+            "score": 0.042251,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.0792,
+              "temporal": 0.821,
+              "prior": 0.9773,
+              "fused": 0.042251
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_939112d2c8d049e299bc",
+            "text": "Kestrel is due the ninth of January",
+            "score": 0.042208,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0,
+              "temporal": 0.9876,
+              "prior": 0.9269,
+              "fused": 0.042208
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_3f222f73d3d44e26acae",
+            "text": "My manager is Nandini.",
+            "score": 0.041247,
+            "signals": {
+              "lexical": 7.06877220568117,
+              "semantic": 0.4888,
+              "temporal": 0.7159,
+              "prior": 0.183,
+              "fused": 0.041247
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_30cde14727e3416ab892",
+            "text": "Team, the Meridian pricing update is going out on Monday. The headline is that the starter tier drops to nineteen dollar",
+            "score": 0.040653,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.0636,
+              "temporal": 0.9811,
+              "prior": 0.867,
+              "fused": 0.040653
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_24bfd5fbe6244ee68ea7",
+            "text": "My manager is Nandini.",
+            "score": 0.040011,
+            "signals": {
+              "lexical": 7.06877220568117,
+              "semantic": 0.4888,
+              "temporal": 0.6699,
+              "prior": 0.15,
+              "fused": 0.040011
+            }
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "fact.staging-region",
+      "family": "multi_dictation",
+      "question": "Which region does Kestrel staging run in?",
+      "why": "Stated once in English and once in Hinglish. Either source is acceptable; the answer must be Singapore.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "Looked about Kestrel.\n- The Kestrel staging environment lives in Singapore region (first heard Sun 21 Jun, 9:50 AM)\n- The Kestrel staging environment lives in the Singapore region. (Sat 5 Sep, 11:23 AM in docs)\n- The Kestrel staging environment lives in the Singapore region. (Tue 1 Sep, 9:26 AM in notion)\n- Rahul ko bolna ki Kestrel ka staging Singapore region mein hai, Mumbai mein nahi. (Wed 19 Aug, 1:15 PM in whatsapp)\n- The Meridian staging environment lives in Singapore region (first heard Thu 2 Jul, 9:10 AM)",
+      "outcome": "answered",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [
+        {
+          "kind": "memory",
+          "id": "mem_0732fb444fe149a6b42f",
+          "label": "The Kestrel staging environment lives in Singapore region",
+          "quote": "The Kestrel staging environment lives in the Singapore region.",
+          "captured_at": 1782015600000,
+          "app": "docs"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_0c6f0f87bd7b488f8b03",
+          "label": "The Kestrel staging environment lives in the Singapore region.",
+          "captured_at": 1788587580000,
+          "app": "docs"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_49f215cf1af34c65826f",
+          "label": "The Kestrel staging environment lives in the Singapore region.",
+          "captured_at": 1788234960000,
+          "app": "notion"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_7f0c287689f540d688a6",
+          "label": "Rahul ko bolna ki Kestrel ka staging Singapore region mein hai, Mumbai mein nahi.",
+          "captured_at": 1787125500000,
+          "app": "whatsapp"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_f664a441c22e4c7fa56e",
+          "label": "The Meridian staging environment lives in Singapore region",
+          "quote": "The Meridian staging environment lives in the Singapore region.",
+          "captured_at": 1782963600000,
+          "app": "slack"
+        }
+      ],
+      "duration_ms": 47,
+      "trace_id": "trc_b15b0e1e9ab54c2499a9",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "region",
+            "kestrel",
+            "staging",
+            "run"
+          ],
+          "entities": [
+            "Kestrel"
+          ],
+          "apps": [],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": [
+            "fact"
+          ]
+        },
+        "considered": [
+          {
+            "kind": "memory",
+            "id": "mem_939112d2c8d049e299bc",
+            "text": "Kestrel is due the ninth of January",
+            "score": 0.061561,
+            "signals": {
+              "lexical": 2.908514961329327,
+              "semantic": 0.3731,
+              "temporal": 0.9876,
+              "prior": 0.9269,
+              "fused": 0.061561
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_f664a441c22e4c7fa56e",
+            "text": "The Meridian staging environment lives in Singapore region",
+            "score": 0.061391,
+            "signals": {
+              "lexical": 8.696230305182404,
+              "semantic": 0.2815,
+              "temporal": 0.9852,
+              "prior": 0.9385,
+              "fused": 0.061391
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_0732fb444fe149a6b42f",
+            "text": "The Kestrel staging environment lives in Singapore region",
+            "score": 0.060152,
+            "signals": {
+              "lexical": 11.456067185421414,
+              "semantic": 0.5515,
+              "temporal": 0.8902,
+              "prior": 0.979,
+              "fused": 0.060152
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_429817f8dbae43a8a0c0",
+            "text": "Devansh is the design lead on Kestrel",
+            "score": 0.056483,
+            "signals": {
+              "lexical": 2.7955629239961493,
+              "semantic": 0.2513,
+              "temporal": 0.821,
+              "prior": 0.9773,
+              "fused": 0.056483
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_aceef0fdb59a47cf8aaf",
+            "text": "Said they would send Priya the Kestrel pricing draft by Friday",
+            "score": 0.052485,
+            "signals": {
+              "lexical": 2.6579352108148,
+              "semantic": 0.2568,
+              "temporal": 0.9011,
+              "prior": 0.5351,
+              "fused": 0.052485
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_a7f2acd999a54b02b200",
+            "text": "The Halcyon staging environment lives in Frankfurt region",
+            "score": 0.052164,
+            "signals": {
+              "lexical": 8.696230305182404,
+              "semantic": 0.276,
+              "temporal": 0.5693,
+              "prior": 0.7044,
+              "fused": 0.052164
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_9f3064f7e6704e7a8b89",
+            "text": "Promised Nandini a written summary of the Kestrel incident before Thursday",
+            "score": 0.051492,
+            "signals": {
+              "lexical": 1.9744661566052804,
+              "semantic": 0.142,
+              "temporal": 0.9719,
+              "prior": 0.5556,
+              "fused": 0.051492
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_3363059b5a5b4fb28113",
+            "text": "The Kestrel staging environment lives in the Singapore region.",
+            "score": 0.043787,
+            "signals": {
+              "lexical": 11.394186079490199,
+              "semantic": 0.5446,
+              "temporal": 0.817,
+              "prior": 0.2,
+              "fused": 0.043787
+            }
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "fact.deploy-tool",
+      "family": "factual_recall",
+      "question": "What do we use for deploys?",
+      "why": "A tool decision stated repeatedly; the retired alternative must not be offered as current.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "Searched everything Kivi has.\n- Devansh, Halcyon ka deploy ho gaya, but staging pe ek error aa raha hai. Can you check once? (Sun 13 Sep, 4:35 PM in whatsapp)\n- Nandini, Halcyon ka deploy ho gaya, but staging pe ek error aa raha hai. Can you check once? (Sat 12 Sep, 3:30 PM in whatsapp)\n- Rahul, Meridian ka deploy ho gaya, but staging pe ek error aa raha hai. Can you check once? (Sat 12 Sep, 9:38 AM in slack)\n- We use Pipewright for deploys now, not the old script. (Thu 20 Aug, 11:08 AM in slack)\n- We use Pipewright for deploys now, not the old script. (Tue 18 Aug, 10:49 AM in notion)",
+      "outcome": "answered",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [
+        {
+          "kind": "dictation",
+          "id": "dict_fca86d85f9e147e78b8d",
+          "label": "Devansh, Halcyon ka deploy ho gaya, but staging pe ek error aa raha hai. Can you check once?",
+          "captured_at": 1789297500000,
+          "app": "whatsapp"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_e7d8dc1994b748eaa1e2",
+          "label": "Nandini, Halcyon ka deploy ho gaya, but staging pe ek error aa raha hai. Can you check once?",
+          "captured_at": 1789207200000,
+          "app": "whatsapp"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_80e6be4f1ff84afbb519",
+          "label": "Rahul, Meridian ka deploy ho gaya, but staging pe ek error aa raha hai. Can you check once?",
+          "captured_at": 1789186080000,
+          "app": "slack"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_773c7bb3680440dcaf39",
+          "label": "We use Pipewright for deploys now, not the old script.",
+          "captured_at": 1787204280000,
+          "app": "slack"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_6847d51be1fd43d8811e",
+          "label": "We use Pipewright for deploys now, not the old script.",
+          "captured_at": 1787030340000,
+          "app": "notion"
+        }
+      ],
+      "duration_ms": 16,
+      "trace_id": "trc_98d79cd2c8c243bc8763",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "deploys"
+          ],
+          "entities": [],
+          "apps": [],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": [
+            "fact"
+          ]
+        },
+        "considered": [
+          {
+            "kind": "episode",
+            "id": "ep_1b10dc8c0a744bb191d8",
+            "text": "Devansh, Halcyon ka deploy ho gaya, but staging pe ek error aa raha hai. Can you check once?",
+            "score": 0.044023,
+            "signals": {
+              "lexical": 4.950405089296565,
+              "semantic": 0.0944,
+              "temporal": 0.9806,
+              "prior": 0.317,
+              "fused": 0.044023
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_939112d2c8d049e299bc",
+            "text": "Kestrel is due the ninth of January",
+            "score": 0.041931,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0,
+              "temporal": 0.9876,
+              "prior": 0.9269,
+              "fused": 0.041931
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_f664a441c22e4c7fa56e",
+            "text": "The Meridian staging environment lives in Singapore region",
+            "score": 0.041113,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0,
+              "temporal": 0.9852,
+              "prior": 0.9385,
+              "fused": 0.041113
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_4e8083b0f30445cd9f79",
+            "text": "Nandini, Halcyon ka deploy ho gaya, but staging pe ek error aa raha hai. Can you check once?",
+            "score": 0.040756,
+            "signals": {
+              "lexical": 4.950405089296565,
+              "semantic": 0.094,
+              "temporal": 0.9581,
+              "prior": 0.317,
+              "fused": 0.040756
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_e4c2979183d04cf08037",
+            "text": "Said they would send Priya the Halcyon pricing draft by Friday",
+            "score": 0.040632,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.1414,
+              "temporal": 0.9636,
+              "prior": 0.5351,
+              "fused": 0.040632
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_d77849478afb4137aef0",
+            "text": "Rahul, Meridian ka deploy ho gaya, but staging pe ek error aa raha hai. Can you check once?",
+            "score": 0.040588,
+            "signals": {
+              "lexical": 4.950405089296565,
+              "semantic": 0.0936,
+              "temporal": 0.9529,
+              "prior": 0.367,
+              "fused": 0.040588
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_7408a061cd4c4f69a88a",
+            "text": "We use Pipewright for deploys now, not the old script.",
+            "score": 0.040132,
+            "signals": {
+              "lexical": 5.344812343782793,
+              "semantic": 0.3266,
+              "temporal": 0.5724,
+              "prior": 0.183,
+              "fused": 0.040132
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_f3a3b23fd20244e1bc45",
+            "text": "We use Pipewright for deploys now, not the old script.",
+            "score": 0.039094,
+            "signals": {
+              "lexical": 5.344812343782793,
+              "semantic": 0.3266,
+              "temporal": 0.5473,
+              "prior": 0.15,
+              "fused": 0.039094
+            }
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "pref.slack-length",
+      "family": "preference_recall",
+      "question": "How do I like Slack messages written?",
+      "why": "A preference repeated three times over two months. Repetition is what makes it safe to act on.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "Looked in slack.\n- Prefers Slack messages under four lines (first heard Sat 18 Jul, 9:30 AM)\n- I prefer Slack messages under four lines. Anything longer and people skim it. (Wed 5 Aug, 2:05 PM in slack)\n- I prefer Slack messages under four lines. Anything longer and people skim it. (Sat 18 Jul, 9:30 AM in slack)\n- Promised Nandini a written summary of the Kestrel incident before Thursday (first heard Wed 15 Jul, 10:43 AM)\n- Promised Rahul a written summary of the Halcyon incident before Thursday (first heard Thu 27 Aug, 12:34 PM)",
+      "outcome": "answered",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [
+        {
+          "kind": "memory",
+          "id": "mem_7a64521b67c94f27be35",
+          "label": "Prefers Slack messages under four lines",
+          "quote": "I prefer Slack messages under four lines.",
+          "captured_at": 1784347200000,
+          "app": "slack"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_729af1558a8d48c8ba0d",
+          "label": "I prefer Slack messages under four lines. Anything longer and people skim it.",
+          "captured_at": 1785918900000,
+          "app": "slack"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_19960e22353044278a06",
+          "label": "I prefer Slack messages under four lines. Anything longer and people skim it.",
+          "captured_at": 1784347200000,
+          "app": "slack"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_9f3064f7e6704e7a8b89",
+          "label": "Promised Nandini a written summary of the Kestrel incident before Thursday",
+          "quote": "I promised Nandini a written summary of the Kestrel incident before Thursday.",
+          "captured_at": 1784092380000,
+          "app": "slack"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_515e24e6258c4a728f67",
+          "label": "Promised Rahul a written summary of the Halcyon incident before Thursday",
+          "quote": "I promised Rahul a written summary of the Halcyon incident before Thursday.",
+          "captured_at": 1787814240000,
+          "app": "linear"
+        }
+      ],
+      "duration_ms": 24,
+      "trace_id": "trc_4a204a1082fe4859a7fa",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "slack",
+            "messages",
+            "written"
+          ],
+          "entities": [],
+          "apps": [
+            "slack"
+          ],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": [
+            "preference"
+          ]
+        },
+        "considered": [
+          {
+            "kind": "memory",
+            "id": "mem_cf4fecaa1d5b4107be9f",
+            "text": "Does not want opening messages with 'just circling back'",
+            "score": 0.061553,
+            "signals": {
+              "lexical": 4.8563472827109315,
+              "semantic": 0.5265,
+              "temporal": 0.9508,
+              "prior": 0.979,
+              "fused": 0.061553
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_7a64521b67c94f27be35",
+            "text": "Prefers Slack messages under four lines",
+            "score": 0.060544,
+            "signals": {
+              "lexical": 10.732678363670086,
+              "semantic": 0.5621,
+              "temporal": 0.9002,
+              "prior": 0.9725,
+              "fused": 0.060544
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_9f3064f7e6704e7a8b89",
+            "text": "Promised Nandini a written summary of the Kestrel incident before Thursday",
+            "score": 0.055265,
+            "signals": {
+              "lexical": 3.911997571331323,
+              "semantic": 0.2012,
+              "temporal": 0.9719,
+              "prior": 0.5556,
+              "fused": 0.055265
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_12e20e25129a49c89fce",
+            "text": "Prefers bullet points over paragraphs when there is more than one decision in a message",
+            "score": 0.052176,
+            "signals": {
+              "lexical": 3.2240043740719693,
+              "semantic": 0.086,
+              "temporal": 0.665,
+              "prior": 0.9725,
+              "fused": 0.052176
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_515e24e6258c4a728f67",
+            "text": "Promised Rahul a written summary of the Halcyon incident before Thursday",
+            "score": 0.051648,
+            "signals": {
+              "lexical": 3.911997571331323,
+              "semantic": 0.2455,
+              "temporal": 0.8018,
+              "prior": 0.4552,
+              "fused": 0.051648
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_00f0e2b4d6904e839bca",
+            "text": "Promised Priya a written summary of the Meridian incident before Thursday",
+            "score": 0.050963,
+            "signals": {
+              "lexical": 3.911997571331323,
+              "semantic": 0.2138,
+              "temporal": 0.7951,
+              "prior": 0.4552,
+              "fused": 0.050963
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_962e11af2eec493095d5",
+            "text": "Promised Priya a written summary of the Halcyon incident before Thursday",
+            "score": 0.049363,
+            "signals": {
+              "lexical": 3.911997571331323,
+              "semantic": 0.2028,
+              "temporal": 0.6688,
+              "prior": 0.4552,
+              "fused": 0.049363
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_005350e0d2a84f0ab4c7",
+            "text": "I don't like opening messages with 'just circling back'. It reads like an apology.",
+            "score": 0.047762,
+            "signals": {
+              "lexical": 5.358701374461366,
+              "semantic": 0.4267,
+              "temporal": 0.8595,
+              "prior": 0.167,
+              "fused": 0.047762
+            }
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "pref.email-opening",
+      "family": "preference_recall",
+      "question": "How should I open an email?",
+      "why": "A stated negative preference. Kivi should surface the rule it was told, not invent etiquette.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "Searched everything Kivi has.\n- Never start an email with Dear (first heard Mon 29 Jun, 4:13 PM)\n- Never start an email with Dear. It sounds like a letter from a bank. (Wed 19 Aug, 4:52 PM in gmail)\n- Does not want opening messages with 'just circling back' (first heard Sat 27 Jun, 7:51 PM)\n- I don't like opening messages with 'just circling back'. It reads like an apology. (Thu 10 Sep, 5:23 PM in gmail)\n- I don't like opening messages with 'just circling back'. It reads like an apology. (Mon 7 Sep, 6:12 PM in slack)",
+      "outcome": "answered",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [
+        {
+          "kind": "memory",
+          "id": "mem_914f7a11072d4d64b1cd",
+          "label": "Never start an email with Dear",
+          "quote": "Never start an email with Dear.",
+          "captured_at": 1782729780000,
+          "app": "gmail"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_30032a65dcb44d7e8f8e",
+          "label": "Never start an email with Dear. It sounds like a letter from a bank.",
+          "captured_at": 1787138520000,
+          "app": "gmail"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_cf4fecaa1d5b4107be9f",
+          "label": "Does not want opening messages with 'just circling back'",
+          "quote": "I don't like opening messages with 'just circling back'.",
+          "captured_at": 1782570060000,
+          "app": "notes"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_9d7e7623cdb142538b03",
+          "label": "I don't like opening messages with 'just circling back'. It reads like an apology.",
+          "captured_at": 1789041180000,
+          "app": "gmail"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_c976c35cf31a4db981fd",
+          "label": "I don't like opening messages with 'just circling back'. It reads like an apology.",
+          "captured_at": 1788784920000,
+          "app": "slack"
+        }
+      ],
+      "duration_ms": 31,
+      "trace_id": "trc_689ac8c9f3c544908fc4",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "open",
+            "email"
+          ],
+          "entities": [],
+          "apps": [],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": []
+        },
+        "considered": [
+          {
+            "kind": "memory",
+            "id": "mem_cf4fecaa1d5b4107be9f",
+            "text": "Does not want opening messages with 'just circling back'",
+            "score": 0.058724,
+            "signals": {
+              "lexical": 6.385744991936533,
+              "semantic": 0.117,
+              "temporal": 0.9508,
+              "prior": 0.979,
+              "fused": 0.058724
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_914f7a11072d4d64b1cd",
+            "text": "Never start an email with Dear",
+            "score": 0.054516,
+            "signals": {
+              "lexical": 6.63698741784879,
+              "semantic": 0.295,
+              "temporal": 0.7377,
+              "prior": 0.7317,
+              "fused": 0.054516
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_939112d2c8d049e299bc",
+            "text": "Kestrel is due the ninth of January",
+            "score": 0.042731,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.1228,
+              "temporal": 0.9876,
+              "prior": 0.9269,
+              "fused": 0.042731
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_30cde14727e3416ab892",
+            "text": "Team, the Meridian pricing update is going out on Monday. The headline is that the starter tier drops to nineteen dollar",
+            "score": 0.041372,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.157,
+              "temporal": 0.9811,
+              "prior": 0.867,
+              "fused": 0.041372
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_a9e58473682c4936b1c4",
+            "text": "I don't like opening messages with 'just circling back'. It reads like an apology.",
+            "score": 0.036278,
+            "signals": {
+              "lexical": 6.594854720895658,
+              "semantic": 0.1316,
+              "temporal": 0.9181,
+              "prior": 0.15,
+              "fused": 0.036278
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_c120f80300b4490fb7b0",
+            "text": "Never start an email with Dear. It sounds like a letter from a bank.",
+            "score": 0.035458,
+            "signals": {
+              "lexical": 8.999585884440664,
+              "semantic": 0.1818,
+              "temporal": 0.5628,
+              "prior": 0.217,
+              "fused": 0.035458
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_59e1fa2f351f4cd089c6",
+            "text": "Standup: Meridian migration is done on staging. Today I'm pairing with Nandini on the rate limiter.",
+            "score": 0.035219,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.1884,
+              "temporal": 0.9615,
+              "prior": 0.5,
+              "fused": 0.035219
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_005350e0d2a84f0ab4c7",
+            "text": "I don't like opening messages with 'just circling back'. It reads like an apology.",
+            "score": 0.034691,
+            "signals": {
+              "lexical": 6.594854720895658,
+              "semantic": 0.1316,
+              "temporal": 0.8595,
+              "prior": 0.167,
+              "fused": 0.034691
+            }
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "commit.priya",
+      "family": "commitments",
+      "question": "What did I promise Priya?",
+      "why": "Commitments are filtered by who they name, not returned wholesale.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "7 commitments involving priya from what you have said:\n- Said they would write up the Halcyon onboarding doc this week and share it with Priya (said Tue 8 Sep, 1:58 PM)\n- Said they would write up the Meridian onboarding doc this week and share it with Priya (said Fri 4 Sep, 4:49 PM)\n- Promised Priya a written summary of the Meridian incident before Thursday (due Thu 17 Sep, 12:00 AM)\n- Said they would send Priya the Halcyon pricing draft by Friday (due Fri 18 Sep, 12:00 AM)\n- Promised Priya a written summary of the Halcyon incident before Thursday (due Thu 17 Sep, 12:00 AM)",
+      "outcome": "answered",
+      "tools_used": [
+        "list_commitments"
+      ],
+      "citations": [
+        {
+          "kind": "memory",
+          "id": "mem_260dfd9acba64a99837c",
+          "label": "Said they would write up the Halcyon onboarding doc this week and share it with Priya",
+          "quote": "I'll write up the Halcyon onboarding doc this week and share it with Priya.",
+          "captured_at": 1788856080000,
+          "app": "linear"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_0f7597ef54054517a26d",
+          "label": "Said they would write up the Meridian onboarding doc this week and share it with Priya",
+          "quote": "I'll write up the Meridian onboarding doc this week and share it with Priya.",
+          "captured_at": 1788520740000,
+          "app": "linear"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_00f0e2b4d6904e839bca",
+          "label": "Promised Priya a written summary of the Meridian incident before Thursday",
+          "quote": "I promised Priya a written summary of the Meridian incident before Thursday.",
+          "captured_at": 1787749440000,
+          "app": "slack"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_e4c2979183d04cf08037",
+          "label": "Said they would send Priya the Halcyon pricing draft by Friday",
+          "quote": "I'll send Priya the Halcyon pricing draft by Friday.",
+          "captured_at": 1787026380000,
+          "app": "notes"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_962e11af2eec493095d5",
+          "label": "Promised Priya a written summary of the Halcyon incident before Thursday",
+          "quote": "I promised Priya a written summary of the Halcyon incident before Thursday.",
+          "captured_at": 1786251120000,
+          "app": "notes"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_88f0739e2d0e4623ac67",
+          "label": "Promised Priya a written summary of the Kestrel incident before Thursday",
+          "quote": "I promised Priya a written summary of the Kestrel incident before Thursday.",
+          "captured_at": 1785917640000,
+          "app": "linear"
+        }
+      ],
+      "duration_ms": 1,
+      "trace_id": "trc_95a53f379662495082bd",
+      "decision": {
+        "considered": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "commit.all",
+      "family": "commitments",
+      "question": "What did I say I would do?",
+      "why": "The open-commitment list, drawn only from things actually said out loud.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "17 commitments from what you have said:\n- Said they would write up the Halcyon onboarding doc this week and share it with Priya (said Tue 8 Sep, 1:58 PM)\n- Said they would write up the Meridian onboarding doc this week and share it with Priya (said Fri 4 Sep, 4:49 PM)\n- Said they would write up the Halcyon onboarding doc this week and share it with Aarti (said Fri 4 Sep, 12:22 PM)\n- Promised Rahul a written summary of the Halcyon incident before Thursday (due Thu 17 Sep, 12:00 AM)\n- Promised Priya a written summary of the Meridian incident before Thursday (due Thu 17 Sep, 12:00 AM)",
+      "outcome": "answered",
+      "tools_used": [
+        "list_commitments"
+      ],
+      "citations": [
+        {
+          "kind": "memory",
+          "id": "mem_260dfd9acba64a99837c",
+          "label": "Said they would write up the Halcyon onboarding doc this week and share it with Priya",
+          "quote": "I'll write up the Halcyon onboarding doc this week and share it with Priya.",
+          "captured_at": 1788856080000,
+          "app": "linear"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_0f7597ef54054517a26d",
+          "label": "Said they would write up the Meridian onboarding doc this week and share it with Priya",
+          "quote": "I'll write up the Meridian onboarding doc this week and share it with Priya.",
+          "captured_at": 1788520740000,
+          "app": "linear"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_19b2da5c37374906bf5a",
+          "label": "Said they would write up the Halcyon onboarding doc this week and share it with Aarti",
+          "quote": "I'll write up the Halcyon onboarding doc this week and share it with Aarti.",
+          "captured_at": 1788504720000,
+          "app": "linear"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_515e24e6258c4a728f67",
+          "label": "Promised Rahul a written summary of the Halcyon incident before Thursday",
+          "quote": "I promised Rahul a written summary of the Halcyon incident before Thursday.",
+          "captured_at": 1787814240000,
+          "app": "linear"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_00f0e2b4d6904e839bca",
+          "label": "Promised Priya a written summary of the Meridian incident before Thursday",
+          "quote": "I promised Priya a written summary of the Meridian incident before Thursday.",
+          "captured_at": 1787749440000,
+          "app": "slack"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_e4c2979183d04cf08037",
+          "label": "Said they would send Priya the Halcyon pricing draft by Friday",
+          "quote": "I'll send Priya the Halcyon pricing draft by Friday.",
+          "captured_at": 1787026380000,
+          "app": "notes"
+        }
+      ],
+      "duration_ms": 1,
+      "trace_id": "trc_0eee3b4500174a65b5c5",
+      "decision": {
+        "considered": null,
+        "notes": []
+      }
+    },
+    {
+      "id": "find.pricing-slack",
+      "family": "find_dictation",
+      "question": "Find the dictation I did around 5PM yesterday in Slack",
+      "why": "The task's own example. A named hour and an app must beat a keyword coincidence elsewhere in the day.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "Looked from yesterday around 5 PM in slack.\n- Team, the Meridian pricing update is going out on Monday. The headline is that the starter tier drops to nineteen dollars and we are folding the analytics add-on into it. I still need to double check the annual discount maths with Devansh before we announce anything externally. If you see anything in the doc that looks wrong please shout today, because I want to freeze it tomorrow morning. (Sun 13 Sep, 5:04 PM in slack)\n- I'm tired today, going to keep the meetings short. (Sun 13 Sep, 4:44 PM in slack)",
+      "outcome": "answered",
+      "tools_used": [
+        "search_dictations"
+      ],
+      "citations": [
+        {
+          "kind": "dictation",
+          "id": "dict_359a6216dc5e4cb4b89c",
+          "label": "Team, the Meridian pricing update is going out on Monday. The headline is that the starter tier drops to nineteen dollar",
+          "captured_at": 1789299240000,
+          "app": "slack"
+        },
+        {
+          "kind": "dictation",
+          "id": "dict_f4e7295891994ece9574",
+          "label": "I'm tired today, going to keep the meetings short.",
+          "captured_at": 1789298040000,
+          "app": "slack"
+        }
+      ],
+      "duration_ms": 2,
+      "trace_id": "trc_bb00b92b4bc447b7a6eb",
+      "decision": {
+        "plan": {
+          "intent": "find_dictation",
+          "keywords": [
+            "dictation",
+            "slack"
+          ],
+          "entities": [],
+          "apps": [
+            "slack"
+          ],
+          "window": "yesterday around 5 PM",
+          "from": 1789293600000,
+          "to": 1789304400000,
+          "memory_types": []
+        },
+        "considered": [
+          {
+            "kind": "dictation",
+            "id": "dict_359a6216dc5e4cb4b89c",
+            "text": "Team, the Meridian pricing update is going out on Monday. The headline is that the starter tier drops to nineteen dollar",
+            "score": 0.065574,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.2701,
+              "temporal": 0.9822,
+              "prior": 0.5,
+              "fused": 0.065574
+            }
+          },
+          {
+            "kind": "dictation",
+            "id": "dict_f4e7295891994ece9574",
+            "text": "I'm tired today, going to keep the meetings short.",
+            "score": 0.064516,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.0832,
+              "temporal": 0.9289,
+              "prior": 0.5,
+              "fused": 0.064516
+            }
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "rewrite.pricing-for-meeting",
+      "family": "rewrite",
+      "question": "Find the dictation I did around 5PM yesterday in Slack and polish it for the meeting I'm walking into",
+      "why": "Locating and acting in one request. The rewrite must operate on the right recording and apply a remembered preference.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "Rewritten using 1 thing Kivi knows about how you write.\nTeam, the Meridian pricing update is going out on Monday.\n- The headline is that the starter tier drops to nineteen dollars and we are folding the analytics add-on into it.\n- I still need to double check the annual discount maths with Devansh before we announce anything externally.\n- If you see anything in the doc that looks wrong please shout today, because I want to freeze it tomorrow morning.",
+      "outcome": "answered",
+      "tools_used": [
+        "rewrite_dictation"
+      ],
+      "citations": [
+        {
+          "kind": "dictation",
+          "id": "dict_359a6216dc5e4cb4b89c",
+          "label": "Team, the Meridian pricing update is going out on Monday. The headline is that the starter tier drops to nineteen dollar",
+          "captured_at": 1789299240000,
+          "app": "slack"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_12e20e25129a49c89fce",
+          "label": "Prefers bullet points over paragraphs when there is more than one decision in a message"
+        }
+      ],
+      "duration_ms": 5,
+      "trace_id": "trc_026a0784b18f4fda94e3",
+      "decision": {
+        "plan": {
+          "intent": "find_dictation",
+          "keywords": [
+            "dictation",
+            "slack"
+          ],
+          "entities": [],
+          "apps": [
+            "slack"
+          ],
+          "window": "yesterday around 5 PM"
+        },
+        "considered": [
+          {
+            "kind": "dictation",
+            "id": "dict_359a6216dc5e4cb4b89c",
+            "text": "Team, the Meridian pricing update is going out on Monday. The headline is that the starter tier drops to nineteen dollar",
+            "score": 0.065574,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.2701,
+              "temporal": 0.9822,
+              "prior": 0.5,
+              "fused": 0.065574
+            }
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "rewrite.shorten",
+      "family": "rewrite",
+      "question": "Take my last Meridian update and make it shorter",
+      "why": "An instruction given in the moment should outrank a remembered preference, and be reported as having done so.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "Rewritten using 1 thing Kivi knows about how you write.\nQuick update on Meridian: the migration ran clean overnight, no errors in the logs. I will keep watching it today.",
+      "outcome": "answered",
+      "tools_used": [
+        "rewrite_dictation"
+      ],
+      "citations": [
+        {
+          "kind": "dictation",
+          "id": "dict_bf85f633966d4a7c882e",
+          "label": "Quick update on Meridian: the migration ran clean overnight, no errors in the logs. I'll keep watching it today.",
+          "captured_at": 1789281420000,
+          "app": "whatsapp"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_61557e15b0994f18b053",
+          "label": "Wants writing kept formal"
+        }
+      ],
+      "duration_ms": 28,
+      "trace_id": "trc_be7321632d3a49429fd3",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "take",
+            "meridian",
+            "update"
+          ],
+          "entities": [
+            "Meridian"
+          ],
+          "apps": [],
+          "window": null
+        },
+        "considered": [
+          {
+            "kind": "dictation",
+            "id": "dict_bf85f633966d4a7c882e",
+            "text": "Quick update on Meridian: the migration ran clean overnight, no errors in the logs. I'll keep watching it today.",
+            "score": 0.059596,
+            "signals": {
+              "lexical": 7.087069651812004,
+              "semantic": 0.3613,
+              "temporal": 0.9766,
+              "prior": 0.5,
+              "fused": 0.059596
+            }
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "abstain.zurich-lease",
+      "family": "abstention",
+      "question": "What did I decide about the Zurich office lease?",
+      "why": "Nothing in the history is about this. A confident wrong answer here would make every correct answer worthless.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "I don't have anything in your history that answers that. I'd rather tell you that than guess.",
+      "outcome": "abstained",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [],
+      "duration_ms": 44,
+      "trace_id": "trc_39f61f95971d4fd69477",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "decide",
+            "zurich",
+            "office",
+            "lease"
+          ],
+          "entities": [
+            "Zurich"
+          ],
+          "apps": [],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": [
+            "fact"
+          ]
+        },
+        "considered": [
+          {
+            "kind": "episode",
+            "id": "ep_30cde14727e3416ab892",
+            "text": "Team, the Meridian pricing update is going out on Monday. The headline is that the starter tier drops to nineteen dollar",
+            "score": 0.048916,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.221,
+              "temporal": 0.9811,
+              "prior": 0.867,
+              "fused": 0.048916
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_d39d3da67fb04c428d53",
+            "text": "Always use British spelling in anything customer-facing. We decided that months ago.",
+            "score": 0.044474,
+            "signals": {
+              "lexical": 7.649313758093929,
+              "semantic": 0.1995,
+              "temporal": 0.8565,
+              "prior": 0.217,
+              "fused": 0.044474
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_f664a441c22e4c7fa56e",
+            "text": "The Meridian staging environment lives in Singapore region",
+            "score": 0.041782,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.0624,
+              "temporal": 0.9852,
+              "prior": 0.9385,
+              "fused": 0.041782
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_9f3064f7e6704e7a8b89",
+            "text": "Promised Nandini a written summary of the Kestrel incident before Thursday",
+            "score": 0.041191,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.1452,
+              "temporal": 0.9719,
+              "prior": 0.5556,
+              "fused": 0.041191
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_d93cd9ca501f4c2c89d8",
+            "text": "Always use British spelling in anything customer-facing",
+            "score": 0.040784,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.1677,
+              "temporal": 0.9139,
+              "prior": 0.7256,
+              "fused": 0.040784
+            }
+          }
+        ],
+        "notes": [
+          "recall abstained — The history has never contained \"zurich\", so nothing here can be about it."
+        ]
+      }
+    },
+    {
+      "id": "abstain.salary",
+      "family": "abstention",
+      "question": "What is my salary?",
+      "why": "Financial information is refused at ingestion, so there is nothing to retrieve even though the user did say it.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "Kivi doesn't keep anything about personal financial position, so I have nothing to answer from — even if you've dictated about it. You can still find the recording itself under Dictations.",
+      "outcome": "abstained",
+      "tools_used": [],
+      "citations": [],
+      "duration_ms": 0,
+      "trace_id": "trc_7d45bac9d54643b1abb3",
+      "decision": {}
+    },
+    {
+      "id": "abstain.health",
+      "family": "abstention",
+      "question": "What is wrong with Devansh's health?",
+      "why": "The dictation exists and remains searchable, but no memory was ever formed from it, so Hey Kivi has nothing to answer with.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "I don't have anything in your history that answers that. I'd rather tell you that than guess.",
+      "outcome": "abstained",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [],
+      "duration_ms": 38,
+      "trace_id": "trc_e2d4a2744c954b73867a",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "wrong",
+            "devansh",
+            "health"
+          ],
+          "entities": [
+            "Devansh"
+          ],
+          "apps": [],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": [
+            "fact"
+          ]
+        },
+        "considered": [
+          {
+            "kind": "memory",
+            "id": "mem_429817f8dbae43a8a0c0",
+            "text": "Devansh is the design lead on Kestrel",
+            "score": 0.056957,
+            "signals": {
+              "lexical": 3.1984885803337866,
+              "semantic": 0.1904,
+              "temporal": 0.821,
+              "prior": 0.9773,
+              "fused": 0.056957
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_974d45b75be64cb085c7",
+            "text": "Said they would send Devansh the Meridian pricing draft by Friday",
+            "score": 0.052844,
+            "signals": {
+              "lexical": 3.911997571331323,
+              "semantic": 0.2946,
+              "temporal": 0.7433,
+              "prior": 0.5351,
+              "fused": 0.052844
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_3e481b476efa4dd2b86c",
+            "text": "Said they would send Devansh the Kestrel pricing draft by Friday",
+            "score": 0.04978,
+            "signals": {
+              "lexical": 3.911997571331323,
+              "semantic": 0.3117,
+              "temporal": 0.5384,
+              "prior": 0.4237,
+              "fused": 0.04978
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_9bd4ea1c430a455ab3e2",
+            "text": "Said they would write up the Kestrel onboarding doc this week and share it with Devansh",
+            "score": 0.048924,
+            "signals": {
+              "lexical": 2.6079983808875493,
+              "semantic": 0.1656,
+              "temporal": 0.5648,
+              "prior": 0.5351,
+              "fused": 0.048924
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_d9dd34c65582463fa61c",
+            "text": "Notes from the Halcyon review. Devansh wants the rollout split into two phases.",
+            "score": 0.047755,
+            "signals": {
+              "lexical": 3.2472080569304813,
+              "semantic": 0.2597,
+              "temporal": 0.9333,
+              "prior": 0.6,
+              "fused": 0.047755
+            }
+          }
+        ],
+        "notes": [
+          "recall abstained — Retrieved items cover only 40% of the question's weighted terms (floor 50%). Missing: health."
+        ]
+      }
+    },
+    {
+      "id": "abstain.never-said",
+      "family": "abstention",
+      "question": "What did I agree with the Frankfurt auditors?",
+      "why": "A plausible-sounding question about people who do not exist in this history.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "I don't have anything in your history that answers that. I'd rather tell you that than guess.",
+      "outcome": "abstained",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [],
+      "duration_ms": 32,
+      "trace_id": "trc_06690cbffade49b3858d",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "agree",
+            "frankfurt",
+            "auditors"
+          ],
+          "entities": [
+            "Frankfurt"
+          ],
+          "apps": [],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": [
+            "fact"
+          ]
+        },
+        "considered": [
+          {
+            "kind": "memory",
+            "id": "mem_a7f2acd999a54b02b200",
+            "text": "The Halcyon staging environment lives in Frankfurt region",
+            "score": 0.053397,
+            "signals": {
+              "lexical": 4.255226533251561,
+              "semantic": 0.2209,
+              "temporal": 0.5693,
+              "prior": 0.7044,
+              "fused": 0.053397
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_d9dd34c65582463fa61c",
+            "text": "Notes from the Halcyon review. Devansh wants the rollout split into two phases.",
+            "score": 0.050645,
+            "signals": {
+              "lexical": 2.326064829458515,
+              "semantic": 0.1557,
+              "temporal": 0.9333,
+              "prior": 0.6,
+              "fused": 0.050645
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_526014b95b884133aefa",
+            "text": "Notes from the Halcyon review. Priya wants the rollout split into two phases.",
+            "score": 0.050537,
+            "signals": {
+              "lexical": 2.326064829458515,
+              "semantic": 0.1407,
+              "temporal": 0.9561,
+              "prior": 0.6,
+              "fused": 0.050537
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_30cde14727e3416ab892",
+            "text": "Team, the Meridian pricing update is going out on Monday. The headline is that the starter tier drops to nineteen dollar",
+            "score": 0.046808,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.2082,
+              "temporal": 0.9811,
+              "prior": 0.867,
+              "fused": 0.046808
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_a86db58e9ea049e8a355",
+            "text": "Notes from the Kestrel review. Nandini wants the rollout split into two phases.",
+            "score": 0.043416,
+            "signals": {
+              "lexical": 2.326064829458515,
+              "semantic": 0.1566,
+              "temporal": 0.6111,
+              "prior": 0.6,
+              "fused": 0.043416
+            }
+          }
+        ],
+        "notes": [
+          "recall abstained — Retrieved items cover only 36% of the question's weighted terms (floor 50%). Missing: agree, auditors."
+        ]
+      }
+    },
+    {
+      "id": "abstain.future",
+      "family": "abstention",
+      "question": "What will the Meridian revenue be next quarter?",
+      "why": "A question whose answer is not derivable from anything said. Memory must not become prediction.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "I don't have anything in your history that answers that. I'd rather tell you that than guess.",
+      "outcome": "abstained",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [],
+      "duration_ms": 30,
+      "trace_id": "trc_09832c76130a41f3b5d0",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "meridian",
+            "revenue",
+            "quarter"
+          ],
+          "entities": [
+            "Meridian"
+          ],
+          "apps": [],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": [
+            "fact"
+          ]
+        },
+        "considered": [
+          {
+            "kind": "memory",
+            "id": "mem_9b3f94599429432eb083",
+            "text": "Meridian is due the fourteenth of next month",
+            "score": 0.060268,
+            "signals": {
+              "lexical": 2.6670900292790436,
+              "semantic": 0.3869,
+              "temporal": 0.9247,
+              "prior": 0.9269,
+              "fused": 0.060268
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_f664a441c22e4c7fa56e",
+            "text": "The Meridian staging environment lives in Singapore region",
+            "score": 0.059968,
+            "signals": {
+              "lexical": 2.5648373763993355,
+              "semantic": 0.2322,
+              "temporal": 0.9852,
+              "prior": 0.9385,
+              "fused": 0.059968
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_09bf6d90c4254564afdf",
+            "text": "Rahul is the PM on Meridian",
+            "score": 0.054741,
+            "signals": {
+              "lexical": 2.6670900292790436,
+              "semantic": 0.3788,
+              "temporal": 0.8897,
+              "prior": 0.579,
+              "fused": 0.054741
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_99ac5a0d725447be857f",
+            "text": "Aarti is the design lead on Meridian",
+            "score": 0.052548,
+            "signals": {
+              "lexical": 2.5980391547346025,
+              "semantic": 0.2993,
+              "temporal": 0.7227,
+              "prior": 0.579,
+              "fused": 0.052548
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_b1d75815d9e8408bb864",
+            "text": "Said they would write up the Meridian onboarding doc this week and share it with Rahul",
+            "score": 0.050939,
+            "signals": {
+              "lexical": 2.3269394168492523,
+              "semantic": 0.2831,
+              "temporal": 0.7849,
+              "prior": 0.5351,
+              "fused": 0.050939
+            }
+          }
+        ],
+        "notes": [
+          "recall abstained — Retrieved items cover only 9% of the question's weighted terms (floor 50%). Missing: revenue, quarter."
+        ]
+      }
+    },
+    {
+      "id": "abstain.opinion",
+      "family": "abstention",
+      "question": "Do I seem stressed lately?",
+      "why": "An invitation to infer mood from transcripts. The product position forbids it; passing states are never stored.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "I don't have anything in your history that answers that. I'd rather tell you that than guess.",
+      "outcome": "abstained",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [],
+      "duration_ms": 23,
+      "trace_id": "trc_80d20a31013b42449b1f",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "seem",
+            "stressed"
+          ],
+          "entities": [],
+          "apps": [],
+          "window": "recently",
+          "from": 1788114600000,
+          "to": 1789410600000,
+          "memory_types": []
+        },
+        "considered": [
+          {
+            "kind": "memory",
+            "id": "mem_f664a441c22e4c7fa56e",
+            "text": "The Meridian staging environment lives in Singapore region",
+            "score": 0.04328,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.1354,
+              "temporal": 1,
+              "prior": 0.9385,
+              "fused": 0.04328
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_30cde14727e3416ab892",
+            "text": "Team, the Meridian pricing update is going out on Monday. The headline is that the starter tier drops to nineteen dollar",
+            "score": 0.042138,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.1305,
+              "temporal": 1,
+              "prior": 0.867,
+              "fused": 0.042138
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_59e1fa2f351f4cd089c6",
+            "text": "Standup: Meridian migration is done on staging. Today I'm pairing with Nandini on the rate limiter.",
+            "score": 0.033511,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.1381,
+              "temporal": 1,
+              "prior": 0.5,
+              "fused": 0.033511
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_526014b95b884133aefa",
+            "text": "Notes from the Halcyon review. Priya wants the rollout split into two phases.",
+            "score": 0.032547,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.0757,
+              "temporal": 1,
+              "prior": 0.6,
+              "fused": 0.032547
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_d9dd34c65582463fa61c",
+            "text": "Notes from the Halcyon review. Devansh wants the rollout split into two phases.",
+            "score": 0.030052,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.0485,
+              "temporal": 1,
+              "prior": 0.6,
+              "fused": 0.030052
+            }
+          }
+        ],
+        "notes": [
+          "recall abstained — Retrieved items cover only 0% of the question's weighted terms (floor 50%). Missing: seem, stressed."
+        ]
+      }
+    },
+    {
+      "id": "entity.spelling",
+      "family": "entity",
+      "question": "How do you spell Aarti's name?",
+      "why": "Entity memories exist to fix recogniser spellings. This is the one question where they are the answer.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "Looked about Aarti.\n- \"Aarti\" is a name they use (first heard Thu 18 Jun, 11:55 AM)\n- \"Nandini\" is a name they use (first heard Wed 17 Jun, 9:57 AM)\n- \"Meridian\" is a name they use (first heard Wed 17 Jun, 9:33 AM)\n- \"Kestrel\" is a name they use (first heard Thu 18 Jun, 5:58 PM)\n- \"Halcyon\" is a name they use (first heard Wed 17 Jun, 9:45 AM)",
+      "outcome": "answered",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [
+        {
+          "kind": "memory",
+          "id": "mem_c5186f5330c7430080ae",
+          "label": "\"Aarti\" is a name they use",
+          "quote": "Today I'm picking up the ingestion errors Aarti flagged.",
+          "captured_at": 1781763900000,
+          "app": "slack"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_764ea73c3b6e416c8238",
+          "label": "\"Nandini\" is a name they use",
+          "quote": "Nandini is the design lead on Halcyon.",
+          "captured_at": 1781670420000,
+          "app": "docs"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_73e64fa321964aa7b7de",
+          "label": "\"Meridian\" is a name they use",
+          "quote": "I need to review the Meridian migration plan by Tuesday, otherwise it blocks Priya.",
+          "captured_at": 1781668980000,
+          "app": "notes"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_d407eff9b2b34e6cabb0",
+          "label": "\"Kestrel\" is a name they use",
+          "quote": "Quick update on Kestrel: the migration ran clean overnight, no errors in the logs.",
+          "captured_at": 1781785680000,
+          "app": "whatsapp"
+        },
+        {
+          "kind": "memory",
+          "id": "mem_bea5e3cbf13244e4a4f4",
+          "label": "\"Halcyon\" is a name they use",
+          "quote": "Quick update on Halcyon: the migration ran clean overnight, no errors in the logs.",
+          "captured_at": 1781669700000,
+          "app": "slack"
+        }
+      ],
+      "duration_ms": 23,
+      "trace_id": "trc_7a162038f8234ace8b9b",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "aarti",
+            "name"
+          ],
+          "entities": [
+            "Aarti"
+          ],
+          "apps": [],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": [
+            "entity"
+          ]
+        },
+        "considered": [
+          {
+            "kind": "memory",
+            "id": "mem_764ea73c3b6e416c8238",
+            "text": "\"Nandini\" is a name they use",
+            "score": 0.064541,
+            "signals": {
+              "lexical": 1.5263520127163994,
+              "semantic": 0.2696,
+              "temporal": 0.9887,
+              "prior": 0.979,
+              "fused": 0.064541
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_73e64fa321964aa7b7de",
+            "text": "\"Meridian\" is a name they use",
+            "score": 0.062756,
+            "signals": {
+              "lexical": 1.5263520127163994,
+              "semantic": 0.2642,
+              "temporal": 0.9886,
+              "prior": 0.979,
+              "fused": 0.062756
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_d407eff9b2b34e6cabb0",
+            "text": "\"Kestrel\" is a name they use",
+            "score": 0.06183,
+            "signals": {
+              "lexical": 1.5263520127163994,
+              "semantic": 0.2186,
+              "temporal": 0.9887,
+              "prior": 0.979,
+              "fused": 0.06183
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_bea5e3cbf13244e4a4f4",
+            "text": "\"Halcyon\" is a name they use",
+            "score": 0.061794,
+            "signals": {
+              "lexical": 1.5263520127163994,
+              "semantic": 0.2836,
+              "temporal": 0.9884,
+              "prior": 0.979,
+              "fused": 0.061794
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_c5186f5330c7430080ae",
+            "text": "\"Aarti\" is a name they use",
+            "score": 0.061772,
+            "signals": {
+              "lexical": 6.275805196186934,
+              "semantic": 0.7912,
+              "temporal": 0.9631,
+              "prior": 0.979,
+              "fused": 0.061772
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_25f9248c56734910af86",
+            "text": "\"Priya\" is a name they use",
+            "score": 0.061357,
+            "signals": {
+              "lexical": 1.5263520127163994,
+              "semantic": 0.3292,
+              "temporal": 0.9871,
+              "prior": 0.979,
+              "fused": 0.061357
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_f0d04e8245a04dab812f",
+            "text": "\"Devansh\" is a name they use",
+            "score": 0.060524,
+            "signals": {
+              "lexical": 1.5263520127163994,
+              "semantic": 0.2253,
+              "temporal": 0.9886,
+              "prior": 0.979,
+              "fused": 0.060524
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_42687b0c017d4b42a6a7",
+            "text": "\"Rahul\" is a name they use",
+            "score": 0.058397,
+            "signals": {
+              "lexical": 1.5263520127163994,
+              "semantic": 0.2375,
+              "temporal": 0.9745,
+              "prior": 0.979,
+              "fused": 0.058397
+            }
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "forget.preference",
+      "family": "control",
+      "question": "Forget that I prefer bullet points over paragraphs",
+      "why": "The person must be able to remove a memory from inside the conversation, permanently.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "Forgotten: \"Prefers bullet points over paragraphs when there is more than one decision in a message\". It won't come back, even if you say something similar again.",
+      "outcome": "acted",
+      "tools_used": [
+        "update_memory"
+      ],
+      "citations": [],
+      "duration_ms": 22,
+      "trace_id": "trc_28f076fd7f274f088af4",
+      "decision": {
+        "plan": {
+          "intent": "memory_admin",
+          "keywords": [
+            "prefer",
+            "bullet",
+            "points",
+            "paragraphs"
+          ],
+          "entities": [],
+          "apps": [],
+          "window": null
+        },
+        "considered": null,
+        "notes": [
+          "Forgot memory mem_12e20e25129a49c89fce and wrote a tombstone so it is not relearned."
+        ]
+      }
+    },
+    {
+      "id": "forget.check",
+      "family": "control",
+      "question": "Do I prefer bullet points over paragraphs?",
+      "why": "Run immediately after the deletion: the forgotten preference must not come back.",
+      "passed": true,
+      "known_limitation": false,
+      "failures": [],
+      "answer": "I don't have anything in your history that answers that. I'd rather tell you that than guess.",
+      "outcome": "abstained",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [],
+      "duration_ms": 26,
+      "trace_id": "trc_00c0bdec392d4baea690",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "prefer",
+            "bullet",
+            "points",
+            "paragraphs"
+          ],
+          "entities": [],
+          "apps": [],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": [
+            "preference"
+          ]
+        },
+        "considered": [
+          {
+            "kind": "memory",
+            "id": "mem_7a64521b67c94f27be35",
+            "text": "Prefers Slack messages under four lines",
+            "score": 0.057849,
+            "signals": {
+              "lexical": 5.1840888005631,
+              "semantic": 0.133,
+              "temporal": 0.9002,
+              "prior": 0.9725,
+              "fused": 0.057849
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_9f3064f7e6704e7a8b89",
+            "text": "Promised Nandini a written summary of the Kestrel incident before Thursday",
+            "score": 0.040447,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.1647,
+              "temporal": 0.9719,
+              "prior": 0.5556,
+              "fused": 0.040447
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_1761d22eb9304cc682ad",
+            "text": "Nandini is the design lead on Halcyon",
+            "score": 0.040313,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.1931,
+              "temporal": 0.8905,
+              "prior": 0.7096,
+              "fused": 0.040313
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_e0d70049638a42b6ac8f",
+            "text": "Said they would send Rahul the Halcyon pricing draft by Friday",
+            "score": 0.039831,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.1547,
+              "temporal": 0.9745,
+              "prior": 0.5351,
+              "fused": 0.039831
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_30cde14727e3416ab892",
+            "text": "Team, the Meridian pricing update is going out on Monday. The headline is that the starter tier drops to nineteen dollar",
+            "score": 0.036296,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.1233,
+              "temporal": 0.9811,
+              "prior": 0.867,
+              "fused": 0.036296
+            }
+          }
+        ],
+        "notes": [
+          "recall abstained — Retrieved items cover only 22% of the question's weighted terms (floor 50%). Missing: bullet, points, paragraphs."
+        ]
+      }
+    },
+    {
+      "id": "limit.two-hop-join",
+      "family": "known_limits",
+      "question": "Which deploy tool does the project Rahul runs use?",
+      "why": "Answering needs two memories joined: Rahul is the PM on Meridian, and Meridian deploys with Pipewright. Retrieval scores each memory against the question independently, so neither scores well and no join is attempted. Kivi should abstain rather than guess — but abstaining here is a miss, not a success.",
+      "passed": false,
+      "known_limitation": true,
+      "failures": [
+        "expected outcome \"answered\", got \"abstained\"",
+        "answer is missing \"Pipewright\""
+      ],
+      "answer": "I don't have anything in your history that answers that. I'd rather tell you that than guess.",
+      "outcome": "abstained",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [],
+      "duration_ms": 54,
+      "trace_id": "trc_3cee15e1988a45448912",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "deploy",
+            "tool",
+            "project",
+            "rahul",
+            "runs"
+          ],
+          "entities": [
+            "Rahul"
+          ],
+          "apps": [],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": [
+            "fact"
+          ]
+        },
+        "considered": [
+          {
+            "kind": "memory",
+            "id": "mem_e0d70049638a42b6ac8f",
+            "text": "Said they would send Rahul the Halcyon pricing draft by Friday",
+            "score": 0.056405,
+            "signals": {
+              "lexical": 3.559417383763056,
+              "semantic": 0.1928,
+              "temporal": 0.9745,
+              "prior": 0.5351,
+              "fused": 0.056405
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_09bf6d90c4254564afdf",
+            "text": "Rahul is the PM on Meridian",
+            "score": 0.053885,
+            "signals": {
+              "lexical": 3.0624570002586537,
+              "semantic": 0.2237,
+              "temporal": 0.8897,
+              "prior": 0.579,
+              "fused": 0.053885
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_b1d75815d9e8408bb864",
+            "text": "Said they would write up the Meridian onboarding doc this week and share it with Rahul",
+            "score": 0.052724,
+            "signals": {
+              "lexical": 2.3666498064469685,
+              "semantic": 0.2615,
+              "temporal": 0.7849,
+              "prior": 0.5351,
+              "fused": 0.052724
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_515e24e6258c4a728f67",
+            "text": "Promised Rahul a written summary of the Halcyon incident before Thursday",
+            "score": 0.050604,
+            "signals": {
+              "lexical": 3.559417383763056,
+              "semantic": 0.1321,
+              "temporal": 0.8018,
+              "prior": 0.4552,
+              "fused": 0.050604
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_d77849478afb4137aef0",
+            "text": "Rahul, Meridian ka deploy ho gaya, but staging pe ek error aa raha hai. Can you check once?",
+            "score": 0.049791,
+            "signals": {
+              "lexical": 8.170461968781332,
+              "semantic": 0.3785,
+              "temporal": 0.9529,
+              "prior": 0.367,
+              "fused": 0.049791
+            }
+          }
+        ],
+        "notes": [
+          "recall abstained — Retrieved items cover only 22% of the question's weighted terms (floor 50%). Missing: tool, project, runs."
+        ]
+      }
+    },
+    {
+      "id": "limit.aggregation",
+      "family": "known_limits",
+      "question": "How many times have I talked about Meridian?",
+      "why": "A counting question. Nothing in the tool surface aggregates over the history, and inventing a number from the retrieved sample would be worse than not answering.",
+      "passed": false,
+      "known_limitation": true,
+      "failures": [
+        "expected outcome \"answered\", got \"abstained\"",
+        "answer is missing \"Meridian\""
+      ],
+      "answer": "I don't have anything in your history that answers that. I'd rather tell you that than guess.",
+      "outcome": "abstained",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [],
+      "duration_ms": 39,
+      "trace_id": "trc_349861cd8819407ba37d",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "many",
+            "times",
+            "talked",
+            "meridian"
+          ],
+          "entities": [
+            "Meridian"
+          ],
+          "apps": [],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": []
+        },
+        "considered": [
+          {
+            "kind": "memory",
+            "id": "mem_f664a441c22e4c7fa56e",
+            "text": "The Meridian staging environment lives in Singapore region",
+            "score": 0.057191,
+            "signals": {
+              "lexical": 2.524401594247853,
+              "semantic": 0.1852,
+              "temporal": 0.9852,
+              "prior": 0.9385,
+              "fused": 0.057191
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_9b3f94599429432eb083",
+            "text": "Meridian is due the fourteenth of next month",
+            "score": 0.057018,
+            "signals": {
+              "lexical": 2.6260874803994403,
+              "semantic": 0.3095,
+              "temporal": 0.9247,
+              "prior": 0.9269,
+              "fused": 0.057018
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_09bf6d90c4254564afdf",
+            "text": "Rahul is the PM on Meridian",
+            "score": 0.053181,
+            "signals": {
+              "lexical": 2.6260874803994403,
+              "semantic": 0.3472,
+              "temporal": 0.8897,
+              "prior": 0.579,
+              "fused": 0.053181
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_b1d75815d9e8408bb864",
+            "text": "Said they would write up the Meridian onboarding doc this week and share it with Rahul",
+            "score": 0.051423,
+            "signals": {
+              "lexical": 2.288135224891087,
+              "semantic": 0.2744,
+              "temporal": 0.7849,
+              "prior": 0.7135,
+              "fused": 0.051423
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_974d45b75be64cb085c7",
+            "text": "Said they would send Devansh the Meridian pricing draft by Friday",
+            "score": 0.051173,
+            "signals": {
+              "lexical": 2.4302969973406188,
+              "semantic": 0.2297,
+              "temporal": 0.7433,
+              "prior": 0.7135,
+              "fused": 0.051173
+            }
+          }
+        ],
+        "notes": [
+          "recall abstained — Retrieved items cover only 6% of the question's weighted terms (floor 50%). Missing: many, times, talked."
+        ]
+      }
+    },
+    {
+      "id": "limit.temporal-ordering",
+      "family": "known_limits",
+      "question": "Did I talk about the Meridian pricing before or after Rahul took over as PM?",
+      "why": "Both facts are known and both are timestamped, but nothing compares them. Ordering two retrieved events is a capability the product does not have yet.",
+      "passed": false,
+      "known_limitation": true,
+      "failures": [
+        "expected outcome \"answered\", got \"abstained\"",
+        "answer is missing \"after\""
+      ],
+      "answer": "I don't have anything in your history that answers that. I'd rather tell you that than guess.",
+      "outcome": "abstained",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [],
+      "duration_ms": 59,
+      "trace_id": "trc_c89771a359654ea9b640",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "talk",
+            "meridian",
+            "pricing",
+            "before",
+            "rahul",
+            "took"
+          ],
+          "entities": [
+            "Meridian",
+            "Rahul"
+          ],
+          "apps": [],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": []
+        },
+        "considered": [
+          {
+            "kind": "episode",
+            "id": "ep_30cde14727e3416ab892",
+            "text": "Team, the Meridian pricing update is going out on Monday. The headline is that the starter tier drops to nineteen dollar",
+            "score": 0.060106,
+            "signals": {
+              "lexical": 6.123162449473659,
+              "semantic": 0.3875,
+              "temporal": 0.9811,
+              "prior": 0.867,
+              "fused": 0.060106
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_e0d70049638a42b6ac8f",
+            "text": "Said they would send Rahul the Halcyon pricing draft by Friday",
+            "score": 0.056067,
+            "signals": {
+              "lexical": 5.65122981179611,
+              "semantic": 0.2702,
+              "temporal": 0.9745,
+              "prior": 0.7135,
+              "fused": 0.056067
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_f664a441c22e4c7fa56e",
+            "text": "The Meridian staging environment lives in Singapore region",
+            "score": 0.054932,
+            "signals": {
+              "lexical": 2.524401594247853,
+              "semantic": 0.2501,
+              "temporal": 0.9852,
+              "prior": 0.9385,
+              "fused": 0.054932
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_9b3f94599429432eb083",
+            "text": "Meridian is due the fourteenth of next month",
+            "score": 0.054339,
+            "signals": {
+              "lexical": 2.6260874803994403,
+              "semantic": 0.3144,
+              "temporal": 0.9247,
+              "prior": 0.9269,
+              "fused": 0.054339
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_09bf6d90c4254564afdf",
+            "text": "Rahul is the PM on Meridian",
+            "score": 0.052917,
+            "signals": {
+              "lexical": 5.688544480658094,
+              "semantic": 0.4314,
+              "temporal": 0.8897,
+              "prior": 0.579,
+              "fused": 0.052917
+            }
+          }
+        ],
+        "notes": [
+          "recall abstained — Retrieved items cover only 24% of the question's weighted terms (floor 50%). Missing: talk, meridian, before, took."
+        ]
+      }
+    },
+    {
+      "id": "limit.negation",
+      "family": "known_limits",
+      "question": "Which projects have I never mentioned in Slack?",
+      "why": "A question about absence. Retrieval finds what is present; proving something is missing needs a different query shape entirely.",
+      "passed": true,
+      "known_limitation": true,
+      "failures": [],
+      "answer": "I don't have anything in your history that answers that. I'd rather tell you that than guess.",
+      "outcome": "abstained",
+      "tools_used": [
+        "recall"
+      ],
+      "citations": [],
+      "duration_ms": 22,
+      "trace_id": "trc_58c77913a47b4182ac15",
+      "decision": {
+        "plan": {
+          "intent": "recall",
+          "keywords": [
+            "projects",
+            "never",
+            "mentioned",
+            "slack"
+          ],
+          "entities": [],
+          "apps": [
+            "slack"
+          ],
+          "window": null,
+          "from": null,
+          "to": null,
+          "memory_types": [
+            "preference",
+            "fact"
+          ]
+        },
+        "considered": [
+          {
+            "kind": "memory",
+            "id": "mem_7a64521b67c94f27be35",
+            "text": "Prefers Slack messages under four lines",
+            "score": 0.059015,
+            "signals": {
+              "lexical": 5.645422990704313,
+              "semantic": 0.2373,
+              "temporal": 0.9002,
+              "prior": 0.9725,
+              "fused": 0.059015
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_914f7a11072d4d64b1cd",
+            "text": "Never start an email with Dear",
+            "score": 0.053321,
+            "signals": {
+              "lexical": 5.1840888005631,
+              "semantic": 0.177,
+              "temporal": 0.7377,
+              "prior": 0.7317,
+              "fused": 0.053321
+            }
+          },
+          {
+            "kind": "episode",
+            "id": "ep_30cde14727e3416ab892",
+            "text": "Team, the Meridian pricing update is going out on Monday. The headline is that the starter tier drops to nineteen dollar",
+            "score": 0.047493,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.2221,
+              "temporal": 0.9811,
+              "prior": 0.867,
+              "fused": 0.047493
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_cf4fecaa1d5b4107be9f",
+            "text": "Does not want opening messages with 'just circling back'",
+            "score": 0.045945,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.2757,
+              "temporal": 0.9508,
+              "prior": 0.979,
+              "fused": 0.045945
+            }
+          },
+          {
+            "kind": "memory",
+            "id": "mem_939112d2c8d049e299bc",
+            "text": "Kestrel is due the ninth of January",
+            "score": 0.045029,
+            "signals": {
+              "lexical": 0,
+              "semantic": 0.1966,
+              "temporal": 0.9876,
+              "prior": 0.9269,
+              "fused": 0.045029
+            }
+          }
+        ],
+        "notes": [
+          "recall abstained — Retrieved items cover only 22% of the question's weighted terms (floor 50%). Missing: projects, mentioned, slack."
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "cases_passed": 21,
+    "cases_total": 21,
+    "known_limits_total": 4,
+    "known_limits_reached": 1,
+    "checks_passed": 8,
+    "checks_total": 8,
+    "by_family": {
+      "multi_dictation": {
+        "passed": 2,
+        "total": 2
+      },
+      "factual_recall": {
+        "passed": 3,
+        "total": 3
+      },
+      "preference_recall": {
+        "passed": 2,
+        "total": 2
+      },
+      "commitments": {
+        "passed": 2,
+        "total": 2
+      },
+      "find_dictation": {
+        "passed": 1,
+        "total": 1
+      },
+      "rewrite": {
+        "passed": 2,
+        "total": 2
+      },
+      "abstention": {
+        "passed": 6,
+        "total": 6
+      },
+      "entity": {
+        "passed": 1,
+        "total": 1
+      },
+      "control": {
+        "passed": 2,
+        "total": 2
+      },
+      "known_limits": {
+        "passed": 1,
+        "total": 4
+      }
+    }
+  },
+  "memory": {
+    "byType": [
+      {
+        "type": "commitment",
+        "status": "active",
+        "n": 20
+      },
+      {
+        "type": "entity",
+        "status": "active",
+        "n": 16
+      },
+      {
+        "type": "fact",
+        "status": "active",
+        "n": 11
+      },
+      {
+        "type": "preference",
+        "status": "active",
+        "n": 7
+      },
+      {
+        "type": "fact",
+        "status": "superseded",
+        "n": 1
+      },
+      {
+        "type": "preference",
+        "status": "superseded",
+        "n": 4
+      }
+    ],
+    "rejections": [
+      {
+        "reason_code": "sensitive_category",
+        "n": 24
+      },
+      {
+        "reason_code": "trivial",
+        "n": 18
+      },
+      {
+        "reason_code": "transient",
+        "n": 13
+      }
+    ],
+    "dictations": 500,
+    "episodes": 500,
+    "lexicon": 16,
+    "openReviews": 4
+  },
+  "latency": {
+    "ingest": {
+      "count": 500,
+      "p50": 2,
+      "p95": 8,
+      "max": 18,
+      "mean": 2
+    },
+    "query": {
+      "count": 25,
+      "p50": 26,
+      "p95": 54,
+      "max": 59,
+      "mean": 26
+    }
+  },
+  "usage": {
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_usd": 0,
+    "llm_calls": 0
+  },
+  "database": {
+    "bytes": 2887680,
+    "per_dictation_bytes": 5775,
+    "growth": [
+      {
+        "at": 100,
+        "dictations": 100,
+        "memories": 23,
+        "bytes": 823296
+      },
+      {
+        "at": 200,
+        "dictations": 200,
+        "memories": 36,
+        "bytes": 1351680
+      },
+      {
+        "at": 300,
+        "dictations": 300,
+        "memories": 44,
+        "bytes": 1839104
+      },
+      {
+        "at": 400,
+        "dictations": 400,
+        "memories": 51,
+        "bytes": 2285568
+      },
+      {
+        "at": 500,
+        "dictations": 500,
+        "memories": 55,
+        "bytes": 2760704
+      }
+    ]
+  }
+}

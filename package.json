@@ -1,0 +1,41 @@
+{
+  "name": "kivi-semantic-memory",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Semantic memory for Kivi \u2014 a ledger of what you said, not a model of who you are.",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "workspaces": [
+    "packages/server",
+    "packages/web"
+  ],
+  "scripts": {
+    "preflight": "node scripts/preflight.mjs",
+    "setup": "npm run preflight && npm run db:migrate && npm run seed && npm run build",
+    "db:migrate": "tsx packages/server/src/db/migrate.ts",
+    "db:reset": "tsx scripts/reset.ts",
+    "seed": "tsx scripts/seed.ts",
+    "import": "tsx scripts/import.ts",
+    "corpus:generate": "tsx corpus/generate.ts",
+    "eval": "tsx eval/run.ts",
+    "dev": "node scripts/dev.mjs",
+    "build": "npm run build --workspace packages/web",
+    "start": "tsx packages/server/src/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "check": "npm run typecheck && npm test && npm run eval"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.125.0",
+    "@fastify/cors": "^10.0.1",
+    "@fastify/static": "^8.0.3",
+    "fastify": "^5.2.0"
+  }
+}
