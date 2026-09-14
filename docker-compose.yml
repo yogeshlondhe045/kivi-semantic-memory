@@ -1,0 +1,45 @@
+# Primary review method for this submission (see RUN.md).
+#
+# Phase 2 scope: the database and the migration runner. The `api` (FastAPI) and
+# `web` (Next.js) services are added in Phases 3 and 5, when there is something
+# for them to serve. A compose file that lists services which cannot start is
+# worse than one that lists only what works, so they are absent rather than
+# stubbed.
+
+name: kivi
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-kivi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kivi}
+      POSTGRES_DB: ${POSTGRES_DB:-kivi}
+    ports:
+      # Exposed so a reviewer can psql into the memory state directly; the
+      # assignment asks for the database to be inspectable.
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - kivi_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # Other services wait on this rather than on a sleep, so `up` is
+      # deterministic instead of racy on a cold start.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-kivi} -d ${POSTGRES_DB:-kivi}"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+
+  migrate:
+    build:
+      context: ./api
+    environment:
+      KIVI_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-kivi}:${POSTGRES_PASSWORD:-kivi}@db:5432/${POSTGRES_DB:-kivi}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["alembic", "upgrade", "head"]
+    restart: "no"
+
+volumes:
+  kivi_pgdata:
