@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+
+# Runtime database artefacts (recreate with `npm run db:migrate && npm run seed`)
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/tmp/
+
+# OS noise
+.DS_Store
+Thumbs.db

@@ -1,0 +1,327 @@
+{
+  "$comment": "Graded cases for the Kivi semantic-memory evaluation. Each case states what should happen and why, so a failure is readable without opening the code. `expect.outcome` is the Hey Kivi outcome; `must_include` is checked case-insensitively against the answer text; `must_cite` requires at least one citation of that kind. A case marked known_limitation documents something the system does not do yet: it is graded and reported like any other, but it does not fail the run. Hiding these would make the other numbers less believable, not more.",
+  "cases": [
+    {
+      "id": "fact.pm-handover",
+      "family": "multi_dictation",
+      "question": "Who is the PM on Meridian?",
+      "why": "Two dictations three weeks apart name different people for the same role. The later one must win, and the earlier one must not be offered as an equal alternative.",
+      "expect": {
+        "outcome": "answered",
+        "must_include": [
+          "Rahul"
+        ],
+        "must_not_include": [
+          "Priya is the PM on Meridian"
+        ],
+        "must_cite": "memory"
+      }
+    },
+    {
+      "id": "fact.design-lead",
+      "family": "factual_recall",
+      "question": "Who is the design lead on Kestrel?",
+      "why": "A plain factual lookup, stated many times. Should be answered with high confidence and a citation.",
+      "expect": {
+        "outcome": "answered",
+        "must_include": [
+          "Devansh"
+        ],
+        "must_cite": "memory"
+      }
+    },
+    {
+      "id": "fact.manager",
+      "family": "factual_recall",
+      "question": "Who is my manager?",
+      "why": "A first-person fact about the user's own world.",
+      "expect": {
+        "outcome": "answered",
+        "must_include": [
+          "Nandini"
+        ],
+        "must_cite": "memory"
+      }
+    },
+    {
+      "id": "fact.staging-region",
+      "family": "multi_dictation",
+      "question": "Which region does Kestrel staging run in?",
+      "why": "Stated once in English and once in Hinglish. Either source is acceptable; the answer must be Singapore.",
+      "expect": {
+        "outcome": "answered",
+        "must_include": [
+          "Singapore"
+        ]
+      }
+    },
+    {
+      "id": "fact.deploy-tool",
+      "family": "factual_recall",
+      "question": "What do we use for deploys?",
+      "why": "A tool decision stated repeatedly; the retired alternative must not be offered as current.",
+      "expect": {
+        "outcome": "answered",
+        "must_include": [
+          "Pipewright"
+        ]
+      }
+    },
+    {
+      "id": "pref.slack-length",
+      "family": "preference_recall",
+      "question": "How do I like Slack messages written?",
+      "why": "A preference repeated three times over two months. Repetition is what makes it safe to act on.",
+      "expect": {
+        "outcome": "answered",
+        "must_include": [
+          "four lines"
+        ],
+        "must_cite": "memory"
+      }
+    },
+    {
+      "id": "pref.email-opening",
+      "family": "preference_recall",
+      "question": "How should I open an email?",
+      "why": "A stated negative preference. Kivi should surface the rule it was told, not invent etiquette.",
+      "expect": {
+        "outcome": "answered",
+        "must_include": [
+          "Dear"
+        ]
+      }
+    },
+    {
+      "id": "commit.priya",
+      "family": "commitments",
+      "question": "What did I promise Priya?",
+      "why": "Commitments are filtered by who they name, not returned wholesale.",
+      "expect": {
+        "outcome": "answered",
+        "must_include": [
+          "Priya"
+        ],
+        "tools": [
+          "list_commitments"
+        ],
+        "must_cite": "memory"
+      }
+    },
+    {
+      "id": "commit.all",
+      "family": "commitments",
+      "question": "What did I say I would do?",
+      "why": "The open-commitment list, drawn only from things actually said out loud.",
+      "expect": {
+        "outcome": "answered",
+        "tools": [
+          "list_commitments"
+        ]
+      }
+    },
+    {
+      "id": "find.pricing-slack",
+      "family": "find_dictation",
+      "question": "Find the dictation I did around 5PM yesterday in Slack",
+      "why": "The task's own example. A named hour and an app must beat a keyword coincidence elsewhere in the day.",
+      "expect": {
+        "outcome": "answered",
+        "must_include": [
+          "pricing"
+        ],
+        "tools": [
+          "search_dictations"
+        ],
+        "must_cite": "dictation"
+      }
+    },
+    {
+      "id": "rewrite.pricing-for-meeting",
+      "family": "rewrite",
+      "question": "Find the dictation I did around 5PM yesterday in Slack and polish it for the meeting I'm walking into",
+      "why": "Locating and acting in one request. The rewrite must operate on the right recording and apply a remembered preference.",
+      "expect": {
+        "outcome": "answered",
+        "must_include": [
+          "Meridian"
+        ],
+        "must_not_include": [
+          "tired"
+        ],
+        "tools": [
+          "rewrite_dictation"
+        ],
+        "must_cite": "dictation"
+      }
+    },
+    {
+      "id": "rewrite.shorten",
+      "family": "rewrite",
+      "question": "Take my last Meridian update and make it shorter",
+      "why": "An instruction given in the moment should outrank a remembered preference, and be reported as having done so.",
+      "expect": {
+        "outcome": "answered",
+        "tools": [
+          "rewrite_dictation"
+        ]
+      }
+    },
+    {
+      "id": "abstain.zurich-lease",
+      "family": "abstention",
+      "question": "What did I decide about the Zurich office lease?",
+      "why": "Nothing in the history is about this. A confident wrong answer here would make every correct answer worthless.",
+      "expect": {
+        "outcome": "abstained",
+        "must_not_include": [
+          "Meridian",
+          "Halcyon",
+          "Kestrel"
+        ]
+      }
+    },
+    {
+      "id": "abstain.salary",
+      "family": "abstention",
+      "question": "What is my salary?",
+      "why": "Financial information is refused at ingestion, so there is nothing to retrieve even though the user did say it.",
+      "expect": {
+        "outcome": "abstained"
+      }
+    },
+    {
+      "id": "abstain.health",
+      "family": "abstention",
+      "question": "What is wrong with Devansh's health?",
+      "why": "The dictation exists and remains searchable, but no memory was ever formed from it, so Hey Kivi has nothing to answer with.",
+      "expect": {
+        "outcome": "abstained",
+        "must_not_include": [
+          "unwell",
+          "two weeks off"
+        ]
+      }
+    },
+    {
+      "id": "abstain.never-said",
+      "family": "abstention",
+      "question": "What did I agree with the Frankfurt auditors?",
+      "why": "A plausible-sounding question about people who do not exist in this history.",
+      "expect": {
+        "outcome": "abstained"
+      }
+    },
+    {
+      "id": "abstain.future",
+      "family": "abstention",
+      "question": "What will the Meridian revenue be next quarter?",
+      "why": "A question whose answer is not derivable from anything said. Memory must not become prediction.",
+      "expect": {
+        "outcome": "abstained"
+      }
+    },
+    {
+      "id": "abstain.opinion",
+      "family": "abstention",
+      "question": "Do I seem stressed lately?",
+      "why": "An invitation to infer mood from transcripts. The product position forbids it; passing states are never stored.",
+      "expect": {
+        "outcome": "abstained",
+        "must_not_include": [
+          "yes",
+          "seem stressed"
+        ]
+      }
+    },
+    {
+      "id": "entity.spelling",
+      "family": "entity",
+      "question": "How do you spell Aarti's name?",
+      "why": "Entity memories exist to fix recogniser spellings. This is the one question where they are the answer.",
+      "expect": {
+        "outcome": "answered",
+        "must_include": [
+          "Aarti"
+        ]
+      }
+    },
+    {
+      "id": "forget.preference",
+      "family": "control",
+      "question": "Forget that I prefer bullet points over paragraphs",
+      "why": "The person must be able to remove a memory from inside the conversation, permanently.",
+      "expect": {
+        "outcome": "acted",
+        "tools": [
+          "update_memory"
+        ],
+        "must_include": [
+          "Forgotten"
+        ]
+      }
+    },
+    {
+      "id": "forget.check",
+      "family": "control",
+      "question": "Do I prefer bullet points over paragraphs?",
+      "dependsOn": "forget.preference",
+      "why": "Run immediately after the deletion: the forgotten preference must not come back.",
+      "expect": {
+        "outcome": "abstained",
+        "must_not_include": [
+          "Prefers bullet points"
+        ]
+      }
+    },
+    {
+      "id": "limit.two-hop-join",
+      "family": "known_limits",
+      "known_limitation": true,
+      "question": "Which deploy tool does the project Rahul runs use?",
+      "why": "Answering needs two memories joined: Rahul is the PM on Meridian, and Meridian deploys with Pipewright. Retrieval scores each memory against the question independently, so neither scores well and no join is attempted. Kivi should abstain rather than guess — but abstaining here is a miss, not a success.",
+      "expect": {
+        "outcome": "answered",
+        "must_include": [
+          "Pipewright"
+        ]
+      }
+    },
+    {
+      "id": "limit.aggregation",
+      "family": "known_limits",
+      "known_limitation": true,
+      "question": "How many times have I talked about Meridian?",
+      "why": "A counting question. Nothing in the tool surface aggregates over the history, and inventing a number from the retrieved sample would be worse than not answering.",
+      "expect": {
+        "outcome": "answered",
+        "must_include": [
+          "Meridian"
+        ]
+      }
+    },
+    {
+      "id": "limit.temporal-ordering",
+      "family": "known_limits",
+      "known_limitation": true,
+      "question": "Did I talk about the Meridian pricing before or after Rahul took over as PM?",
+      "why": "Both facts are known and both are timestamped, but nothing compares them. Ordering two retrieved events is a capability the product does not have yet.",
+      "expect": {
+        "outcome": "answered",
+        "must_include": [
+          "after"
+        ]
+      }
+    },
+    {
+      "id": "limit.negation",
+      "family": "known_limits",
+      "known_limitation": true,
+      "question": "Which projects have I never mentioned in Slack?",
+      "why": "A question about absence. Retrieval finds what is present; proving something is missing needs a different query shape entirely.",
+      "expect": {
+        "outcome": "abstained"
+      }
+    }
+  ]
+}

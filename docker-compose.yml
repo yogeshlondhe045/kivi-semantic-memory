@@ -1,0 +1,34 @@
+# Secondary review path. The declared one is local Node — see RUN.md.
+#
+#   docker compose up --build     →  http://localhost:8787
+#
+# Builds, migrates, seeds and serves in one container. The database lives on a
+# named volume so restarts keep the learned memory; `docker compose down -v`
+# resets the system exactly as `npm run db:reset` does.
+
+services:
+  kivi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8787:8787'
+    environment:
+      PORT: '8787'
+      DATABASE_URL: /data/kivi.db
+      LLM_PROVIDER: ${LLM_PROVIDER:-local}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-opus-5}
+      ANTHROPIC_EXTRACTION_MODEL: ${ANTHROPIC_EXTRACTION_MODEL:-claude-haiku-4-5}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    volumes:
+      - kivi-data:/data
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://localhost:8787/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+volumes:
+  kivi-data:
