@@ -29,3 +29,15 @@ Chronological record of what was built, what was run, what failed and how it was
 - Verification: `scripts/build.sh` OK; `scripts/test.sh` → 18 tests, 0 failures
   (layout parsing, id format, alias resolution, access poses clear of obstacles and restricted
   zones, slot spacing, speed/restricted zone queries, container mass/SDF).
+
+## Phase 3 — Gazebo warehouse world
+- `uco_simulation/scripts/generate_world.py` generates from the layout YAML: the SDF world
+  (walls with door shutters, receiving line, inspection booth, racks, tank farm with bund,
+  charger, pallet store, columns, floor markings, delivery truck, lighting), the Nav2
+  occupancy map and the keepout filter mask. `--check` detects stale generated files.
+- `snapshot.py` spawns a temporary camera through the world's `create` service and saves a PNG.
+- Issue found: door shutters were generated at 60 % wall thickness and rasterised as a 2-pixel
+  line that looked like a gap. Fixed by using full wall thickness.
+- Verification: world runs 2000 iterations in `gz sim -s` with no errors or warnings;
+  `gz sdf -k` → Valid; 3 generator tests pass (up-to-date check, SDF validity, map free at every
+  access pose / occupied at walls, doors, tanks); rendered images in `project_report/figures/`.
