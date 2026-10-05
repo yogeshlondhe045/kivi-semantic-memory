@@ -5,7 +5,8 @@ import sys
 import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from uco_safety.localization_monitor import LocalizationMonitor, near_obstacle_mask, scan_match_score  # noqa
+from uco_safety.localization_monitor import (LocalizationMonitor, add_rectangles, near_obstacle_mask,  # noqa
+                                             scan_match_score)
 
 
 def room():
@@ -59,3 +60,24 @@ def test_monitor_persistence():
     assert m.state(7.0) == 'DEGRADED'
     m.update(0.9, 8.0)
     assert m.state(8.0) == 'OK'
+
+
+def test_known_containers_raise_the_score():
+    """A container in front of the robot (unknown to the static map) lowers the score unless the
+    WMS-known container footprint is added to the mask."""
+    grid = room()
+    mask = near_obstacle_mask(grid, 0.05, 0.25)
+    # simulate a 1.2 m container centred at (5, 5): rays from (5, 3) hitting its south face at y = 4.4
+    n = 360
+    ranges = []
+    for i in range(n):
+        a = -math.pi + i * 2 * math.pi / n
+        if math.radians(70) < a < math.radians(110):      # rays that hit the 1.2 m container face
+            ranges.append((4.4 - 3.0) / math.sin(a))
+        else:
+            ranges.append(np.inf)
+    ranges = np.array(ranges)
+    base = scan_match_score(ranges, -math.pi, 2 * math.pi / n, 5.0, 3.0, 0.0, mask, 0, 0, 0.05)
+    with_box = add_rectangles(mask, [(4.15, 4.15, 5.85, 5.85)], 0, 0, 0.05)
+    known = scan_match_score(ranges, -math.pi, 2 * math.pi / n, 5.0, 3.0, 0.0, with_box, 0, 0, 0.05)
+    assert base < 0.1 and known > 0.9

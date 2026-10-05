@@ -1,0 +1,901 @@
+{
+  "scenario": "demo",
+  "description": "A restaurant delivery vehicle arrives with five containers of used cooking oil. They are registered, weighed, inspected, approved and stored by AGV-01. A processing request then retrieves the two oldest containers to the dispatch / processing buffer.\n",
+  "passed": true,
+  "sim_duration_s": 592.8,
+  "steps": [
+    {
+      "index": 0,
+      "step": "log",
+      "arg": "Restaurant delivery vehicle arrives at the receiving dock",
+      "sim_time": 38.0,
+      "ok": true
+    },
+    {
+      "index": 1,
+      "step": "snapshot",
+      "arg": {
+        "name": "demo_00_empty_warehouse",
+        "view": "overview"
+      },
+      "sim_time": 38.0,
+      "ok": true,
+      "file": "/home/user/kivi-semantic-memory/runtime/results/demo_20261005_221052/figures/demo_00_empty_warehouse.png"
+    },
+    {
+      "index": 2,
+      "step": "delivery",
+      "arg": {
+        "supplier": "Restaurant Bella Napoli",
+        "containers": [
+          [
+            "DRUM_200L",
+            190
+          ],
+          [
+            "DRUM_200L",
+            175
+          ],
+          [
+            "IBC_1000L",
+            900
+          ],
+          [
+            "DRUM_200L",
+            160
+          ],
+          [
+            "IBC_1000L",
+            850
+          ]
+        ]
+      },
+      "sim_time": 38.0,
+      "ok": true,
+      "message": "D-001: 5 containers from Restaurant Bella Napoli at the dock"
+    },
+    {
+      "index": 3,
+      "step": "wait_for",
+      "arg": {
+        "received": 5,
+        "timeout": 300
+      },
+      "sim_time": 39.7,
+      "ok": true,
+      "waited_s": 28.1,
+      "observed": {
+        "received": 5
+      }
+    },
+    {
+      "index": 4,
+      "step": "log",
+      "arg": "All five containers registered; weighing and inspection in progress",
+      "sim_time": 67.8,
+      "ok": true
+    },
+    {
+      "index": 5,
+      "step": "wait_for",
+      "arg": {
+        "holding": ">=3",
+        "timeout": 300
+      },
+      "sim_time": 67.8,
+      "ok": true,
+      "waited_s": 8.3,
+      "observed": {
+        "holding": 3
+      }
+    },
+    {
+      "index": 6,
+      "step": "snapshot",
+      "arg": {
+        "name": "demo_01_receiving",
+        "view": "receiving"
+      },
+      "sim_time": 76.2,
+      "ok": true,
+      "file": "/home/user/kivi-semantic-memory/runtime/results/demo_20261005_221052/figures/demo_01_receiving.png"
+    },
+    {
+      "index": 7,
+      "step": "wait_for",
+      "arg": {
+        "stored": 1,
+        "timeout": 600
+      },
+      "sim_time": 76.2,
+      "ok": true,
+      "waited_s": 74.0,
+      "observed": {
+        "stored": 1
+      }
+    },
+    {
+      "index": 8,
+      "step": "snapshot",
+      "arg": {
+        "name": "demo_02_first_stored",
+        "view": "storage"
+      },
+      "sim_time": 150.2,
+      "ok": true,
+      "file": "/home/user/kivi-semantic-memory/runtime/results/demo_20261005_221052/figures/demo_02_first_stored.png"
+    },
+    {
+      "index": 9,
+      "step": "wait_for",
+      "arg": {
+        "stored": 5,
+        "tasks_active": "==0",
+        "timeout": 2400
+      },
+      "sim_time": 150.2,
+      "ok": true,
+      "waited_s": 248.7,
+      "observed": {
+        "stored": 5,
+        "tasks_active": 0
+      }
+    },
+    {
+      "index": 10,
+      "step": "expect",
+      "arg": {
+        "stored": 5,
+        "tasks_completed": 5,
+        "tasks_failed": "==0",
+        "holding": "==0"
+      },
+      "sim_time": 398.9,
+      "ok": true,
+      "observed": {
+        "stored": 5,
+        "tasks_completed": 5,
+        "tasks_failed": 0,
+        "holding": 0
+      },
+      "failed": []
+    },
+    {
+      "index": 11,
+      "step": "snapshot",
+      "arg": {
+        "name": "demo_03_all_stored",
+        "view": "overview"
+      },
+      "sim_time": 399.4,
+      "ok": true,
+      "file": "/home/user/kivi-semantic-memory/runtime/results/demo_20261005_221052/figures/demo_03_all_stored.png"
+    },
+    {
+      "index": 12,
+      "step": "log",
+      "arg": "Biodiesel plant requests two containers for processing",
+      "sim_time": 399.4,
+      "ok": true
+    },
+    {
+      "index": 13,
+      "step": "processing_request",
+      "arg": {
+        "count": 2
+      },
+      "sim_time": 399.4,
+      "ok": true,
+      "message": "2 containers scheduled for processing",
+      "containers": [
+        "UCO-0001",
+        "UCO-0002"
+      ]
+    },
+    {
+      "index": 14,
+      "step": "wait_for",
+      "arg": {
+        "tasks_completed": 7,
+        "timeout": 1200
+      },
+      "sim_time": 401.3,
+      "ok": true,
+      "waited_s": 145.9,
+      "observed": {
+        "tasks_completed": 7
+      }
+    },
+    {
+      "index": 15,
+      "step": "snapshot",
+      "arg": {
+        "name": "demo_04_dispatch_buffer",
+        "view": "dispatch"
+      },
+      "sim_time": 547.3,
+      "ok": true,
+      "file": "/home/user/kivi-semantic-memory/runtime/results/demo_20261005_221052/figures/demo_04_dispatch_buffer.png"
+    },
+    {
+      "index": 16,
+      "step": "wait_for",
+      "arg": {
+        "dispatched": 2,
+        "timeout": 300
+      },
+      "sim_time": 547.3,
+      "ok": true,
+      "waited_s": 20.8,
+      "observed": {
+        "dispatched": 2
+      }
+    },
+    {
+      "index": 17,
+      "step": "expect",
+      "arg": {
+        "stored": 3,
+        "dispatched": 2,
+        "tasks_completed": 7,
+        "tasks_failed": "==0"
+      },
+      "sim_time": 568.0,
+      "ok": true,
+      "observed": {
+        "stored": 3,
+        "dispatched": 2,
+        "tasks_completed": 7,
+        "tasks_failed": 0
+      },
+      "failed": []
+    },
+    {
+      "index": 18,
+      "step": "log",
+      "arg": "Operator command: move AGV-01 to storage position A03",
+      "sim_time": 568.5,
+      "ok": true
+    },
+    {
+      "index": 19,
+      "step": "move_agv",
+      "arg": {
+        "location": "A03",
+        "wait": true,
+        "timeout": 600
+      },
+      "sim_time": 568.5,
+      "ok": true,
+      "message": "AGV-01 at A-03-R01"
+    },
+    {
+      "index": 20,
+      "step": "expect",
+      "arg": {
+        "agv_at": "A-03-R01"
+      },
+      "sim_time": 630.3,
+      "ok": true,
+      "observed": {
+        "agv_at": "A-03-R01"
+      },
+      "failed": []
+    },
+    {
+      "index": 21,
+      "step": "snapshot",
+      "arg": {
+        "name": "demo_05_final",
+        "view": "overview"
+      },
+      "sim_time": 630.8,
+      "ok": true,
+      "file": "/home/user/kivi-semantic-memory/runtime/results/demo_20261005_221052/figures/demo_05_final.png"
+    }
+  ],
+  "alerts": [
+    {
+      "t": 39.7,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "DELIVERY_ARRIVED",
+      "message": "Delivery D-001: 5 containers from Restaurant Bella Napoli at the dock"
+    },
+    {
+      "t": 39.8,
+      "severity": 0,
+      "source": "WMS",
+      "code": "CONTAINER_REGISTERED",
+      "message": "UCO-0001 registered (DRUM_200L, 190 L declared, supplier Restaurant Bella Napoli)"
+    },
+    {
+      "t": 40.0,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "UNLOADED",
+      "message": "UCO-0001 (200 L steel drum on pallet, 190 L declared) unloaded from delivery D-001"
+    },
+    {
+      "t": 45.9,
+      "severity": 0,
+      "source": "WEIGH",
+      "code": "WEIGHED",
+      "message": "UCO-0001 weighed: 193.5 kg gross / 160.5 kg net = 174 L"
+    },
+    {
+      "t": 46.0,
+      "severity": 0,
+      "source": "WMS",
+      "code": "CONTAINER_REGISTERED",
+      "message": "UCO-0002 registered (DRUM_200L, 175 L declared, supplier Restaurant Bella Napoli)"
+    },
+    {
+      "t": 46.0,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "UNLOADED",
+      "message": "UCO-0002 (200 L steel drum on pallet, 175 L declared) unloaded from delivery D-001"
+    },
+    {
+      "t": 51.3,
+      "severity": 0,
+      "source": "INSPECT",
+      "code": "INSPECTED",
+      "message": "UCO-0001: FFA 3.0 %, water 0.19 %, -> PASS"
+    },
+    {
+      "t": 52.1,
+      "severity": 0,
+      "source": "WEIGH",
+      "code": "WEIGHED",
+      "message": "UCO-0002 weighed: 180.0 kg gross / 147.0 kg net = 160 L"
+    },
+    {
+      "t": 52.1,
+      "severity": 0,
+      "source": "WMS",
+      "code": "CONTAINER_REGISTERED",
+      "message": "UCO-0003 registered (IBC_1000L, 900 L declared, supplier Restaurant Bella Napoli)"
+    },
+    {
+      "t": 52.1,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "UNLOADED",
+      "message": "UCO-0003 (1000 L IBC tote, 900 L declared) unloaded from delivery D-001"
+    },
+    {
+      "t": 59.5,
+      "severity": 0,
+      "source": "WEIGH",
+      "code": "WEIGHED",
+      "message": "UCO-0003 weighed: 867.0 kg gross / 805.0 kg net = 875 L"
+    },
+    {
+      "t": 59.5,
+      "severity": 0,
+      "source": "WMS",
+      "code": "CONTAINER_REGISTERED",
+      "message": "UCO-0004 registered (DRUM_200L, 160 L declared, supplier Restaurant Bella Napoli)"
+    },
+    {
+      "t": 59.5,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "UNLOADED",
+      "message": "UCO-0004 (200 L steel drum on pallet, 160 L declared) unloaded from delivery D-001"
+    },
+    {
+      "t": 59.7,
+      "severity": 0,
+      "source": "WMS",
+      "code": "STORAGE_ASSIGNED",
+      "message": "Storage location A-01-R01 assigned to UCO-0001"
+    },
+    {
+      "t": 59.7,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_CREATED",
+      "message": "Task T-0001: STORE UCO-0001 HOLD-01 -> A-01-R01"
+    },
+    {
+      "t": 59.7,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "RECEIVED",
+      "message": "UCO-0001 received: quality PASS, storage A-01-R01, task T-0001"
+    },
+    {
+      "t": 59.7,
+      "severity": 0,
+      "source": "INSPECT",
+      "code": "INSPECTED",
+      "message": "UCO-0002: FFA 2.7 %, water 0.24 %, -> PASS"
+    },
+    {
+      "t": 60.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ASSIGNED",
+      "message": "Task T-0001 assigned to AGV-01 (UCO-0001: HOLD-01 -> A-01-R01)"
+    },
+    {
+      "t": 60.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "TASK_STARTED",
+      "message": "AGV-01 executing T-0001: UCO-0001 HOLD-01 -> A-01-R01"
+    },
+    {
+      "t": 60.5,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CHARGING_STOPPED",
+      "message": "AGV-01 left charger at 100 %"
+    },
+    {
+      "t": 67.8,
+      "severity": 0,
+      "source": "WEIGH",
+      "code": "WEIGHED",
+      "message": "UCO-0004 weighed: 179.0 kg gross / 146.0 kg net = 159 L"
+    },
+    {
+      "t": 67.8,
+      "severity": 0,
+      "source": "WMS",
+      "code": "CONTAINER_REGISTERED",
+      "message": "UCO-0005 registered (IBC_1000L, 850 L declared, supplier Restaurant Bella Napoli)"
+    },
+    {
+      "t": 67.8,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "UNLOADED",
+      "message": "UCO-0005 (1000 L IBC tote, 850 L declared) unloaded from delivery D-001"
+    },
+    {
+      "t": 68.1,
+      "severity": 0,
+      "source": "WMS",
+      "code": "STORAGE_ASSIGNED",
+      "message": "Storage location A-01-R02 assigned to UCO-0002"
+    },
+    {
+      "t": 68.1,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_CREATED",
+      "message": "Task T-0002: STORE UCO-0002 HOLD-02 -> A-01-R02"
+    },
+    {
+      "t": 68.1,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "RECEIVED",
+      "message": "UCO-0002 received: quality PASS, storage A-01-R02, task T-0002"
+    },
+    {
+      "t": 68.1,
+      "severity": 0,
+      "source": "INSPECT",
+      "code": "INSPECTED",
+      "message": "UCO-0003: FFA 1.9 %, water 0.32 %, -> PASS"
+    },
+    {
+      "t": 76.2,
+      "severity": 0,
+      "source": "WEIGH",
+      "code": "WEIGHED",
+      "message": "UCO-0005 weighed: 812.0 kg gross / 750.0 kg net = 815 L"
+    },
+    {
+      "t": 76.4,
+      "severity": 0,
+      "source": "WMS",
+      "code": "STORAGE_ASSIGNED",
+      "message": "Storage location A-02-R01 assigned to UCO-0003"
+    },
+    {
+      "t": 76.4,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_CREATED",
+      "message": "Task T-0003: STORE UCO-0003 HOLD-03 -> A-02-R01"
+    },
+    {
+      "t": 76.4,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "RECEIVED",
+      "message": "UCO-0003 received: quality PASS, storage A-02-R01, task T-0003"
+    },
+    {
+      "t": 76.4,
+      "severity": 0,
+      "source": "INSPECT",
+      "code": "INSPECTED",
+      "message": "UCO-0004: FFA 2.3 %, water 0.52 %, -> PASS"
+    },
+    {
+      "t": 84.9,
+      "severity": 0,
+      "source": "WMS",
+      "code": "STORAGE_ASSIGNED",
+      "message": "Storage location A-02-R02 assigned to UCO-0004"
+    },
+    {
+      "t": 84.9,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_CREATED",
+      "message": "Task T-0004: STORE UCO-0004 HOLD-04 -> A-02-R02"
+    },
+    {
+      "t": 84.9,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "RECEIVED",
+      "message": "UCO-0004 received: quality PASS, storage A-02-R02, task T-0004"
+    },
+    {
+      "t": 84.9,
+      "severity": 0,
+      "source": "INSPECT",
+      "code": "INSPECTED",
+      "message": "UCO-0005: FFA 3.3 %, water 0.40 %, -> PASS"
+    },
+    {
+      "t": 93.3,
+      "severity": 0,
+      "source": "WMS",
+      "code": "STORAGE_ASSIGNED",
+      "message": "Storage location A-03-R01 assigned to UCO-0005"
+    },
+    {
+      "t": 93.3,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_CREATED",
+      "message": "Task T-0005: STORE UCO-0005 HOLD-05 -> A-03-R01"
+    },
+    {
+      "t": 93.3,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "RECEIVED",
+      "message": "UCO-0005 received: quality PASS, storage A-03-R01, task T-0005"
+    },
+    {
+      "t": 112.1,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_PICKED",
+      "message": "AGV-01 picked UCO-0001"
+    },
+    {
+      "t": 150.2,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_DELIVERED",
+      "message": "AGV-01 delivered UCO-0001 to A-01-R01"
+    },
+    {
+      "t": 150.2,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "TASK_DONE",
+      "message": "T-0001 done by AGV-01 in 90 s, 30.8 m"
+    },
+    {
+      "t": 150.2,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_COMPLETED",
+      "message": "Task T-0001 completed: UCO-0001 at A-01-R01"
+    },
+    {
+      "t": 151.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ASSIGNED",
+      "message": "Task T-0002 assigned to AGV-01 (UCO-0002: HOLD-02 -> A-01-R02)"
+    },
+    {
+      "t": 151.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "TASK_STARTED",
+      "message": "AGV-01 executing T-0002: UCO-0002 HOLD-02 -> A-01-R02"
+    },
+    {
+      "t": 182.6,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_PICKED",
+      "message": "AGV-01 picked UCO-0002"
+    },
+    {
+      "t": 212.1,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_DELIVERED",
+      "message": "AGV-01 delivered UCO-0002 to A-01-R02"
+    },
+    {
+      "t": 212.1,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "TASK_DONE",
+      "message": "T-0002 done by AGV-01 in 61 s, 21.6 m"
+    },
+    {
+      "t": 212.1,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_COMPLETED",
+      "message": "Task T-0002 completed: UCO-0002 at A-01-R02"
+    },
+    {
+      "t": 213.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ASSIGNED",
+      "message": "Task T-0003 assigned to AGV-01 (UCO-0003: HOLD-03 -> A-02-R01)"
+    },
+    {
+      "t": 213.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "TASK_STARTED",
+      "message": "AGV-01 executing T-0003: UCO-0003 HOLD-03 -> A-02-R01"
+    },
+    {
+      "t": 247.2,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_PICKED",
+      "message": "AGV-01 picked UCO-0003"
+    },
+    {
+      "t": 282.6,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_DELIVERED",
+      "message": "AGV-01 delivered UCO-0003 to A-02-R01"
+    },
+    {
+      "t": 282.6,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "TASK_DONE",
+      "message": "T-0003 done by AGV-01 in 70 s, 19.9 m"
+    },
+    {
+      "t": 282.6,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_COMPLETED",
+      "message": "Task T-0003 completed: UCO-0003 at A-02-R01"
+    },
+    {
+      "t": 283.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ASSIGNED",
+      "message": "Task T-0004 assigned to AGV-01 (UCO-0004: HOLD-04 -> A-02-R02)"
+    },
+    {
+      "t": 283.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "TASK_STARTED",
+      "message": "AGV-01 executing T-0004: UCO-0004 HOLD-04 -> A-02-R02"
+    },
+    {
+      "t": 312.9,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_PICKED",
+      "message": "AGV-01 picked UCO-0004"
+    },
+    {
+      "t": 339.6,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_DELIVERED",
+      "message": "AGV-01 delivered UCO-0004 to A-02-R02"
+    },
+    {
+      "t": 339.6,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "TASK_DONE",
+      "message": "T-0004 done by AGV-01 in 57 s, 18.3 m"
+    },
+    {
+      "t": 339.6,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_COMPLETED",
+      "message": "Task T-0004 completed: UCO-0004 at A-02-R02"
+    },
+    {
+      "t": 340.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ASSIGNED",
+      "message": "Task T-0005 assigned to AGV-01 (UCO-0005: HOLD-05 -> A-03-R01)"
+    },
+    {
+      "t": 340.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "TASK_STARTED",
+      "message": "AGV-01 executing T-0005: UCO-0005 HOLD-05 -> A-03-R01"
+    },
+    {
+      "t": 370.1,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_PICKED",
+      "message": "AGV-01 picked UCO-0005"
+    },
+    {
+      "t": 398.9,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_DELIVERED",
+      "message": "AGV-01 delivered UCO-0005 to A-03-R01"
+    },
+    {
+      "t": 398.9,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "TASK_DONE",
+      "message": "T-0005 done by AGV-01 in 59 s, 18.0 m"
+    },
+    {
+      "t": 398.9,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_COMPLETED",
+      "message": "Task T-0005 completed: UCO-0005 at A-03-R01"
+    },
+    {
+      "t": 401.3,
+      "severity": 0,
+      "source": "WMS",
+      "code": "DISPATCH_REQUEST",
+      "message": "Processing request: 2 containers scheduled for processing"
+    },
+    {
+      "t": 401.3,
+      "severity": 0,
+      "source": "DISPATCH",
+      "code": "PROCESSING_REQUEST",
+      "message": "Processing request for 2 container(s): 2 containers scheduled for processing"
+    },
+    {
+      "t": 402.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ASSIGNED",
+      "message": "Task T-0006 assigned to AGV-01 (UCO-0001: A-01-R01 -> DSP-01)"
+    },
+    {
+      "t": 402.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "TASK_STARTED",
+      "message": "AGV-01 executing T-0006: UCO-0001 A-01-R01 -> DSP-01"
+    },
+    {
+      "t": 423.3,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_PICKED",
+      "message": "AGV-01 picked UCO-0001"
+    },
+    {
+      "t": 463.4,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_DELIVERED",
+      "message": "AGV-01 delivered UCO-0001 to DSP-01"
+    },
+    {
+      "t": 463.4,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "TASK_DONE",
+      "message": "T-0006 done by AGV-01 in 61 s, 22.7 m"
+    },
+    {
+      "t": 463.4,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_COMPLETED",
+      "message": "Task T-0006 completed: UCO-0001 at DSP-01"
+    },
+    {
+      "t": 464.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ASSIGNED",
+      "message": "Task T-0007 assigned to AGV-01 (UCO-0002: A-01-R02 -> DSP-02)"
+    },
+    {
+      "t": 464.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "TASK_STARTED",
+      "message": "AGV-01 executing T-0007: UCO-0002 A-01-R02 -> DSP-02"
+    },
+    {
+      "t": 484.0,
+      "severity": 0,
+      "source": "WMS",
+      "code": "HANDED_OVER",
+      "message": "UCO-0001 handed over to the processing plant"
+    },
+    {
+      "t": 484.0,
+      "severity": 0,
+      "source": "DISPATCH",
+      "code": "DISPATCHED",
+      "message": "UCO-0001 collected by the processing plant (transfer door)"
+    },
+    {
+      "t": 506.8,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_PICKED",
+      "message": "AGV-01 picked UCO-0002"
+    },
+    {
+      "t": 547.2,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_DELIVERED",
+      "message": "AGV-01 delivered UCO-0002 to DSP-02"
+    },
+    {
+      "t": 547.2,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "TASK_DONE",
+      "message": "T-0007 done by AGV-01 in 83 s, 39.5 m"
+    },
+    {
+      "t": 547.2,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_COMPLETED",
+      "message": "Task T-0007 completed: UCO-0002 at DSP-02"
+    },
+    {
+      "t": 568.0,
+      "severity": 0,
+      "source": "WMS",
+      "code": "HANDED_OVER",
+      "message": "UCO-0002 handed over to the processing plant"
+    },
+    {
+      "t": 568.0,
+      "severity": 0,
+      "source": "DISPATCH",
+      "code": "DISPATCHED",
+      "message": "UCO-0002 collected by the processing plant (transfer door)"
+    },
+    {
+      "t": 568.5,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "MANUAL_MOVE",
+      "message": "AGV-01 moving to A-03-R01 (operator request)"
+    }
+  ]
+}

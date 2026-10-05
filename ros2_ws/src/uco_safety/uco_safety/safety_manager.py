@@ -32,9 +32,9 @@ from tf2_ros import Buffer, TransformListener
 from uco_common.alerts import AlertPublisher
 from uco_common.layout import load_layout
 from uco_common.qos import FAULTS, LATCHED
-from uco_interfaces.msg import AgvState, Fault, SafetyStatus
+from uco_interfaces.msg import AgvState, Fault, Inventory, SafetyStatus
 
-from .localization_monitor import LocalizationMonitor, near_obstacle_mask, scan_match_score
+from .localization_monitor import LocalizationMonitor, add_rectangles, near_obstacle_mask, scan_match_score
 from .safety_core import ALARM, EMERGENCY_STOP, NORMAL, WARNING, SafetyConfig, SafetySupervisor
 
 
@@ -90,12 +90,15 @@ class SafetyManager(Node):
 
         self.loc = LocalizationMonitor(p('localization_degraded_below'), p('localization_lost_below'),
                                        p('localization_persist_s'))
-        self.map_mask = None
+        self.map_mask = None            # static map, dilated
+        self.static_mask = None
+        self.slot_rects = []            # containers known to the WMS
         self.map_info = None
         self.scan_count = 0
         self.loc_state = 'OK'
         self.score_pub = self.create_publisher(Float32, '/safety/localization_score', 10)
         self.create_subscription(OccupancyGrid, '/map', self._on_map, LATCHED)
+        self.create_subscription(Inventory, '/warehouse/inventory', self._on_inventory, LATCHED)
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self, spin_thread=True)  # /tf off the main executor
         self.last_speed_limit = None
@@ -120,8 +123,24 @@ class SafetyManager(Node):
 
     def _on_map(self, m: OccupancyGrid) -> None:
         grid = np.array(m.data, dtype=np.int16).reshape(m.info.height, m.info.width)
-        self.map_mask = near_obstacle_mask(grid, m.info.resolution, 0.25)
+        self.static_mask = near_obstacle_mask(grid, m.info.resolution, 0.25)
         self.map_info = m.info
+        self._compose_mask()
+
+    def _on_inventory(self, inv: Inventory) -> None:
+        # containers standing in slots: 1.2 m footprint + 0.25 m tolerance
+        rects = sorted((round(s.x - 0.85, 2), round(s.y - 0.85, 2), round(s.x + 0.85, 2), round(s.y + 0.85, 2))
+                       for s in inv.slots if s.container_id)
+        if rects != self.slot_rects:
+            self.slot_rects = rects
+            self._compose_mask()
+
+    def _compose_mask(self) -> None:
+        if self.static_mask is None:
+            return
+        i = self.map_info
+        self.map_mask = add_rectangles(self.static_mask, self.slot_rects, i.origin.position.x, i.origin.position.y,
+                                       i.resolution)
 
     def _score_localization(self, scan: LaserScan) -> None:
         if self.map_mask is None:

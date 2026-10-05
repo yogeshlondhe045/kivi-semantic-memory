@@ -59,7 +59,7 @@ slip (offset 0.000 m in the AGV frame through turns).
 | Lidars | 2 × gpu_lidar, 264° (±132°), 265 rays, 10 Hz, 0.08–12 m, σ = 1 cm; at the front-left and rear-right corners → 360° |
 | IMU | 50 Hz, gaussian noise |
 | Odometry | diff-drive plugin, 30 Hz, publishes `odom → base_footprint` |
-| Ground truth | odometry-publisher plugin, 20 Hz, frame `world` (payload placement and metrics only) |
+| Ground truth | odometry-publisher plugin, 10 Hz, frame `world` (payload placement and statistics only) |
 | Camera | optional RGB-D, 320 × 240 @ 5 Hz (`camera:=true`) |
 | E-stop | modelled visual + `/safety/emergency_stop` service |
 
@@ -75,7 +75,13 @@ camera bridge is a separate file.
 |---|---|
 | World + AGV (2 lidars) | 0.97 |
 | + RGB-D camera | 1.00 (camera at 5 Hz) |
-| Full stack (Nav2, all nodes) | ≈ 0.85–0.9 (estimated from task log timing: 110 s simulated took 126 s) |
+| Full stack (Nav2, all nodes), first version | 0.1–0.3 (CPU starvation, see below) |
+| Full stack after the CPU fixes | ≈ 1.0 (measured with `gz topic -e -t /stats`; brief dips to ~0.6) |
+
+CPU fixes (details in the development log): Gazebo's `/clock` (one message per 2 ms physics step)
+is bridged to `/clock_gz` and republished at 25 Hz of simulation time by the C++ `clock_throttle`
+node; all Python nodes use rclpy's single-threaded executor (the multi-threaded executor cost 5×
+the CPU of the same idle node); state topics are published on change.
 
 ## 7. Headless operation
 

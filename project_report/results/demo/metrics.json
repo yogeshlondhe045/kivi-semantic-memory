@@ -1,0 +1,75 @@
+{
+  "sim_duration_s": 627.1,
+  "containers": {
+    "received": 5,
+    "stored_now": 3,
+    "dispatched": 2,
+    "stored_volume_l": 1848.9
+  },
+  "tasks": {
+    "completed": 7,
+    "failed": 0,
+    "cancelled": 0,
+    "completion_rate": 1.0,
+    "retried_attempts": 0,
+    "avg_total_time_s": 172.73,
+    "avg_waiting_time_s": 104.02,
+    "avg_execution_time_s": 68.71,
+    "avg_total_time_by_type_s": {
+      "STORE": 200.2,
+      "RETRIEVE": 104.03
+    }
+  },
+  "throughput": {
+    "tasks_per_hour": 40.19,
+    "containers_stored_per_hour": 28.7,
+    "containers_retrieved_per_hour": 11.48
+  },
+  "warehouse": {
+    "occupancy_now": 0.094,
+    "occupancy_max": 0.156,
+    "storage_capacity": 32
+  },
+  "agv": {
+    "distance_m": 187.4,
+    "busy_time_s": 542.5,
+    "uptime_s": 632.7,
+    "utilization": 0.857,
+    "battery_start_pct": 85.0,
+    "battery_end_pct": 79.3,
+    "energy_consumed_wh": 248.5,
+    "battery_time_scale": 10.0,
+    "energy_consumed_wh_real_time_equivalent": 24.9
+  },
+  "localization": {
+    "samples": 624,
+    "mean_error_m": 0.071,
+    "p95_error_m": 0.13,
+    "max_error_m": 0.176
+  },
+  "alerts": {
+    "AGV_ASSIGNED": 7,
+    "AGV_ONLINE": 1,
+    "AGV_READY": 1,
+    "CHARGING_STARTED": 1,
+    "CHARGING_STOPPED": 1,
+    "CONTAINER_DELIVERED": 7,
+    "CONTAINER_PICKED": 7,
+    "CONTAINER_REGISTERED": 5,
+    "DELIVERY_ARRIVED": 1,
+    "DISPATCHED": 2,
+    "DISPATCH_REQUEST": 1,
+    "HANDED_OVER": 2,
+    "INSPECTED": 5,
+    "MANUAL_MOVE": 1,
+    "PROCESSING_REQUEST": 1,
+    "RECEIVED": 5,
+    "STORAGE_ASSIGNED": 5,
+    "TASK_COMPLETED": 7,
+    "TASK_CREATED": 5,
+    "TASK_DONE": 7,
+    "TASK_STARTED": 7,
+    "UNLOADED": 5,
+    "WEIGHED": 5
+  }
+}

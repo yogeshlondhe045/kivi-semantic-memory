@@ -1,0 +1,165 @@
+t_s,severity,source,code,message
+6.0,INFO,AGV-01,CHARGING_STARTED,"AGV-01 docked, charging at 85 %"
+7.0,INFO,task_manager,AGV_ONLINE,AGV-01 online
+40.0,WARN,fault_injector,FAULT_INJECTED,Fault injected: REGISTRATION_FAILURE (value 1)
+40.0,WARN,fault_injector,FAULT_INJECTED,Fault injected: STATION_UNAVAILABLE at INSPECT for 30 s
+40.0,WARN,INSPECT,STATION_UNAVAILABLE,Inspection station unavailable (simulated fault)
+40.0,INFO,RECEIVING,DELIVERY_ARRIVED,Delivery D-001: 1 containers from Cafe Roma at the dock
+40.1,WARN,safety_manager,STATION_DOWN:INSPECT,Station INSPECT unavailable
+40.2,ERROR,WMS,WMSERROR,Container registration failed (simulated database/scanner fault)
+40.2,ERROR,RECEIVING,REGISTRATION_FAILED,Container registration failed for D-001/1 (attempt 1): Container registration failed (simulated database/scanner fault); retrying
+45.3,INFO,WMS,CONTAINER_REGISTERED,"UCO-0001 registered (DRUM_200L, 180 L declared, supplier Cafe Roma)"
+45.3,INFO,RECEIVING,UNLOADED,"UCO-0001 (200 L steel drum on pallet, 180 L declared) unloaded from delivery D-001"
+51.5,INFO,WEIGH,WEIGHED,UCO-0001 weighed: 185.0 kg gross / 152.0 kg net = 165 L
+57.0,WARN,RECEIVING,WAITING_AT_INSPECTION,UCO-0001 waiting at inspection: inspection station unavailable
+62.2,WARN,RECEIVING,WAITING_AT_INSPECTION,UCO-0001 waiting at inspection: inspection station unavailable
+67.5,WARN,RECEIVING,WAITING_AT_INSPECTION,UCO-0001 waiting at inspection: inspection station unavailable
+70.1,INFO,INSPECT,STATION_AVAILABLE,Inspection station back in service
+70.1,INFO,fault_injector,FAULT_CLEARED,Fault cleared: STATION_UNAVAILABLE at INSPECT
+70.1,INFO,safety_manager,STATION_DOWN:INSPECT_CLEARED,STATION_DOWN:INSPECT cleared
+72.7,INFO,INSPECT,INSPECTED,"UCO-0001: FFA 3.0 %, water 0.19 %, -> PASS"
+81.1,INFO,WMS,STORAGE_ASSIGNED,Storage location A-01-R01 assigned to UCO-0001
+81.1,INFO,WMS,TASK_CREATED,Task T-0001: STORE UCO-0001 HOLD-01 -> A-01-R01
+81.1,INFO,RECEIVING,RECEIVED,"UCO-0001 received: quality PASS, storage A-01-R01, task T-0001"
+82.0,INFO,task_manager,AGV_ASSIGNED,Task T-0001 assigned to AGV-01 (UCO-0001: HOLD-01 -> A-01-R01)
+82.0,INFO,AGV-01,TASK_STARTED,AGV-01 executing T-0001: UCO-0001 HOLD-01 -> A-01-R01
+82.5,INFO,AGV-01,CHARGING_STOPPED,AGV-01 left charger at 100 %
+133.8,INFO,AGV-01,CONTAINER_PICKED,AGV-01 picked UCO-0001
+136.5,ALARM,safety_manager,ESTOP,Emergency stop activated
+136.5,WARN,safety_manager,MOTION_BLOCKED,AGV motion blocked by safety system
+136.6,WARN,AGV-01,AGV_PAUSED,AGV-01 paused by safety system
+148.6,INFO,safety_manager,ESTOP_RELEASED,Emergency stop released
+148.6,INFO,safety_manager,MOTION_RESUMED,AGV motion resumed - safe
+148.6,INFO,AGV-01,AGV_RESUMED,AGV-01 resuming after safety stop
+186.3,INFO,AGV-01,CONTAINER_DELIVERED,AGV-01 delivered UCO-0001 to A-01-R01
+186.3,INFO,task_manager,TASK_DONE,"T-0001 done by AGV-01 in 104 s, 30.8 m"
+186.3,INFO,WMS,TASK_COMPLETED,Task T-0001 completed: UCO-0001 at A-01-R01
+186.8,INFO,RECEIVING,DELIVERY_ARRIVED,Delivery D-002: 1 containers from Burger Hub at the dock
+187.0,INFO,WMS,CONTAINER_REGISTERED,"UCO-0002 registered (DRUM_200L, 170 L declared, supplier Burger Hub)"
+187.0,INFO,RECEIVING,UNLOADED,"UCO-0002 (200 L steel drum on pallet, 170 L declared) unloaded from delivery D-002"
+193.2,INFO,WEIGH,WEIGHED,UCO-0002 weighed: 175.5 kg gross / 142.5 kg net = 155 L
+198.7,INFO,INSPECT,INSPECTED,"UCO-0002: FFA 2.7 %, water 0.24 %, -> PASS"
+207.0,INFO,WMS,STORAGE_ASSIGNED,Storage location A-01-R02 assigned to UCO-0002
+207.0,INFO,WMS,TASK_CREATED,Task T-0002: STORE UCO-0002 HOLD-01 -> A-01-R02
+207.0,INFO,RECEIVING,RECEIVED,"UCO-0002 received: quality PASS, storage A-01-R02, task T-0002"
+207.0,INFO,task_manager,AGV_ASSIGNED,Task T-0002 assigned to AGV-01 (UCO-0002: HOLD-01 -> A-01-R02)
+207.0,INFO,AGV-01,TASK_STARTED,AGV-01 executing T-0002: UCO-0002 HOLD-01 -> A-01-R02
+240.4,INFO,AGV-01,CONTAINER_PICKED,AGV-01 picked UCO-0002
+243.0,WARN,fault_injector,FAULT_INJECTED,Fault injected: SENSOR_FAILURE at lidar for 8 s
+243.9,ALARM,safety_manager,SENSOR_FAULT:scan_rear,Sensor failure: no scan_rear data for 1.0 s
+243.9,WARN,safety_manager,MOTION_BLOCKED,AGV motion blocked by safety system
+244.0,WARN,AGV-01,NAVIGATION_RETRY,AGV-01 could not reach A-01-R02 (attempt 1/2)
+244.1,ALARM,safety_manager,SENSOR_FAULT:scan,Sensor failure: no scan data for 1.1 s
+251.0,INFO,fault_injector,FAULT_CLEARED,Fault cleared: SENSOR_FAILURE at lidar
+251.1,INFO,safety_manager,SENSOR_FAULT:scan_CLEARED,SENSOR_FAULT:scan cleared
+251.1,INFO,safety_manager,SENSOR_FAULT:scan_rear_CLEARED,SENSOR_FAULT:scan_rear cleared
+251.1,INFO,safety_manager,MOTION_RESUMED,AGV motion resumed - safe
+251.2,INFO,AGV-01,AGV_RESUMED,AGV-01 resuming after safety stop
+280.9,INFO,AGV-01,CONTAINER_DELIVERED,AGV-01 delivered UCO-0002 to A-01-R02
+280.9,INFO,task_manager,TASK_DONE,"T-0002 done by AGV-01 in 74 s, 25.0 m"
+280.9,INFO,WMS,TASK_COMPLETED,Task T-0002 completed: UCO-0002 at A-01-R02
+280.9,INFO,RECEIVING,DELIVERY_ARRIVED,Delivery D-003: 1 containers from Noodle Bar at the dock
+281.0,INFO,WMS,CONTAINER_REGISTERED,"UCO-0003 registered (DRUM_200L, 190 L declared, supplier Noodle Bar)"
+281.0,INFO,RECEIVING,UNLOADED,"UCO-0003 (200 L steel drum on pallet, 190 L declared) unloaded from delivery D-003"
+287.0,INFO,WEIGH,WEIGHED,UCO-0003 weighed: 203.0 kg gross / 170.0 kg net = 185 L
+292.5,INFO,INSPECT,INSPECTED,"UCO-0003: FFA 1.9 %, water 0.32 %, -> PASS"
+300.9,INFO,WMS,STORAGE_ASSIGNED,Storage location A-02-R01 assigned to UCO-0003
+300.9,INFO,WMS,TASK_CREATED,Task T-0003: STORE UCO-0003 HOLD-01 -> A-02-R01
+300.9,INFO,RECEIVING,RECEIVED,"UCO-0003 received: quality PASS, storage A-02-R01, task T-0003"
+301.0,INFO,task_manager,AGV_ASSIGNED,Task T-0003 assigned to AGV-01 (UCO-0003: HOLD-01 -> A-02-R01)
+301.0,INFO,AGV-01,TASK_STARTED,AGV-01 executing T-0003: UCO-0003 HOLD-01 -> A-02-R01
+333.5,INFO,AGV-01,CONTAINER_PICKED,AGV-01 picked UCO-0003
+336.0,WARN,fault_injector,FAULT_INJECTED,Fault injected: BLOCKED_PATH at AHEAD for 20 s
+337.1,WARN,safety_manager,OBSTACLE,Obstacle detected in navigation corridor
+338.3,INFO,safety_manager,OBSTACLE_CLEARED,OBSTACLE cleared
+342.4,WARN,safety_manager,OBSTACLE,Obstacle detected in navigation corridor
+356.0,INFO,fault_injector,FAULT_CLEARED,Fault cleared: BLOCKED_PATH at AHEAD
+358.1,INFO,safety_manager,OBSTACLE_CLEARED,OBSTACLE cleared
+393.4,INFO,AGV-01,CONTAINER_DELIVERED,AGV-01 delivered UCO-0003 to A-02-R01
+393.4,INFO,task_manager,TASK_DONE,"T-0003 done by AGV-01 in 92 s, 26.5 m"
+393.4,INFO,WMS,TASK_COMPLETED,Task T-0003 completed: UCO-0003 at A-02-R01
+393.4,INFO,RECEIVING,DELIVERY_ARRIVED,Delivery D-004: 1 containers from Taco Place at the dock
+393.6,INFO,WMS,CONTAINER_REGISTERED,"UCO-0004 registered (DRUM_200L, 185 L declared, supplier Taco Place)"
+393.6,INFO,RECEIVING,UNLOADED,"UCO-0004 (200 L steel drum on pallet, 185 L declared) unloaded from delivery D-004"
+399.8,INFO,WEIGH,WEIGHED,UCO-0004 weighed: 202.0 kg gross / 169.0 kg net = 184 L
+405.2,INFO,INSPECT,INSPECTED,"UCO-0004: FFA 2.3 %, water 0.52 %, -> PASS"
+413.6,INFO,WMS,STORAGE_ASSIGNED,Storage location A-02-R02 assigned to UCO-0004
+413.6,INFO,WMS,TASK_CREATED,Task T-0004: STORE UCO-0004 HOLD-01 -> A-02-R02
+413.6,INFO,RECEIVING,RECEIVED,"UCO-0004 received: quality PASS, storage A-02-R02, task T-0004"
+414.0,INFO,task_manager,AGV_ASSIGNED,Task T-0004 assigned to AGV-01 (UCO-0004: HOLD-01 -> A-02-R02)
+414.0,INFO,AGV-01,TASK_STARTED,AGV-01 executing T-0004: UCO-0004 HOLD-01 -> A-02-R02
+418.0,WARN,fault_injector,FAULT_INJECTED,Fault injected: LOW_BATTERY (value 18)
+418.0,WARN,AGV-01,BATTERY_FAULT_INJECTED,AGV-01 battery forced to 18 % (simulated fault)
+418.6,ERROR,AGV-01,BATTERY_LOW,"AGV-01 battery below threshold (18 %): task interrupted, going to charge"
+418.6,WARN,task_manager,TASK_REQUEUED,T-0004 returned to queue (LOW_BATTERY)
+418.6,WARN,safety_manager,BATTERY_LOW,Battery low (18 %)
+419.0,ERROR,AGV-01,BATTERY_LOW,AGV-01 battery below threshold (18 %)
+419.0,INFO,AGV-01,GOING_TO_CHARGE,AGV-01 returning to charger (low battery)
+454.5,INFO,AGV-01,CHARGING_STARTED,"AGV-01 docked, charging at 17 %"
+469.6,INFO,safety_manager,BATTERY_LOW_CLEARED,BATTERY_LOW cleared
+572.0,INFO,AGV-01,CHARGED,"AGV-01 charged to 80 %, available for tasks"
+573.0,INFO,task_manager,AGV_ASSIGNED,Task T-0004 assigned to AGV-01 (UCO-0004: HOLD-01 -> A-02-R02)
+573.0,INFO,AGV-01,TASK_STARTED,AGV-01 executing T-0004: UCO-0004 HOLD-01 -> A-02-R02
+573.5,INFO,AGV-01,CHARGING_STOPPED,AGV-01 left charger at 81 %
+622.7,INFO,AGV-01,CONTAINER_PICKED,AGV-01 picked UCO-0004
+658.8,INFO,AGV-01,CONTAINER_DELIVERED,AGV-01 delivered UCO-0004 to A-02-R02
+658.8,INFO,task_manager,TASK_DONE,"T-0004 done by AGV-01 in 86 s, 32.4 m"
+658.8,INFO,WMS,TASK_COMPLETED,Task T-0004 completed: UCO-0004 at A-02-R02
+658.8,WARN,fault_injector,FAULT_INJECTED,Fault injected: NAVIGATION_FAILURE (value 2)
+658.8,WARN,AGV-01,NAV_FAULT_INJECTED,AGV-01: next 2 navigation attempt(s) will fail (simulated)
+658.8,INFO,RECEIVING,DELIVERY_ARRIVED,Delivery D-005: 1 containers from Sushi Corner at the dock
+659.1,INFO,WMS,CONTAINER_REGISTERED,"UCO-0005 registered (DRUM_200L, 150 L declared, supplier Sushi Corner)"
+659.1,INFO,RECEIVING,UNLOADED,"UCO-0005 (200 L steel drum on pallet, 150 L declared) unloaded from delivery D-005"
+665.3,INFO,WEIGH,WEIGHED,UCO-0005 weighed: 165.0 kg gross / 132.0 kg net = 143 L
+670.7,INFO,INSPECT,INSPECTED,"UCO-0005: FFA 3.3 %, water 0.40 %, -> PASS"
+679.1,INFO,WMS,STORAGE_ASSIGNED,Storage location A-03-R01 assigned to UCO-0005
+679.1,INFO,WMS,TASK_CREATED,Task T-0005: STORE UCO-0005 HOLD-01 -> A-03-R01
+679.1,INFO,RECEIVING,RECEIVED,"UCO-0005 received: quality PASS, storage A-03-R01, task T-0005"
+680.0,INFO,task_manager,AGV_ASSIGNED,Task T-0005 assigned to AGV-01 (UCO-0005: HOLD-01 -> A-03-R01)
+680.0,INFO,AGV-01,TASK_STARTED,AGV-01 executing T-0005: UCO-0005 HOLD-01 -> A-03-R01
+680.0,ERROR,AGV-01,NAVIGATION_FAILED,"AGV-01 navigation to HOLD-01 failed (simulated fault, attempt 1)"
+682.0,ERROR,AGV-01,NAVIGATION_FAILED,"AGV-01 navigation to HOLD-01 failed (simulated fault, attempt 2)"
+684.0,ERROR,AGV-01,NAVIGATION_FAILED,AGV-01 navigation to HOLD-01 failed
+684.0,WARN,AGV-01,TASK_ABORTED,AGV-01: to pick-up: NAV_FAILED
+684.1,WARN,WMS,TASK_RETRY,Task T-0005 attempt 1 failed (NAV_FAILED: to pick-up: NAV_FAILED); requeued
+685.0,INFO,task_manager,AGV_ASSIGNED,Task T-0005 assigned to AGV-01 (UCO-0005: HOLD-01 -> A-03-R01)
+685.0,INFO,AGV-01,TASK_STARTED,AGV-01 executing T-0005: UCO-0005 HOLD-01 -> A-03-R01
+720.0,INFO,AGV-01,CONTAINER_PICKED,AGV-01 picked UCO-0005
+760.0,INFO,AGV-01,CONTAINER_DELIVERED,AGV-01 delivered UCO-0005 to A-03-R01
+760.0,INFO,task_manager,TASK_DONE,"T-0005 done by AGV-01 in 75 s, 29.5 m"
+760.0,INFO,WMS,TASK_COMPLETED,Task T-0005 completed: UCO-0005 at A-03-R01
+760.5,WARN,fault_injector,FAULT_INJECTED,Fault injected: STORAGE_FULL
+760.5,WARN,WMS,STORAGE_FULL,Storage full: no storage positions available (simulated)
+760.5,INFO,RECEIVING,DELIVERY_ARRIVED,Delivery D-006: 1 containers from Pizza Express at the dock
+760.6,WARN,safety_manager,STORAGE_FULL,Storage area full
+760.6,INFO,WMS,CONTAINER_REGISTERED,"UCO-0006 registered (DRUM_200L, 160 L declared, supplier Pizza Express)"
+760.7,INFO,RECEIVING,UNLOADED,"UCO-0006 (200 L steel drum on pallet, 160 L declared) unloaded from delivery D-006"
+766.8,INFO,WEIGH,WEIGHED,UCO-0006 weighed: 168.5 kg gross / 135.5 kg net = 147 L
+772.3,INFO,INSPECT,INSPECTED,"UCO-0006: FFA 2.5 %, water 0.17 %, -> PASS"
+780.7,WARN,WMS,STORAGEFULLERROR,No free storage position available for UCO-0006
+780.7,WARN,RECEIVING,STORAGE_UNAVAILABLE,UCO-0006 waiting in HOLD-01: No free storage position available for UCO-0006
+781.2,INFO,fault_injector,FAULT_CLEARED,Fault cleared: STORAGE_FULL
+781.2,INFO,WMS,STORAGE_AVAILABLE,Storage positions available again
+781.3,INFO,safety_manager,STORAGE_FULL_CLEARED,STORAGE_FULL cleared
+785.9,INFO,WMS,STORAGE_ASSIGNED,Storage location A-03-R02 assigned to UCO-0006
+785.9,INFO,WMS,TASK_CREATED,Task T-0006: STORE UCO-0006 HOLD-01 -> A-03-R02
+785.9,INFO,RECEIVING,RECEIVED,"UCO-0006 received: quality PASS, storage A-03-R02, task T-0006"
+786.0,INFO,task_manager,AGV_ASSIGNED,Task T-0006 assigned to AGV-01 (UCO-0006: HOLD-01 -> A-03-R02)
+786.0,INFO,AGV-01,TASK_STARTED,AGV-01 executing T-0006: UCO-0006 HOLD-01 -> A-03-R02
+825.1,INFO,AGV-01,CONTAINER_PICKED,AGV-01 picked UCO-0006
+864.6,INFO,AGV-01,CONTAINER_DELIVERED,AGV-01 delivered UCO-0006 to A-03-R02
+864.6,INFO,task_manager,TASK_DONE,"T-0006 done by AGV-01 in 79 s, 31.1 m"
+864.6,INFO,WMS,TASK_COMPLETED,Task T-0006 completed: UCO-0006 at A-03-R02
+864.6,INFO,AGV-01,MANUAL_MOVE,AGV-01 moving to A-05-R01 (operator request)
+867.0,WARN,fault_injector,FAULT_INJECTED,Fault injected: COMMUNICATION_FAILURE at AGV-01 for 8 s
+870.0,ALARM,task_manager,AGV_TIMEOUT,AGV-01 heartbeat lost: no state for 3.0 s; no new tasks will be assigned
+870.0,ALARM,safety_manager,HEARTBEAT_LOST,AGV heartbeat lost for 3.0 s
+870.0,WARN,safety_manager,MOTION_BLOCKED,AGV motion blocked by safety system
+870.2,WARN,AGV-01,AGV_PAUSED,AGV-01 paused by safety system
+875.0,INFO,AGV-01,COMM_RESTORED,AGV-01 communication restored
+875.0,INFO,fault_injector,FAULT_CLEARED,Fault cleared: COMMUNICATION_FAILURE at AGV-01
+875.1,INFO,safety_manager,HEARTBEAT_LOST_CLEARED,HEARTBEAT_LOST cleared
+875.1,INFO,safety_manager,MOTION_RESUMED,AGV motion resumed - safe
+875.2,INFO,AGV-01,AGV_RESUMED,AGV-01 resuming after safety stop
+876.0,INFO,task_manager,AGV_ONLINE,AGV-01 online
+878.4,WARN,AGV-01,NAVIGATION_RETRY,AGV-01 could not reach A-05-R01 (attempt 1/2)

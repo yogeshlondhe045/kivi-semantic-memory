@@ -26,6 +26,24 @@ def near_obstacle_mask(occupancy: np.ndarray, resolution: float, tolerance_m: fl
     return window > 0
 
 
+def add_rectangles(mask: np.ndarray, rects, origin_x: float, origin_y: float, resolution: float) -> np.ndarray:
+    """Return a copy of mask with axis-aligned rectangles (xmin, ymin, xmax, ymax) set.
+
+    Used to add the containers the WMS knows about (occupied slots) to the expected-obstacle mask:
+    the digital twin's best knowledge of what the lidar should see beyond the static map.
+    """
+    out = mask.copy()
+    h, w = out.shape
+    for xmin, ymin, xmax, ymax in rects:
+        c0 = max(0, int(np.floor((xmin - origin_x) / resolution)))
+        c1 = min(w, int(np.ceil((xmax - origin_x) / resolution)))
+        r0 = max(0, int(np.floor((ymin - origin_y) / resolution)))
+        r1 = min(h, int(np.ceil((ymax - origin_y) / resolution)))
+        if c0 < c1 and r0 < r1:
+            out[r0:r1, c0:c1] = True
+    return out
+
+
 def scan_match_score(ranges: np.ndarray, angle_min: float, angle_increment: float, sensor_x: float,
                      sensor_y: float, sensor_yaw: float, mask: np.ndarray, origin_x: float, origin_y: float,
                      resolution: float, max_range: float = 8.0) -> Optional[float]:

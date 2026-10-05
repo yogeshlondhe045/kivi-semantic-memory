@@ -5,13 +5,13 @@ Three levels, all automated and all actually executed in the development environ
 
 | Level | Command | Needs Gazebo | Count | Result |
 |---|---|---|---|---|
-| Unit (pure Python / generators / configs) | `scripts/test.sh` | no | 103 | all pass |
+| Unit (pure Python / generators / configs) | `scripts/test.sh` | no | 104 | all pass |
 | ROS integration (real nodes, mock Nav2 / Gazebo services) | `scripts/test.sh` | no | 12 | all pass |
 | Simulation scenarios (full stack in Gazebo) | `scripts/run_sim_tests.sh`, `scripts/run_demo.sh` | yes | 2 scenarios, 38 + 14 checks | see §4 |
 
-`scripts/test.sh` = `colcon test` + `colcon test-result`: **115 test cases, 0 failures, 0 skipped**
+`scripts/test.sh` = `colcon test` + `colcon test-result`: **116 test cases, 0 failures, 0 skipped**
 (latest run). `colcon test-result` prints 114 because the pytest suites of the three ament_cmake
-packages are also counted once each as a CTest entry (colcon prints 118).
+packages are also counted once each as a CTest entry (colcon prints 119).
 
 ## 1. Unit tests
 
@@ -28,7 +28,7 @@ packages are also counted once each as a CTest entry (colcon prints 118).
 | uco_fleet | `test_dispatch_core.py` | 7 | nearest AGV, priority then FIFO, one task per AGV, low battery / offline / unavailable / unlocalised not eligible, picked container stays with its AGV, time-outs |
 | uco_fleet | `test_battery_model.py` | 4 | idle drain, motion + payload consumption, charging and clamping, time scale, voltage |
 | uco_stations | `test_station_models.py` | 12 | acceptance-rule boundaries (8 cases), load-cell quantisation and accuracy, profile pass rates, truth volume range, seed reproducibility |
-| uco_safety | `test_localization_monitor.py` | 4 | obstacle-mask dilation, match score high at the true pose and low when shifted / rotated, too few points, degraded / lost persistence |
+| uco_safety | `test_localization_monitor.py` | 5 | obstacle-mask dilation, match score high at the true pose and low when shifted / rotated, too few points, degraded / lost persistence, WMS-known containers added to the expected-obstacle mask |
 | uco_safety | `test_safety_core.py` | 11 | normal state, e-stop priority, sensor timeout and recovery, start-up grace, heartbeat armed on first message, speed zones, restricted zone stop then crawl, obstacle debounce / hysteresis / PATH_BLOCKED, no obstacle report during sensor fault, battery levels, external conditions |
 
 ## 2. ROS integration tests

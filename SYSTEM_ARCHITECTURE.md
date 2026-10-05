@@ -252,14 +252,14 @@ Source of truth: `ros2_ws/src/uco_common/config/warehouse_layout.yaml`.
 ```mermaid
 flowchart LR
   subgraph Robot["AGV-01 (Gazebo model)"]
-    LIDAR[Front 270° 2D lidar<br/>10 Hz, 12 m] 
+    LIDAR[2 corner lidars, 264° each<br/>front-left + rear-right = 360°<br/>10 Hz, 12 m]
     IMU[IMU 50 Hz]
     DD[Diff-drive wheels<br/>+ 2 casters]
     DECK[Lift deck<br/>payload transfer]
     ESTOP[E-stop button<br/>visual + service]
     CAM[Depth camera<br/>optional]
   end
-  LIDAR -->|/agv/scan_raw| GW[sensor gateway] -->|/agv/scan| AMCL & COSTMAPS[costmaps] & CM[collision_monitor]
+  LIDAR -->|/agv/scan_raw, /agv/scan_rear_raw| GW[safety_manager<br/>sensor gateway + localisation check] -->|/agv/scan, /agv/scan_rear| AMCL & COSTMAPS[costmaps] & CM[collision_monitor]
   DD -->|/agv/odom + TF| AMCL
   BAT[battery_simulator] -->|/agv/battery| AC[agv_controller]
   AC -->|NavigateToPose| BT[bt_navigator] --> PL[planner NavFn] & CT[controller RPP]
@@ -267,7 +267,10 @@ flowchart LR
 ```
 
 - Mechanics: 1.0 m × 0.7 m chassis, 0.35 m deck height, two 0.1 m radius drive wheels
-  at mid-length, front and rear casters (rotates in place), ~150 kg, max 0.8 m/s.
+  at mid-length (sphere collisions for exact odometry), front and rear casters (rotates in place),
+  ~150 kg, max 0.8 m/s.
+- Sensors: two 264° lidars just outside diagonally opposite chassis corners (no self-hits, 360°
+  together), IMU 50 Hz, wheel odometry 30 Hz, optional RGB-D camera; AMCL uses the front lidar.
 - Payload transfer: a lift-deck transfer is *simulated* by moving the container entity
   between slot pose and deck pose with the bridged `set_pose` service; during travel the
   container rides on the deck under physics (friction).

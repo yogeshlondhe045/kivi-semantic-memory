@@ -1,0 +1,1943 @@
+{
+  "scenario": "fault_suite",
+  "description": "Safety and fault-injection tests: registration failure, station unavailable, speed zone, emergency stop, lidar failure, obstacle in the path, low battery, navigation failure, storage full and communication loss. Each container must still end up stored.\n",
+  "passed": true,
+  "sim_duration_s": 838.1,
+  "steps": [
+    {
+      "index": 0,
+      "step": "fault",
+      "arg": {
+        "type": "REGISTRATION_FAILURE",
+        "value": 1
+      },
+      "sim_time": 40.0,
+      "ok": true,
+      "message": "REGISTRATION_FAILURE injected"
+    },
+    {
+      "index": 1,
+      "step": "fault",
+      "arg": {
+        "type": "STATION_UNAVAILABLE",
+        "target": "INSPECT",
+        "duration": 30
+      },
+      "sim_time": 40.0,
+      "ok": true,
+      "message": "STATION_UNAVAILABLE injected at INSPECT"
+    },
+    {
+      "index": 2,
+      "step": "delivery",
+      "arg": {
+        "supplier": "Cafe Roma",
+        "containers": [
+          [
+            "DRUM_200L",
+            180
+          ]
+        ]
+      },
+      "sim_time": 40.0,
+      "ok": true,
+      "message": "D-001: 1 containers from Cafe Roma at the dock"
+    },
+    {
+      "index": 3,
+      "step": "wait_for",
+      "arg": {
+        "alert_since_step": "REGISTRATION_FAILED",
+        "timeout": 60
+      },
+      "sim_time": 40.1,
+      "ok": true,
+      "waited_s": 0.1,
+      "observed": {
+        "alert_since_step": "REGISTRATION_FAILED"
+      }
+    },
+    {
+      "index": 4,
+      "step": "wait_for",
+      "arg": {
+        "received": 1,
+        "timeout": 60
+      },
+      "sim_time": 40.2,
+      "ok": true,
+      "waited_s": 5.2,
+      "observed": {
+        "received": 1
+      }
+    },
+    {
+      "index": 5,
+      "step": "wait_for",
+      "arg": {
+        "alert_since_step": "WAITING_AT_INSPECTION",
+        "timeout": 120
+      },
+      "sim_time": 45.3,
+      "ok": true,
+      "waited_s": 11.7,
+      "observed": {
+        "alert_since_step": "WAITING_AT_INSPECTION"
+      }
+    },
+    {
+      "index": 6,
+      "step": "expect",
+      "arg": {
+        "holding": "==0"
+      },
+      "sim_time": 57.0,
+      "ok": true,
+      "observed": {
+        "holding": 0
+      },
+      "failed": []
+    },
+    {
+      "index": 7,
+      "step": "wait_for",
+      "arg": {
+        "holding": 1,
+        "timeout": 180
+      },
+      "sim_time": 57.5,
+      "ok": true,
+      "waited_s": 23.3,
+      "observed": {
+        "holding": 1
+      }
+    },
+    {
+      "index": 8,
+      "step": "wait_for",
+      "arg": {
+        "task_phase": "PICKING",
+        "timeout": 400
+      },
+      "sim_time": 80.8,
+      "ok": true,
+      "waited_s": 49.9,
+      "observed": {
+        "task_phase": "PICKING"
+      }
+    },
+    {
+      "index": 9,
+      "step": "expect",
+      "arg": {
+        "speed_limit": "==0.4"
+      },
+      "sim_time": 130.7,
+      "ok": true,
+      "observed": {
+        "speed_limit": 0.4
+      },
+      "failed": []
+    },
+    {
+      "index": 10,
+      "step": "wait_for",
+      "arg": {
+        "task_phase": "TO_DROPOFF",
+        "agv_speed_above": 0.15,
+        "timeout": 120
+      },
+      "sim_time": 131.2,
+      "ok": true,
+      "waited_s": 5.3,
+      "observed": {
+        "task_phase": "TO_DROPOFF",
+        "agv_speed_above": 0.26729875802993774
+      }
+    },
+    {
+      "index": 11,
+      "step": "estop",
+      "arg": true,
+      "sim_time": 136.5,
+      "ok": true,
+      "message": "e-stop ACTIVE"
+    },
+    {
+      "index": 12,
+      "step": "sleep",
+      "arg": 3,
+      "sim_time": 136.5,
+      "ok": true
+    },
+    {
+      "index": 13,
+      "step": "expect",
+      "arg": {
+        "safety_state": "EMERGENCY_STOP",
+        "motion_allowed": false,
+        "agv_speed_below": 0.05
+      },
+      "sim_time": 139.5,
+      "ok": true,
+      "observed": {
+        "safety_state": "EMERGENCY_STOP",
+        "motion_allowed": false,
+        "agv_speed_below": 0.0
+      },
+      "failed": []
+    },
+    {
+      "index": 14,
+      "step": "sleep",
+      "arg": 8,
+      "sim_time": 140.1,
+      "ok": true
+    },
+    {
+      "index": 15,
+      "step": "expect",
+      "arg": {
+        "agv_speed_below": 0.05,
+        "agv_state": "PAUSED"
+      },
+      "sim_time": 148.1,
+      "ok": true,
+      "observed": {
+        "agv_speed_below": 0.0,
+        "agv_state": "PAUSED"
+      },
+      "failed": []
+    },
+    {
+      "index": 16,
+      "step": "estop",
+      "arg": false,
+      "sim_time": 148.6,
+      "ok": true,
+      "message": "e-stop released"
+    },
+    {
+      "index": 17,
+      "step": "wait_for",
+      "arg": {
+        "tasks_completed": 1,
+        "timeout": 600
+      },
+      "sim_time": 148.6,
+      "ok": true,
+      "waited_s": 37.7,
+      "observed": {
+        "tasks_completed": 1
+      }
+    },
+    {
+      "index": 18,
+      "step": "expect",
+      "arg": {
+        "alert_since_step": "AGV_RESUMED",
+        "tasks_failed": "==0"
+      },
+      "sim_time": 186.3,
+      "ok": true,
+      "observed": {
+        "alert_since_step": "AGV_RESUMED",
+        "tasks_failed": 0
+      },
+      "failed": []
+    },
+    {
+      "index": 19,
+      "step": "delivery",
+      "arg": {
+        "supplier": "Burger Hub",
+        "containers": [
+          [
+            "DRUM_200L",
+            170
+          ]
+        ]
+      },
+      "sim_time": 186.8,
+      "ok": true,
+      "message": "D-002: 1 containers from Burger Hub at the dock"
+    },
+    {
+      "index": 20,
+      "step": "wait_for",
+      "arg": {
+        "task_phase": "TO_DROPOFF",
+        "agv_speed_above": 0.15,
+        "timeout": 600
+      },
+      "sim_time": 186.8,
+      "ok": true,
+      "waited_s": 56.2,
+      "observed": {
+        "task_phase": "TO_DROPOFF",
+        "agv_speed_above": 0.19519883394241333
+      }
+    },
+    {
+      "index": 21,
+      "step": "fault",
+      "arg": {
+        "type": "SENSOR_FAILURE",
+        "target": "lidar",
+        "duration": 8
+      },
+      "sim_time": 243.0,
+      "ok": true,
+      "message": "SENSOR_FAILURE injected at lidar"
+    },
+    {
+      "index": 22,
+      "step": "sleep",
+      "arg": 3,
+      "sim_time": 243.0,
+      "ok": true
+    },
+    {
+      "index": 23,
+      "step": "expect",
+      "arg": {
+        "alert_since_step": "SENSOR_FAULT:scan",
+        "motion_allowed": false,
+        "safety_state": "ALARM"
+      },
+      "sim_time": 246.0,
+      "ok": true,
+      "observed": {
+        "alert_since_step": "SENSOR_FAULT:scan",
+        "motion_allowed": false,
+        "safety_state": "ALARM"
+      },
+      "failed": []
+    },
+    {
+      "index": 24,
+      "step": "wait_for",
+      "arg": {
+        "motion_allowed": true,
+        "timeout": 60
+      },
+      "sim_time": 246.5,
+      "ok": true,
+      "waited_s": 4.6,
+      "observed": {
+        "motion_allowed": true
+      }
+    },
+    {
+      "index": 25,
+      "step": "wait_for",
+      "arg": {
+        "tasks_completed": 2,
+        "timeout": 600
+      },
+      "sim_time": 251.1,
+      "ok": true,
+      "waited_s": 29.8,
+      "observed": {
+        "tasks_completed": 2
+      }
+    },
+    {
+      "index": 26,
+      "step": "delivery",
+      "arg": {
+        "supplier": "Noodle Bar",
+        "containers": [
+          [
+            "DRUM_200L",
+            190
+          ]
+        ]
+      },
+      "sim_time": 280.9,
+      "ok": true,
+      "message": "D-003: 1 containers from Noodle Bar at the dock"
+    },
+    {
+      "index": 27,
+      "step": "wait_for",
+      "arg": {
+        "task_phase": "TO_DROPOFF",
+        "agv_speed_above": 0.2,
+        "timeout": 600
+      },
+      "sim_time": 280.9,
+      "ok": true,
+      "waited_s": 55.1,
+      "observed": {
+        "task_phase": "TO_DROPOFF",
+        "agv_speed_above": 0.2664032280445099
+      }
+    },
+    {
+      "index": 28,
+      "step": "fault",
+      "arg": {
+        "type": "BLOCKED_PATH",
+        "target": "AHEAD",
+        "duration": 20
+      },
+      "sim_time": 336.0,
+      "ok": true,
+      "message": "BLOCKED_PATH injected at AHEAD"
+    },
+    {
+      "index": 29,
+      "step": "wait_for",
+      "arg": {
+        "alert_since_step": "OBSTACLE",
+        "timeout": 30
+      },
+      "sim_time": 336.0,
+      "ok": true,
+      "waited_s": 1.1,
+      "observed": {
+        "alert_since_step": "OBSTACLE"
+      }
+    },
+    {
+      "index": 30,
+      "step": "wait_for",
+      "arg": {
+        "tasks_completed": 3,
+        "timeout": 900
+      },
+      "sim_time": 337.1,
+      "ok": true,
+      "waited_s": 56.3,
+      "observed": {
+        "tasks_completed": 3
+      }
+    },
+    {
+      "index": 31,
+      "step": "delivery",
+      "arg": {
+        "supplier": "Taco Place",
+        "containers": [
+          [
+            "DRUM_200L",
+            185
+          ]
+        ]
+      },
+      "sim_time": 393.4,
+      "ok": true,
+      "message": "D-004: 1 containers from Taco Place at the dock"
+    },
+    {
+      "index": 32,
+      "step": "wait_for",
+      "arg": {
+        "task_phase": "TO_PICKUP",
+        "agv_speed_above": 0.1,
+        "timeout": 600
+      },
+      "sim_time": 393.4,
+      "ok": true,
+      "waited_s": 24.6,
+      "observed": {
+        "task_phase": "TO_PICKUP",
+        "agv_speed_above": 0.3899995982646942
+      }
+    },
+    {
+      "index": 33,
+      "step": "fault",
+      "arg": {
+        "type": "LOW_BATTERY",
+        "value": 18
+      },
+      "sim_time": 418.0,
+      "ok": true,
+      "message": "LOW_BATTERY injected"
+    },
+    {
+      "index": 34,
+      "step": "wait_for",
+      "arg": {
+        "alert_since_step": "BATTERY_LOW",
+        "timeout": 30
+      },
+      "sim_time": 418.0,
+      "ok": true,
+      "waited_s": 0.6,
+      "observed": {
+        "alert_since_step": "BATTERY_LOW"
+      }
+    },
+    {
+      "index": 35,
+      "step": "wait_for",
+      "arg": {
+        "agv_state": [
+          "GOING_TO_CHARGE",
+          "CHARGING"
+        ],
+        "timeout": 60
+      },
+      "sim_time": 418.6,
+      "ok": true,
+      "waited_s": 1.0,
+      "observed": {
+        "agv_state": "GOING_TO_CHARGE"
+      }
+    },
+    {
+      "index": 36,
+      "step": "expect",
+      "arg": {
+        "tasks_active": ">=1",
+        "tasks_failed": "==0"
+      },
+      "sim_time": 419.5,
+      "ok": true,
+      "observed": {
+        "tasks_active": 1,
+        "tasks_failed": 0
+      },
+      "failed": []
+    },
+    {
+      "index": 37,
+      "step": "wait_for",
+      "arg": {
+        "agv_state": "CHARGING",
+        "timeout": 400
+      },
+      "sim_time": 420.1,
+      "ok": true,
+      "waited_s": 35.5,
+      "observed": {
+        "agv_state": "CHARGING"
+      }
+    },
+    {
+      "index": 38,
+      "step": "wait_for",
+      "arg": {
+        "battery_above": 80,
+        "timeout": 600
+      },
+      "sim_time": 455.5,
+      "ok": true,
+      "waited_s": 116.0,
+      "observed": {
+        "battery_above": 80.08167266845703
+      }
+    },
+    {
+      "index": 39,
+      "step": "wait_for",
+      "arg": {
+        "tasks_completed": 4,
+        "timeout": 900
+      },
+      "sim_time": 571.5,
+      "ok": true,
+      "waited_s": 87.3,
+      "observed": {
+        "tasks_completed": 4
+      }
+    },
+    {
+      "index": 40,
+      "step": "fault",
+      "arg": {
+        "type": "NAVIGATION_FAILURE",
+        "value": 2
+      },
+      "sim_time": 658.8,
+      "ok": true,
+      "message": "NAVIGATION_FAILURE injected"
+    },
+    {
+      "index": 41,
+      "step": "delivery",
+      "arg": {
+        "supplier": "Sushi Corner",
+        "containers": [
+          [
+            "DRUM_200L",
+            150
+          ]
+        ]
+      },
+      "sim_time": 658.8,
+      "ok": true,
+      "message": "D-005: 1 containers from Sushi Corner at the dock"
+    },
+    {
+      "index": 42,
+      "step": "wait_for",
+      "arg": {
+        "alert_since_step": "TASK_RETRY",
+        "timeout": 400
+      },
+      "sim_time": 658.8,
+      "ok": true,
+      "waited_s": 25.2,
+      "observed": {
+        "alert_since_step": "TASK_RETRY"
+      }
+    },
+    {
+      "index": 43,
+      "step": "wait_for",
+      "arg": {
+        "tasks_completed": 5,
+        "timeout": 900
+      },
+      "sim_time": 684.1,
+      "ok": true,
+      "waited_s": 76.0,
+      "observed": {
+        "tasks_completed": 5
+      }
+    },
+    {
+      "index": 44,
+      "step": "expect",
+      "arg": {
+        "alert_since_step": "NAVIGATION_FAILED",
+        "tasks_failed": "==0"
+      },
+      "sim_time": 760.0,
+      "ok": true,
+      "observed": {
+        "alert_since_step": "NAVIGATION_FAILED",
+        "tasks_failed": 0
+      },
+      "failed": []
+    },
+    {
+      "index": 45,
+      "step": "fault",
+      "arg": {
+        "type": "STORAGE_FULL"
+      },
+      "sim_time": 760.5,
+      "ok": true,
+      "message": "STORAGE_FULL injected"
+    },
+    {
+      "index": 46,
+      "step": "delivery",
+      "arg": {
+        "supplier": "Pizza Express",
+        "containers": [
+          [
+            "DRUM_200L",
+            160
+          ]
+        ]
+      },
+      "sim_time": 760.5,
+      "ok": true,
+      "message": "D-006: 1 containers from Pizza Express at the dock"
+    },
+    {
+      "index": 47,
+      "step": "wait_for",
+      "arg": {
+        "alert_since_step": "STORAGE_UNAVAILABLE",
+        "timeout": 200
+      },
+      "sim_time": 760.5,
+      "ok": true,
+      "waited_s": 20.2,
+      "observed": {
+        "alert_since_step": "STORAGE_UNAVAILABLE"
+      }
+    },
+    {
+      "index": 48,
+      "step": "expect",
+      "arg": {
+        "container_status": {
+          "UCO-0006": "APPROVED"
+        },
+        "holding": 1
+      },
+      "sim_time": 780.7,
+      "ok": true,
+      "observed": {
+        "container_status": {
+          "UCO-0006": "APPROVED"
+        },
+        "holding": 1
+      },
+      "failed": []
+    },
+    {
+      "index": 49,
+      "step": "fault",
+      "arg": {
+        "type": "STORAGE_FULL",
+        "active": false
+      },
+      "sim_time": 781.2,
+      "ok": true,
+      "message": "STORAGE_FULL cleared"
+    },
+    {
+      "index": 50,
+      "step": "wait_for",
+      "arg": {
+        "tasks_completed": 6,
+        "timeout": 900
+      },
+      "sim_time": 781.2,
+      "ok": true,
+      "waited_s": 83.3,
+      "observed": {
+        "tasks_completed": 6
+      }
+    },
+    {
+      "index": 51,
+      "step": "move_agv",
+      "arg": {
+        "location": "A05",
+        "wait": false
+      },
+      "sim_time": 864.6,
+      "ok": true
+    },
+    {
+      "index": 52,
+      "step": "wait_for",
+      "arg": {
+        "agv_speed_above": 0.15,
+        "timeout": 120
+      },
+      "sim_time": 864.6,
+      "ok": true,
+      "waited_s": 2.4,
+      "observed": {
+        "agv_speed_above": 0.2045592963695526
+      }
+    },
+    {
+      "index": 53,
+      "step": "fault",
+      "arg": {
+        "type": "COMMUNICATION_FAILURE",
+        "target": "AGV-01",
+        "duration": 8
+      },
+      "sim_time": 867.0,
+      "ok": true,
+      "message": "COMMUNICATION_FAILURE injected at AGV-01"
+    },
+    {
+      "index": 54,
+      "step": "sleep",
+      "arg": 6,
+      "sim_time": 867.0,
+      "ok": true
+    },
+    {
+      "index": 55,
+      "step": "expect",
+      "arg": {
+        "alert_since_step": "HEARTBEAT_LOST",
+        "motion_allowed": false
+      },
+      "sim_time": 873.0,
+      "ok": true,
+      "observed": {
+        "alert_since_step": "HEARTBEAT_LOST",
+        "motion_allowed": false
+      },
+      "failed": []
+    },
+    {
+      "index": 56,
+      "step": "wait_for",
+      "arg": {
+        "motion_allowed": true,
+        "timeout": 60
+      },
+      "sim_time": 873.5,
+      "ok": true,
+      "waited_s": 1.6,
+      "observed": {
+        "motion_allowed": true
+      }
+    },
+    {
+      "index": 57,
+      "step": "expect",
+      "arg": {
+        "alert_since_step": "AGV_TIMEOUT"
+      },
+      "sim_time": 875.1,
+      "ok": true,
+      "observed": {
+        "alert_since_step": "AGV_TIMEOUT"
+      },
+      "failed": []
+    },
+    {
+      "index": 58,
+      "step": "wait_for",
+      "arg": {
+        "agv_at": "A-05-R01",
+        "timeout": 300
+      },
+      "sim_time": 875.6,
+      "ok": true,
+      "waited_s": 1.9,
+      "observed": {
+        "agv_at": "A-05-R01"
+      }
+    },
+    {
+      "index": 59,
+      "step": "expect",
+      "arg": {
+        "stored": 6,
+        "tasks_completed": 6,
+        "tasks_failed": "==0",
+        "tasks_active": "==0"
+      },
+      "sim_time": 877.5,
+      "ok": true,
+      "observed": {
+        "stored": 6,
+        "tasks_completed": 6,
+        "tasks_failed": 0,
+        "tasks_active": 0
+      },
+      "failed": []
+    }
+  ],
+  "alerts": [
+    {
+      "t": 40.0,
+      "severity": 1,
+      "source": "fault_injector",
+      "code": "FAULT_INJECTED",
+      "message": "Fault injected: REGISTRATION_FAILURE (value 1)"
+    },
+    {
+      "t": 40.0,
+      "severity": 1,
+      "source": "fault_injector",
+      "code": "FAULT_INJECTED",
+      "message": "Fault injected: STATION_UNAVAILABLE at INSPECT for 30 s"
+    },
+    {
+      "t": 40.0,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "DELIVERY_ARRIVED",
+      "message": "Delivery D-001: 1 containers from Cafe Roma at the dock"
+    },
+    {
+      "t": 40.1,
+      "severity": 1,
+      "source": "safety_manager",
+      "code": "STATION_DOWN:INSPECT",
+      "message": "Station INSPECT unavailable"
+    },
+    {
+      "t": 40.2,
+      "severity": 2,
+      "source": "WMS",
+      "code": "WMSERROR",
+      "message": "Container registration failed (simulated database/scanner fault)"
+    },
+    {
+      "t": 40.2,
+      "severity": 2,
+      "source": "RECEIVING",
+      "code": "REGISTRATION_FAILED",
+      "message": "Container registration failed for D-001/1 (attempt 1): Container registration failed (simulated database/scanner fault); retrying"
+    },
+    {
+      "t": 45.3,
+      "severity": 0,
+      "source": "WMS",
+      "code": "CONTAINER_REGISTERED",
+      "message": "UCO-0001 registered (DRUM_200L, 180 L declared, supplier Cafe Roma)"
+    },
+    {
+      "t": 45.3,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "UNLOADED",
+      "message": "UCO-0001 (200 L steel drum on pallet, 180 L declared) unloaded from delivery D-001"
+    },
+    {
+      "t": 51.5,
+      "severity": 0,
+      "source": "WEIGH",
+      "code": "WEIGHED",
+      "message": "UCO-0001 weighed: 185.0 kg gross / 152.0 kg net = 165 L"
+    },
+    {
+      "t": 57.0,
+      "severity": 1,
+      "source": "RECEIVING",
+      "code": "WAITING_AT_INSPECTION",
+      "message": "UCO-0001 waiting at inspection: inspection station unavailable"
+    },
+    {
+      "t": 62.2,
+      "severity": 1,
+      "source": "RECEIVING",
+      "code": "WAITING_AT_INSPECTION",
+      "message": "UCO-0001 waiting at inspection: inspection station unavailable"
+    },
+    {
+      "t": 67.5,
+      "severity": 1,
+      "source": "RECEIVING",
+      "code": "WAITING_AT_INSPECTION",
+      "message": "UCO-0001 waiting at inspection: inspection station unavailable"
+    },
+    {
+      "t": 70.1,
+      "severity": 0,
+      "source": "INSPECT",
+      "code": "STATION_AVAILABLE",
+      "message": "Inspection station back in service"
+    },
+    {
+      "t": 70.1,
+      "severity": 0,
+      "source": "fault_injector",
+      "code": "FAULT_CLEARED",
+      "message": "Fault cleared: STATION_UNAVAILABLE at INSPECT"
+    },
+    {
+      "t": 70.1,
+      "severity": 0,
+      "source": "safety_manager",
+      "code": "STATION_DOWN:INSPECT_CLEARED",
+      "message": "STATION_DOWN:INSPECT cleared"
+    },
+    {
+      "t": 72.7,
+      "severity": 0,
+      "source": "INSPECT",
+      "code": "INSPECTED",
+      "message": "UCO-0001: FFA 3.0 %, water 0.19 %, -> PASS"
+    },
+    {
+      "t": 81.1,
+      "severity": 0,
+      "source": "WMS",
+      "code": "STORAGE_ASSIGNED",
+      "message": "Storage location A-01-R01 assigned to UCO-0001"
+    },
+    {
+      "t": 81.1,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_CREATED",
+      "message": "Task T-0001: STORE UCO-0001 HOLD-01 -> A-01-R01"
+    },
+    {
+      "t": 81.1,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "RECEIVED",
+      "message": "UCO-0001 received: quality PASS, storage A-01-R01, task T-0001"
+    },
+    {
+      "t": 82.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ASSIGNED",
+      "message": "Task T-0001 assigned to AGV-01 (UCO-0001: HOLD-01 -> A-01-R01)"
+    },
+    {
+      "t": 82.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "TASK_STARTED",
+      "message": "AGV-01 executing T-0001: UCO-0001 HOLD-01 -> A-01-R01"
+    },
+    {
+      "t": 82.5,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CHARGING_STOPPED",
+      "message": "AGV-01 left charger at 100 %"
+    },
+    {
+      "t": 133.8,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_PICKED",
+      "message": "AGV-01 picked UCO-0001"
+    },
+    {
+      "t": 136.5,
+      "severity": 3,
+      "source": "safety_manager",
+      "code": "ESTOP",
+      "message": "Emergency stop activated"
+    },
+    {
+      "t": 136.5,
+      "severity": 1,
+      "source": "safety_manager",
+      "code": "MOTION_BLOCKED",
+      "message": "AGV motion blocked by safety system"
+    },
+    {
+      "t": 136.6,
+      "severity": 1,
+      "source": "AGV-01",
+      "code": "AGV_PAUSED",
+      "message": "AGV-01 paused by safety system"
+    },
+    {
+      "t": 148.6,
+      "severity": 0,
+      "source": "safety_manager",
+      "code": "ESTOP_RELEASED",
+      "message": "Emergency stop released"
+    },
+    {
+      "t": 148.6,
+      "severity": 0,
+      "source": "safety_manager",
+      "code": "MOTION_RESUMED",
+      "message": "AGV motion resumed - safe"
+    },
+    {
+      "t": 148.6,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "AGV_RESUMED",
+      "message": "AGV-01 resuming after safety stop"
+    },
+    {
+      "t": 186.3,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_DELIVERED",
+      "message": "AGV-01 delivered UCO-0001 to A-01-R01"
+    },
+    {
+      "t": 186.3,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "TASK_DONE",
+      "message": "T-0001 done by AGV-01 in 104 s, 30.8 m"
+    },
+    {
+      "t": 186.3,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_COMPLETED",
+      "message": "Task T-0001 completed: UCO-0001 at A-01-R01"
+    },
+    {
+      "t": 186.8,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "DELIVERY_ARRIVED",
+      "message": "Delivery D-002: 1 containers from Burger Hub at the dock"
+    },
+    {
+      "t": 187.0,
+      "severity": 0,
+      "source": "WMS",
+      "code": "CONTAINER_REGISTERED",
+      "message": "UCO-0002 registered (DRUM_200L, 170 L declared, supplier Burger Hub)"
+    },
+    {
+      "t": 187.0,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "UNLOADED",
+      "message": "UCO-0002 (200 L steel drum on pallet, 170 L declared) unloaded from delivery D-002"
+    },
+    {
+      "t": 193.2,
+      "severity": 0,
+      "source": "WEIGH",
+      "code": "WEIGHED",
+      "message": "UCO-0002 weighed: 175.5 kg gross / 142.5 kg net = 155 L"
+    },
+    {
+      "t": 198.7,
+      "severity": 0,
+      "source": "INSPECT",
+      "code": "INSPECTED",
+      "message": "UCO-0002: FFA 2.7 %, water 0.24 %, -> PASS"
+    },
+    {
+      "t": 207.0,
+      "severity": 0,
+      "source": "WMS",
+      "code": "STORAGE_ASSIGNED",
+      "message": "Storage location A-01-R02 assigned to UCO-0002"
+    },
+    {
+      "t": 207.0,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_CREATED",
+      "message": "Task T-0002: STORE UCO-0002 HOLD-01 -> A-01-R02"
+    },
+    {
+      "t": 207.0,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "RECEIVED",
+      "message": "UCO-0002 received: quality PASS, storage A-01-R02, task T-0002"
+    },
+    {
+      "t": 207.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ASSIGNED",
+      "message": "Task T-0002 assigned to AGV-01 (UCO-0002: HOLD-01 -> A-01-R02)"
+    },
+    {
+      "t": 207.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "TASK_STARTED",
+      "message": "AGV-01 executing T-0002: UCO-0002 HOLD-01 -> A-01-R02"
+    },
+    {
+      "t": 240.4,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_PICKED",
+      "message": "AGV-01 picked UCO-0002"
+    },
+    {
+      "t": 243.0,
+      "severity": 1,
+      "source": "fault_injector",
+      "code": "FAULT_INJECTED",
+      "message": "Fault injected: SENSOR_FAILURE at lidar for 8 s"
+    },
+    {
+      "t": 243.9,
+      "severity": 3,
+      "source": "safety_manager",
+      "code": "SENSOR_FAULT:scan_rear",
+      "message": "Sensor failure: no scan_rear data for 1.0 s"
+    },
+    {
+      "t": 243.9,
+      "severity": 1,
+      "source": "safety_manager",
+      "code": "MOTION_BLOCKED",
+      "message": "AGV motion blocked by safety system"
+    },
+    {
+      "t": 244.0,
+      "severity": 1,
+      "source": "AGV-01",
+      "code": "NAVIGATION_RETRY",
+      "message": "AGV-01 could not reach A-01-R02 (attempt 1/2)"
+    },
+    {
+      "t": 244.1,
+      "severity": 3,
+      "source": "safety_manager",
+      "code": "SENSOR_FAULT:scan",
+      "message": "Sensor failure: no scan data for 1.1 s"
+    },
+    {
+      "t": 251.0,
+      "severity": 0,
+      "source": "fault_injector",
+      "code": "FAULT_CLEARED",
+      "message": "Fault cleared: SENSOR_FAILURE at lidar"
+    },
+    {
+      "t": 251.1,
+      "severity": 0,
+      "source": "safety_manager",
+      "code": "SENSOR_FAULT:scan_CLEARED",
+      "message": "SENSOR_FAULT:scan cleared"
+    },
+    {
+      "t": 251.1,
+      "severity": 0,
+      "source": "safety_manager",
+      "code": "SENSOR_FAULT:scan_rear_CLEARED",
+      "message": "SENSOR_FAULT:scan_rear cleared"
+    },
+    {
+      "t": 251.1,
+      "severity": 0,
+      "source": "safety_manager",
+      "code": "MOTION_RESUMED",
+      "message": "AGV motion resumed - safe"
+    },
+    {
+      "t": 251.2,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "AGV_RESUMED",
+      "message": "AGV-01 resuming after safety stop"
+    },
+    {
+      "t": 280.9,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_DELIVERED",
+      "message": "AGV-01 delivered UCO-0002 to A-01-R02"
+    },
+    {
+      "t": 280.9,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "TASK_DONE",
+      "message": "T-0002 done by AGV-01 in 74 s, 25.0 m"
+    },
+    {
+      "t": 280.9,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_COMPLETED",
+      "message": "Task T-0002 completed: UCO-0002 at A-01-R02"
+    },
+    {
+      "t": 280.9,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "DELIVERY_ARRIVED",
+      "message": "Delivery D-003: 1 containers from Noodle Bar at the dock"
+    },
+    {
+      "t": 281.0,
+      "severity": 0,
+      "source": "WMS",
+      "code": "CONTAINER_REGISTERED",
+      "message": "UCO-0003 registered (DRUM_200L, 190 L declared, supplier Noodle Bar)"
+    },
+    {
+      "t": 281.0,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "UNLOADED",
+      "message": "UCO-0003 (200 L steel drum on pallet, 190 L declared) unloaded from delivery D-003"
+    },
+    {
+      "t": 287.0,
+      "severity": 0,
+      "source": "WEIGH",
+      "code": "WEIGHED",
+      "message": "UCO-0003 weighed: 203.0 kg gross / 170.0 kg net = 185 L"
+    },
+    {
+      "t": 292.5,
+      "severity": 0,
+      "source": "INSPECT",
+      "code": "INSPECTED",
+      "message": "UCO-0003: FFA 1.9 %, water 0.32 %, -> PASS"
+    },
+    {
+      "t": 300.9,
+      "severity": 0,
+      "source": "WMS",
+      "code": "STORAGE_ASSIGNED",
+      "message": "Storage location A-02-R01 assigned to UCO-0003"
+    },
+    {
+      "t": 300.9,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_CREATED",
+      "message": "Task T-0003: STORE UCO-0003 HOLD-01 -> A-02-R01"
+    },
+    {
+      "t": 300.9,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "RECEIVED",
+      "message": "UCO-0003 received: quality PASS, storage A-02-R01, task T-0003"
+    },
+    {
+      "t": 301.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ASSIGNED",
+      "message": "Task T-0003 assigned to AGV-01 (UCO-0003: HOLD-01 -> A-02-R01)"
+    },
+    {
+      "t": 301.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "TASK_STARTED",
+      "message": "AGV-01 executing T-0003: UCO-0003 HOLD-01 -> A-02-R01"
+    },
+    {
+      "t": 333.5,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_PICKED",
+      "message": "AGV-01 picked UCO-0003"
+    },
+    {
+      "t": 336.0,
+      "severity": 1,
+      "source": "fault_injector",
+      "code": "FAULT_INJECTED",
+      "message": "Fault injected: BLOCKED_PATH at AHEAD for 20 s"
+    },
+    {
+      "t": 337.1,
+      "severity": 1,
+      "source": "safety_manager",
+      "code": "OBSTACLE",
+      "message": "Obstacle detected in navigation corridor"
+    },
+    {
+      "t": 338.3,
+      "severity": 0,
+      "source": "safety_manager",
+      "code": "OBSTACLE_CLEARED",
+      "message": "OBSTACLE cleared"
+    },
+    {
+      "t": 342.4,
+      "severity": 1,
+      "source": "safety_manager",
+      "code": "OBSTACLE",
+      "message": "Obstacle detected in navigation corridor"
+    },
+    {
+      "t": 356.0,
+      "severity": 0,
+      "source": "fault_injector",
+      "code": "FAULT_CLEARED",
+      "message": "Fault cleared: BLOCKED_PATH at AHEAD"
+    },
+    {
+      "t": 358.1,
+      "severity": 0,
+      "source": "safety_manager",
+      "code": "OBSTACLE_CLEARED",
+      "message": "OBSTACLE cleared"
+    },
+    {
+      "t": 393.4,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_DELIVERED",
+      "message": "AGV-01 delivered UCO-0003 to A-02-R01"
+    },
+    {
+      "t": 393.4,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "TASK_DONE",
+      "message": "T-0003 done by AGV-01 in 92 s, 26.5 m"
+    },
+    {
+      "t": 393.4,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_COMPLETED",
+      "message": "Task T-0003 completed: UCO-0003 at A-02-R01"
+    },
+    {
+      "t": 393.4,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "DELIVERY_ARRIVED",
+      "message": "Delivery D-004: 1 containers from Taco Place at the dock"
+    },
+    {
+      "t": 393.6,
+      "severity": 0,
+      "source": "WMS",
+      "code": "CONTAINER_REGISTERED",
+      "message": "UCO-0004 registered (DRUM_200L, 185 L declared, supplier Taco Place)"
+    },
+    {
+      "t": 393.6,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "UNLOADED",
+      "message": "UCO-0004 (200 L steel drum on pallet, 185 L declared) unloaded from delivery D-004"
+    },
+    {
+      "t": 399.8,
+      "severity": 0,
+      "source": "WEIGH",
+      "code": "WEIGHED",
+      "message": "UCO-0004 weighed: 202.0 kg gross / 169.0 kg net = 184 L"
+    },
+    {
+      "t": 405.2,
+      "severity": 0,
+      "source": "INSPECT",
+      "code": "INSPECTED",
+      "message": "UCO-0004: FFA 2.3 %, water 0.52 %, -> PASS"
+    },
+    {
+      "t": 413.6,
+      "severity": 0,
+      "source": "WMS",
+      "code": "STORAGE_ASSIGNED",
+      "message": "Storage location A-02-R02 assigned to UCO-0004"
+    },
+    {
+      "t": 413.6,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_CREATED",
+      "message": "Task T-0004: STORE UCO-0004 HOLD-01 -> A-02-R02"
+    },
+    {
+      "t": 413.6,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "RECEIVED",
+      "message": "UCO-0004 received: quality PASS, storage A-02-R02, task T-0004"
+    },
+    {
+      "t": 414.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ASSIGNED",
+      "message": "Task T-0004 assigned to AGV-01 (UCO-0004: HOLD-01 -> A-02-R02)"
+    },
+    {
+      "t": 414.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "TASK_STARTED",
+      "message": "AGV-01 executing T-0004: UCO-0004 HOLD-01 -> A-02-R02"
+    },
+    {
+      "t": 418.0,
+      "severity": 1,
+      "source": "fault_injector",
+      "code": "FAULT_INJECTED",
+      "message": "Fault injected: LOW_BATTERY (value 18)"
+    },
+    {
+      "t": 418.0,
+      "severity": 1,
+      "source": "AGV-01",
+      "code": "BATTERY_FAULT_INJECTED",
+      "message": "AGV-01 battery forced to 18 % (simulated fault)"
+    },
+    {
+      "t": 418.6,
+      "severity": 2,
+      "source": "AGV-01",
+      "code": "BATTERY_LOW",
+      "message": "AGV-01 battery below threshold (18 %): task interrupted, going to charge"
+    },
+    {
+      "t": 418.6,
+      "severity": 1,
+      "source": "task_manager",
+      "code": "TASK_REQUEUED",
+      "message": "T-0004 returned to queue (LOW_BATTERY)"
+    },
+    {
+      "t": 418.6,
+      "severity": 1,
+      "source": "safety_manager",
+      "code": "BATTERY_LOW",
+      "message": "Battery low (18 %)"
+    },
+    {
+      "t": 419.0,
+      "severity": 2,
+      "source": "AGV-01",
+      "code": "BATTERY_LOW",
+      "message": "AGV-01 battery below threshold (18 %)"
+    },
+    {
+      "t": 419.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "GOING_TO_CHARGE",
+      "message": "AGV-01 returning to charger (low battery)"
+    },
+    {
+      "t": 454.5,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CHARGING_STARTED",
+      "message": "AGV-01 docked, charging at 17 %"
+    },
+    {
+      "t": 469.6,
+      "severity": 0,
+      "source": "safety_manager",
+      "code": "BATTERY_LOW_CLEARED",
+      "message": "BATTERY_LOW cleared"
+    },
+    {
+      "t": 572.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CHARGED",
+      "message": "AGV-01 charged to 80 %, available for tasks"
+    },
+    {
+      "t": 573.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ASSIGNED",
+      "message": "Task T-0004 assigned to AGV-01 (UCO-0004: HOLD-01 -> A-02-R02)"
+    },
+    {
+      "t": 573.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "TASK_STARTED",
+      "message": "AGV-01 executing T-0004: UCO-0004 HOLD-01 -> A-02-R02"
+    },
+    {
+      "t": 573.5,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CHARGING_STOPPED",
+      "message": "AGV-01 left charger at 81 %"
+    },
+    {
+      "t": 622.7,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_PICKED",
+      "message": "AGV-01 picked UCO-0004"
+    },
+    {
+      "t": 658.8,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_DELIVERED",
+      "message": "AGV-01 delivered UCO-0004 to A-02-R02"
+    },
+    {
+      "t": 658.8,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "TASK_DONE",
+      "message": "T-0004 done by AGV-01 in 86 s, 32.4 m"
+    },
+    {
+      "t": 658.8,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_COMPLETED",
+      "message": "Task T-0004 completed: UCO-0004 at A-02-R02"
+    },
+    {
+      "t": 658.8,
+      "severity": 1,
+      "source": "fault_injector",
+      "code": "FAULT_INJECTED",
+      "message": "Fault injected: NAVIGATION_FAILURE (value 2)"
+    },
+    {
+      "t": 658.8,
+      "severity": 1,
+      "source": "AGV-01",
+      "code": "NAV_FAULT_INJECTED",
+      "message": "AGV-01: next 2 navigation attempt(s) will fail (simulated)"
+    },
+    {
+      "t": 658.8,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "DELIVERY_ARRIVED",
+      "message": "Delivery D-005: 1 containers from Sushi Corner at the dock"
+    },
+    {
+      "t": 659.1,
+      "severity": 0,
+      "source": "WMS",
+      "code": "CONTAINER_REGISTERED",
+      "message": "UCO-0005 registered (DRUM_200L, 150 L declared, supplier Sushi Corner)"
+    },
+    {
+      "t": 659.1,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "UNLOADED",
+      "message": "UCO-0005 (200 L steel drum on pallet, 150 L declared) unloaded from delivery D-005"
+    },
+    {
+      "t": 665.3,
+      "severity": 0,
+      "source": "WEIGH",
+      "code": "WEIGHED",
+      "message": "UCO-0005 weighed: 165.0 kg gross / 132.0 kg net = 143 L"
+    },
+    {
+      "t": 670.7,
+      "severity": 0,
+      "source": "INSPECT",
+      "code": "INSPECTED",
+      "message": "UCO-0005: FFA 3.3 %, water 0.40 %, -> PASS"
+    },
+    {
+      "t": 679.1,
+      "severity": 0,
+      "source": "WMS",
+      "code": "STORAGE_ASSIGNED",
+      "message": "Storage location A-03-R01 assigned to UCO-0005"
+    },
+    {
+      "t": 679.1,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_CREATED",
+      "message": "Task T-0005: STORE UCO-0005 HOLD-01 -> A-03-R01"
+    },
+    {
+      "t": 679.1,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "RECEIVED",
+      "message": "UCO-0005 received: quality PASS, storage A-03-R01, task T-0005"
+    },
+    {
+      "t": 680.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ASSIGNED",
+      "message": "Task T-0005 assigned to AGV-01 (UCO-0005: HOLD-01 -> A-03-R01)"
+    },
+    {
+      "t": 680.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "TASK_STARTED",
+      "message": "AGV-01 executing T-0005: UCO-0005 HOLD-01 -> A-03-R01"
+    },
+    {
+      "t": 680.0,
+      "severity": 2,
+      "source": "AGV-01",
+      "code": "NAVIGATION_FAILED",
+      "message": "AGV-01 navigation to HOLD-01 failed (simulated fault, attempt 1)"
+    },
+    {
+      "t": 682.0,
+      "severity": 2,
+      "source": "AGV-01",
+      "code": "NAVIGATION_FAILED",
+      "message": "AGV-01 navigation to HOLD-01 failed (simulated fault, attempt 2)"
+    },
+    {
+      "t": 684.0,
+      "severity": 2,
+      "source": "AGV-01",
+      "code": "NAVIGATION_FAILED",
+      "message": "AGV-01 navigation to HOLD-01 failed"
+    },
+    {
+      "t": 684.0,
+      "severity": 1,
+      "source": "AGV-01",
+      "code": "TASK_ABORTED",
+      "message": "AGV-01: to pick-up: NAV_FAILED"
+    },
+    {
+      "t": 684.1,
+      "severity": 1,
+      "source": "WMS",
+      "code": "TASK_RETRY",
+      "message": "Task T-0005 attempt 1 failed (NAV_FAILED: to pick-up: NAV_FAILED); requeued"
+    },
+    {
+      "t": 685.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ASSIGNED",
+      "message": "Task T-0005 assigned to AGV-01 (UCO-0005: HOLD-01 -> A-03-R01)"
+    },
+    {
+      "t": 685.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "TASK_STARTED",
+      "message": "AGV-01 executing T-0005: UCO-0005 HOLD-01 -> A-03-R01"
+    },
+    {
+      "t": 720.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_PICKED",
+      "message": "AGV-01 picked UCO-0005"
+    },
+    {
+      "t": 760.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_DELIVERED",
+      "message": "AGV-01 delivered UCO-0005 to A-03-R01"
+    },
+    {
+      "t": 760.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "TASK_DONE",
+      "message": "T-0005 done by AGV-01 in 75 s, 29.5 m"
+    },
+    {
+      "t": 760.0,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_COMPLETED",
+      "message": "Task T-0005 completed: UCO-0005 at A-03-R01"
+    },
+    {
+      "t": 760.5,
+      "severity": 1,
+      "source": "fault_injector",
+      "code": "FAULT_INJECTED",
+      "message": "Fault injected: STORAGE_FULL"
+    },
+    {
+      "t": 760.5,
+      "severity": 1,
+      "source": "WMS",
+      "code": "STORAGE_FULL",
+      "message": "Storage full: no storage positions available (simulated)"
+    },
+    {
+      "t": 760.5,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "DELIVERY_ARRIVED",
+      "message": "Delivery D-006: 1 containers from Pizza Express at the dock"
+    },
+    {
+      "t": 760.6,
+      "severity": 1,
+      "source": "safety_manager",
+      "code": "STORAGE_FULL",
+      "message": "Storage area full"
+    },
+    {
+      "t": 760.6,
+      "severity": 0,
+      "source": "WMS",
+      "code": "CONTAINER_REGISTERED",
+      "message": "UCO-0006 registered (DRUM_200L, 160 L declared, supplier Pizza Express)"
+    },
+    {
+      "t": 760.7,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "UNLOADED",
+      "message": "UCO-0006 (200 L steel drum on pallet, 160 L declared) unloaded from delivery D-006"
+    },
+    {
+      "t": 766.8,
+      "severity": 0,
+      "source": "WEIGH",
+      "code": "WEIGHED",
+      "message": "UCO-0006 weighed: 168.5 kg gross / 135.5 kg net = 147 L"
+    },
+    {
+      "t": 772.3,
+      "severity": 0,
+      "source": "INSPECT",
+      "code": "INSPECTED",
+      "message": "UCO-0006: FFA 2.5 %, water 0.17 %, -> PASS"
+    },
+    {
+      "t": 780.7,
+      "severity": 1,
+      "source": "WMS",
+      "code": "STORAGEFULLERROR",
+      "message": "No free storage position available for UCO-0006"
+    },
+    {
+      "t": 780.7,
+      "severity": 1,
+      "source": "RECEIVING",
+      "code": "STORAGE_UNAVAILABLE",
+      "message": "UCO-0006 waiting in HOLD-01: No free storage position available for UCO-0006"
+    },
+    {
+      "t": 781.2,
+      "severity": 0,
+      "source": "fault_injector",
+      "code": "FAULT_CLEARED",
+      "message": "Fault cleared: STORAGE_FULL"
+    },
+    {
+      "t": 781.2,
+      "severity": 0,
+      "source": "WMS",
+      "code": "STORAGE_AVAILABLE",
+      "message": "Storage positions available again"
+    },
+    {
+      "t": 781.3,
+      "severity": 0,
+      "source": "safety_manager",
+      "code": "STORAGE_FULL_CLEARED",
+      "message": "STORAGE_FULL cleared"
+    },
+    {
+      "t": 785.9,
+      "severity": 0,
+      "source": "WMS",
+      "code": "STORAGE_ASSIGNED",
+      "message": "Storage location A-03-R02 assigned to UCO-0006"
+    },
+    {
+      "t": 785.9,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_CREATED",
+      "message": "Task T-0006: STORE UCO-0006 HOLD-01 -> A-03-R02"
+    },
+    {
+      "t": 785.9,
+      "severity": 0,
+      "source": "RECEIVING",
+      "code": "RECEIVED",
+      "message": "UCO-0006 received: quality PASS, storage A-03-R02, task T-0006"
+    },
+    {
+      "t": 786.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ASSIGNED",
+      "message": "Task T-0006 assigned to AGV-01 (UCO-0006: HOLD-01 -> A-03-R02)"
+    },
+    {
+      "t": 786.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "TASK_STARTED",
+      "message": "AGV-01 executing T-0006: UCO-0006 HOLD-01 -> A-03-R02"
+    },
+    {
+      "t": 825.1,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_PICKED",
+      "message": "AGV-01 picked UCO-0006"
+    },
+    {
+      "t": 864.6,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "CONTAINER_DELIVERED",
+      "message": "AGV-01 delivered UCO-0006 to A-03-R02"
+    },
+    {
+      "t": 864.6,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "TASK_DONE",
+      "message": "T-0006 done by AGV-01 in 79 s, 31.1 m"
+    },
+    {
+      "t": 864.6,
+      "severity": 0,
+      "source": "WMS",
+      "code": "TASK_COMPLETED",
+      "message": "Task T-0006 completed: UCO-0006 at A-03-R02"
+    },
+    {
+      "t": 864.6,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "MANUAL_MOVE",
+      "message": "AGV-01 moving to A-05-R01 (operator request)"
+    },
+    {
+      "t": 867.0,
+      "severity": 1,
+      "source": "fault_injector",
+      "code": "FAULT_INJECTED",
+      "message": "Fault injected: COMMUNICATION_FAILURE at AGV-01 for 8 s"
+    },
+    {
+      "t": 870.0,
+      "severity": 3,
+      "source": "task_manager",
+      "code": "AGV_TIMEOUT",
+      "message": "AGV-01 heartbeat lost: no state for 3.0 s; no new tasks will be assigned"
+    },
+    {
+      "t": 870.0,
+      "severity": 3,
+      "source": "safety_manager",
+      "code": "HEARTBEAT_LOST",
+      "message": "AGV heartbeat lost for 3.0 s"
+    },
+    {
+      "t": 870.0,
+      "severity": 1,
+      "source": "safety_manager",
+      "code": "MOTION_BLOCKED",
+      "message": "AGV motion blocked by safety system"
+    },
+    {
+      "t": 870.2,
+      "severity": 1,
+      "source": "AGV-01",
+      "code": "AGV_PAUSED",
+      "message": "AGV-01 paused by safety system"
+    },
+    {
+      "t": 875.0,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "COMM_RESTORED",
+      "message": "AGV-01 communication restored"
+    },
+    {
+      "t": 875.0,
+      "severity": 0,
+      "source": "fault_injector",
+      "code": "FAULT_CLEARED",
+      "message": "Fault cleared: COMMUNICATION_FAILURE at AGV-01"
+    },
+    {
+      "t": 875.1,
+      "severity": 0,
+      "source": "safety_manager",
+      "code": "HEARTBEAT_LOST_CLEARED",
+      "message": "HEARTBEAT_LOST cleared"
+    },
+    {
+      "t": 875.1,
+      "severity": 0,
+      "source": "safety_manager",
+      "code": "MOTION_RESUMED",
+      "message": "AGV motion resumed - safe"
+    },
+    {
+      "t": 875.2,
+      "severity": 0,
+      "source": "AGV-01",
+      "code": "AGV_RESUMED",
+      "message": "AGV-01 resuming after safety stop"
+    },
+    {
+      "t": 876.0,
+      "severity": 0,
+      "source": "task_manager",
+      "code": "AGV_ONLINE",
+      "message": "AGV-01 online"
+    }
+  ]
+}

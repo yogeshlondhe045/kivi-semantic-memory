@@ -227,3 +227,25 @@ Findings while running the scenarios as reference runs:
   battery (unit test added).
 - Test-count reconciliation: `colcon test-result` prints 114 because the three ament_cmake pytest
   suites are additionally counted as CTest entries; the real number of test cases is 111.
+- **Kidnapped robot in a reference run**: in one fault-suite run the AGV could not reach the charger
+  for 400 s ("failed to create plan"). Ground truth showed AMCL 8.7 m off. Cause: the obstacle
+  test spawned a *static* pallet 1.0 m ahead of the moving AGV; with the ~0.3 s spawn latency the
+  AGV had already closed the 10 cm margin, the pallet appeared overlapping the robot and the physics
+  engine flung it. AMCL (confident, small covariance) never recovered, real walls were then marked
+  at wrong positions (phantom "walls" in the global costmap) and planning failed.
+  Fixes: (1) the obstacle is now a light dynamic pallet stack spawned 1.05 m + 0.3 s × speed
+  ahead; (2) new **localisation monitor** in the safety manager: share of lidar endpoints within
+  0.25 m of a mapped obstacle at the AMCL pose (2 Hz); < 0.4 for 5 s → LOCALIZATION_DEGRADED,
+  < 0.2 for 5 s → LOCALIZATION_LOST (ALARM, motion blocked). In a normal fault-suite run the score
+  never fell below 0.66, so the thresholds have margin. 4 unit tests.
+- Localisation-error KPI: the first version compared the 2 Hz AGV state with the latest ground
+  truth (up to 0.4 m artefact at 0.8 m/s); the recorder now interpolates ground truth at the AGV
+  state's timestamp.
+- Report generation: `scripts/build_report.py` fills Chapters 14–16 of the report from the recorded
+  run files and the latest `colcon test` results.
+- **False localisation warnings**: the first demonstration run raised LOCALIZATION_DEGRADED twice
+  although the measured localisation error was < 0.18 m. The AGV was facing stored containers,
+  which are not in the static map, so few lidar endpoints matched. The monitor now checks scans
+  against the static map **plus the containers the WMS knows about** (occupied slot footprints from
+  `/warehouse/inventory`), the digital twin's best knowledge of what the lidar should see
+  (unit test added). Both reference scenarios were re-run on this final build.
