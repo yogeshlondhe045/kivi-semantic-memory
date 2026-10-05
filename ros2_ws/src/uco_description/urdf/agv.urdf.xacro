@@ -1,0 +1,289 @@
+<?xml version="1.0"?>
+<!--
+  UCO-AMR: warehouse load-carrying autonomous mobile robot (AGV-01).
+  Differential drive with mid-mounted drive wheels and front/rear casters (turns on the spot),
+  lift deck for one container, two 270 deg safety lidars on diagonally opposite corners
+  (full 360 deg coverage), IMU, optional depth camera, e-stop button and status beacon.
+
+  Frames: base_footprint (ground) -> base_link (axle height) -> sensors / wheels / deck.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="uco_amr">
+  <xacro:arg name="camera" default="false"/>
+  <xacro:arg name="agv_ns" default="agv"/>
+  <xacro:property name="ns" value="$(arg agv_ns)"/>
+
+  <!-- ===================== dimensions (m, kg) ===================== -->
+  <xacro:property name="L" value="1.0"/>          <!-- chassis length -->
+  <xacro:property name="W" value="0.7"/>          <!-- chassis width -->
+  <xacro:property name="chassis_bottom" value="0.08"/>
+  <xacro:property name="chassis_top" value="0.32"/>
+  <xacro:property name="deck_h" value="0.03"/>    <!-- deck top = 0.35 above ground -->
+  <xacro:property name="wheel_r" value="0.10"/>
+  <xacro:property name="wheel_w" value="0.06"/>
+  <xacro:property name="wheel_sep" value="0.60"/>
+  <xacro:property name="caster_r" value="0.05"/>
+  <xacro:property name="caster_x" value="0.38"/>
+  <xacro:property name="chassis_mass" value="140.0"/>
+  <xacro:property name="wheel_mass" value="5.0"/>
+  <xacro:property name="lidar_z" value="0.20"/>   <!-- scan plane height above ground -->
+
+  <xacro:macro name="box_inertia" params="m x y z">
+    <inertial><mass value="${m}"/>
+      <inertia ixx="${m*(y*y+z*z)/12}" iyy="${m*(x*x+z*z)/12}" izz="${m*(x*x+y*y)/12}" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </xacro:macro>
+
+  <material name="body_green"><color rgba="0.12 0.45 0.30 1"/></material>
+  <material name="deck_grey"><color rgba="0.35 0.36 0.38 1"/></material>
+  <material name="black"><color rgba="0.05 0.05 0.05 1"/></material>
+  <material name="yellow"><color rgba="0.95 0.78 0.05 1"/></material>
+  <material name="red"><color rgba="0.85 0.05 0.05 1"/></material>
+  <material name="lidar_black"><color rgba="0.1 0.1 0.12 1"/></material>
+
+  <!-- ===================== chassis ===================== -->
+  <link name="base_footprint"/>
+
+  <link name="base_link">
+    <visual name="chassis">
+      <origin xyz="0 0 ${(chassis_bottom+chassis_top)/2 - wheel_r}"/>
+      <geometry><box size="${L} ${W} ${chassis_top-chassis_bottom}"/></geometry>
+      <material name="body_green"/>
+    </visual>
+    <visual name="bumper_front">
+      <origin xyz="${L/2 - 0.02} 0 ${chassis_bottom + 0.06 - wheel_r}"/>
+      <geometry><box size="0.05 ${W - 0.1} 0.08"/></geometry>
+      <material name="yellow"/>
+    </visual>
+    <visual name="bumper_rear">
+      <origin xyz="${-L/2 + 0.02} 0 ${chassis_bottom + 0.06 - wheel_r}"/>
+      <geometry><box size="0.05 ${W - 0.1} 0.08"/></geometry>
+      <material name="yellow"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${(chassis_bottom+chassis_top)/2 - wheel_r}"/>
+      <geometry><box size="${L} ${W} ${chassis_top-chassis_bottom}"/></geometry>
+    </collision>
+    <xacro:box_inertia m="${chassis_mass}" x="${L}" y="${W}" z="${chassis_top-chassis_bottom}"/>
+  </link>
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/><child link="base_link"/>
+    <origin xyz="0 0 ${wheel_r}"/>
+  </joint>
+
+  <!-- lift deck (payload surface) -->
+  <link name="deck_link">
+    <visual name="deck">
+      <origin xyz="0 0 ${-deck_h/2}"/>
+      <geometry><box size="${L - 0.08} ${W - 0.06} ${deck_h}"/></geometry>
+      <material name="deck_grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${-deck_h/2}"/>
+      <geometry><box size="${L - 0.08} ${W - 0.06} ${deck_h}"/></geometry>
+    </collision>
+    <xacro:box_inertia m="10" x="${L - 0.08}" y="${W - 0.06}" z="${deck_h}"/>
+  </link>
+  <joint name="deck_joint" type="fixed">
+    <parent link="base_link"/><child link="deck_link"/>
+    <origin xyz="0 0 ${chassis_top + deck_h - wheel_r}"/>
+  </joint>
+
+  <!-- e-stop mushroom button and status beacon (rear corners) -->
+  <link name="estop_link">
+    <visual name="estop_base"><geometry><cylinder radius="0.035" length="0.04"/></geometry><material name="yellow"/></visual>
+    <visual name="estop_button"><origin xyz="0 0 0.03"/><geometry><cylinder radius="0.025" length="0.03"/></geometry><material name="red"/></visual>
+  </link>
+  <joint name="estop_joint" type="fixed">
+    <parent link="base_link"/><child link="estop_link"/>
+    <origin xyz="${-L/2 + 0.06} ${W/2 - 0.06} ${chassis_top - wheel_r + 0.02}"/>
+  </joint>
+  <link name="beacon_link">
+    <visual name="beacon"><geometry><cylinder radius="0.03" length="0.08"/></geometry><material name="yellow"/></visual>
+  </link>
+  <joint name="beacon_joint" type="fixed">
+    <parent link="base_link"/><child link="beacon_link"/>
+    <origin xyz="${-L/2 + 0.06} ${-W/2 + 0.06} ${chassis_top - wheel_r + 0.04}"/>
+  </joint>
+
+  <!-- ===================== drive wheels ===================== -->
+  <xacro:macro name="drive_wheel" params="side y">
+    <link name="${side}_wheel_link">
+      <visual name="tyre">
+        <origin rpy="${pi/2} 0 0"/>
+        <geometry><cylinder radius="${wheel_r}" length="${wheel_w}"/></geometry>
+        <material name="black"/>
+      </visual>
+      <!-- Sphere collision: a cylinder touches the floor at its rim edges, which shifts the
+           effective track width and corrupts odometry in turns (measured ~10 % yaw error). -->
+      <collision>
+        <geometry><sphere radius="${wheel_r}"/></geometry>
+      </collision>
+      <inertial><mass value="${wheel_mass}"/>
+        <inertia ixx="${wheel_mass*(3*wheel_r*wheel_r+wheel_w*wheel_w)/12}" iyy="${wheel_mass*wheel_r*wheel_r/2}"
+                 izz="${wheel_mass*(3*wheel_r*wheel_r+wheel_w*wheel_w)/12}" ixy="0" ixz="0" iyz="0"/>
+      </inertial>
+    </link>
+    <joint name="${side}_wheel_joint" type="continuous">
+      <parent link="base_link"/><child link="${side}_wheel_link"/>
+      <origin xyz="0 ${y} 0"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+    <gazebo reference="${side}_wheel_link">
+      <mu1>1.2</mu1><mu2>1.2</mu2>
+    </gazebo>
+  </xacro:macro>
+  <xacro:drive_wheel side="left" y="${wheel_sep/2}"/>
+  <xacro:drive_wheel side="right" y="${-wheel_sep/2}"/>
+
+  <!-- ===================== casters (frictionless spheres) ===================== -->
+  <xacro:macro name="caster" params="name x">
+    <link name="${name}_caster_link">
+      <visual name="ball"><geometry><sphere radius="${caster_r}"/></geometry><material name="black"/></visual>
+      <collision><geometry><sphere radius="${caster_r}"/></geometry></collision>
+      <inertial><mass value="1.0"/><inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0" ixz="0" iyz="0"/></inertial>
+    </link>
+    <joint name="${name}_caster_joint" type="fixed">
+      <parent link="base_link"/><child link="${name}_caster_link"/>
+      <origin xyz="${x} 0 ${caster_r - wheel_r}"/>
+    </joint>
+    <gazebo reference="${name}_caster_link">
+      <mu1>0.0</mu1><mu2>0.0</mu2>
+    </gazebo>
+  </xacro:macro>
+  <xacro:caster name="front" x="${caster_x}"/>
+  <xacro:caster name="rear" x="${-caster_x}"/>
+
+  <!-- ===================== sensors ===================== -->
+  <!-- 270 deg safety lidar mounted just outside a chassis corner, facing diagonally outwards.
+       Its +-135 deg field of view then grazes the two adjacent chassis faces without hitting them. -->
+  <xacro:macro name="corner_lidar" params="name x y yaw topic">
+    <link name="${name}_link">
+      <visual name="scanner">
+        <geometry><cylinder radius="0.04" length="0.08"/></geometry>
+        <material name="lidar_black"/>
+      </visual>
+      <inertial><mass value="0.5"/><inertia ixx="0.0005" iyy="0.0005" izz="0.0005" ixy="0" ixz="0" iyz="0"/></inertial>
+    </link>
+    <joint name="${name}_joint" type="fixed">
+      <parent link="base_link"/><child link="${name}_link"/>
+      <origin xyz="${x} ${y} ${lidar_z - wheel_r}" rpy="0 0 ${yaw}"/>
+    </joint>
+    <gazebo reference="${name}_link">
+      <sensor name="${name}" type="gpu_lidar">
+        <gz_frame_id>${name}_link</gz_frame_id>
+        <topic>/${ns}/${topic}</topic>
+        <update_rate>10</update_rate>
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>271</samples>
+              <resolution>1</resolution>
+              <min_angle>${-3*pi/4}</min_angle>
+              <max_angle>${3*pi/4}</max_angle>
+            </horizontal>
+            <vertical><samples>1</samples><min_angle>0</min_angle><max_angle>0</max_angle></vertical>
+          </scan>
+          <range><min>0.08</min><max>12.0</max><resolution>0.01</resolution></range>
+          <noise><type>gaussian</type><mean>0.0</mean><stddev>0.01</stddev></noise>
+        </lidar>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+  <xacro:corner_lidar name="lidar_front" x="${L/2 + 0.045}" y="${W/2 + 0.045}" yaw="${pi/4}" topic="scan_raw"/>
+  <xacro:corner_lidar name="lidar_rear" x="${-L/2 - 0.045}" y="${-W/2 - 0.045}" yaw="${-3*pi/4}" topic="scan_rear_raw"/>
+
+  <link name="imu_link">
+    <inertial><mass value="0.1"/><inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0" ixz="0" iyz="0"/></inertial>
+  </link>
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/><child link="imu_link"/>
+    <origin xyz="0 0 0.05"/>
+  </joint>
+  <gazebo reference="imu_link">
+    <sensor name="imu" type="imu">
+      <gz_frame_id>imu_link</gz_frame_id>
+      <topic>/${ns}/imu</topic>
+      <update_rate>50</update_rate>
+      <always_on>true</always_on>
+      <imu>
+        <angular_velocity>
+          <x><noise type="gaussian"><mean>0</mean><stddev>0.002</stddev></noise></x>
+          <y><noise type="gaussian"><mean>0</mean><stddev>0.002</stddev></noise></y>
+          <z><noise type="gaussian"><mean>0</mean><stddev>0.002</stddev></noise></z>
+        </angular_velocity>
+        <linear_acceleration>
+          <x><noise type="gaussian"><mean>0</mean><stddev>0.02</stddev></noise></x>
+          <y><noise type="gaussian"><mean>0</mean><stddev>0.02</stddev></noise></y>
+          <z><noise type="gaussian"><mean>0</mean><stddev>0.02</stddev></noise></z>
+        </linear_acceleration>
+      </imu>
+    </sensor>
+  </gazebo>
+
+  <xacro:if value="$(arg camera)">
+    <link name="camera_link">
+      <visual name="camera"><geometry><box size="0.04 0.12 0.04"/></geometry><material name="lidar_black"/></visual>
+      <inertial><mass value="0.2"/><inertia ixx="0.0002" iyy="0.0002" izz="0.0002" ixy="0" ixz="0" iyz="0"/></inertial>
+    </link>
+    <joint name="camera_joint" type="fixed">
+      <parent link="base_link"/><child link="camera_link"/>
+      <origin xyz="${L/2 - 0.03} 0 ${chassis_top - wheel_r + 0.02}"/>
+    </joint>
+    <link name="camera_optical_frame"/>
+    <joint name="camera_optical_joint" type="fixed">
+      <parent link="camera_link"/><child link="camera_optical_frame"/>
+      <origin rpy="${-pi/2} 0 ${-pi/2}"/>
+    </joint>
+    <gazebo reference="camera_link">
+      <sensor name="depth_camera" type="rgbd_camera">
+        <gz_frame_id>camera_optical_frame</gz_frame_id>
+        <topic>/${ns}/camera</topic>
+        <update_rate>5</update_rate>
+        <always_on>true</always_on>
+        <camera>
+          <horizontal_fov>1.2</horizontal_fov>
+          <image><width>320</width><height>240</height><format>R8G8B8</format></image>
+          <clip><near>0.2</near><far>8.0</far></clip>
+        </camera>
+      </sensor>
+    </gazebo>
+  </xacro:if>
+
+  <!-- ===================== Gazebo systems ===================== -->
+  <gazebo>
+    <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>${wheel_sep}</wheel_separation>
+      <wheel_radius>${wheel_r}</wheel_radius>
+      <max_linear_acceleration>0.8</max_linear_acceleration>
+      <min_linear_acceleration>-1.2</min_linear_acceleration>
+      <max_angular_acceleration>1.5</max_angular_acceleration>
+      <min_angular_acceleration>-1.5</min_angular_acceleration>
+      <max_linear_velocity>1.0</max_linear_velocity>
+      <min_linear_velocity>-0.3</min_linear_velocity>
+      <max_angular_velocity>1.2</max_angular_velocity>
+      <min_angular_velocity>-1.2</min_angular_velocity>
+      <topic>/${ns}/cmd_vel</topic>
+      <odom_topic>/${ns}/odom</odom_topic>
+      <tf_topic>/${ns}/tf</tf_topic>
+      <frame_id>odom</frame_id>
+      <child_frame_id>base_footprint</child_frame_id>
+      <odom_publish_frequency>30</odom_publish_frequency>
+    </plugin>
+    <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+      <topic>/${ns}/joint_states</topic>
+    </plugin>
+    <!-- Ground-truth pose: used only for payload placement and metrics, never for navigation. -->
+    <plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
+      <odom_frame>world</odom_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+      <odom_topic>/${ns}/ground_truth</odom_topic>
+      <tf_topic>/${ns}/ground_truth_tf</tf_topic>
+      <odom_publish_frequency>20</odom_publish_frequency>
+      <dimensions>2</dimensions>
+    </plugin>
+  </gazebo>
+</robot>

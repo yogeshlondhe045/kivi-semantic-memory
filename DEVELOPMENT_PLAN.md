@@ -10,8 +10,8 @@ the development environment. The *Verification* column states what was run.
 | 1 | Requirements & architecture | `PROJECT_REQUIREMENTS.md`, `SYSTEM_ARCHITECTURE.md`, this plan, README | Review | Done |
 | 2 | Repository & workspace | Package skeletons, `uco_interfaces`, `uco_common` (layout model) | `colcon build`, interface generation, layout unit tests (18 pass) | Done |
 | 3 | Gazebo warehouse world | Layout YAML, world generator, generated SDF, container models, map + keepout mask | Generator tests (3 pass); world runs in `gz sim -s` without errors; `gz sdf -k` valid; rendered images | Done |
-| 4 | AGV model | Xacro, diff-drive, casters, joint states | `xacro` + `check_urdf`; robot spawns, drives with `cmd_vel` | Planned |
-| 5 | Sensors & bridge | Lidar, IMU, odometry, ground truth, optional depth camera, bridge YAML | Topics observed in ROS with plausible data | Planned |
+| 4 | AGV model | Xacro, diff-drive, casters, joint states | `xacro` + `check_urdf`; spawns and drives; odom vs ground truth < 3 mm, 0° yaw error | Done |
+| 5 | Sensors & bridge | Lidar, IMU, odometry, ground truth, optional depth camera, bridge YAML | All topics live with correct frames; RTF 0.97–1.0 | Done |
 | 6 | Navigation | Nav2 params, AMCL, keepout filter, collision monitor, RViz config | Robot reaches goals across the warehouse in simulation | Planned |
 | 7 | Receiving station | Receiving/weighing/inspection nodes, container spawning | Delivery spawns containers, pipeline reaches holding area | Planned |
 | 8 | Inventory system | SQLite store, container state machine | Unit tests | Planned |
