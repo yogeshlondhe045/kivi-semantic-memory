@@ -1,0 +1,8 @@
+wms_node:
+  ros__parameters:
+    use_sim_time: true
+    db_path: ""                 # "" -> $ROS_HOME/uco_warehouse/wms.db ; "memory" = in-memory database (tests)
+    reset_on_start: true        # demo: start with an empty warehouse
+    allocation_policy: nearest  # nearest | sequential
+    max_task_attempts: 3
+    publish_period_s: 1.0

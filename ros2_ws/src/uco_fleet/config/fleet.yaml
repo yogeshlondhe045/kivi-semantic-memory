@@ -1,0 +1,37 @@
+agv_controller:
+  ros__parameters:
+    use_sim_time: true
+    agv_id: AGV-01
+    model_name: agv_01
+    action_ns: /agv_01
+    low_battery_pct: 25.0        # below: interrupt non-critical task, go charging
+    resume_battery_pct: 80.0     # charge until this level before accepting tasks again
+    nav_retries: 1               # extra navigation attempts per leg
+    transfer_time_s: 3.0         # simulated lift-deck transfer duration
+    idle_return_s: 45.0          # idle time before returning to the charger
+    arrival_tolerance_m: 0.35
+
+task_manager:
+  ros__parameters:
+    use_sim_time: true
+    agv_ids: [AGV-01]
+    agv_action_namespaces: [/agv_01]
+    min_task_battery_pct: 30.0
+    heartbeat_timeout_s: 3.0
+    max_task_duration_s: 600.0
+    period_s: 1.0
+
+battery_simulator:
+  ros__parameters:
+    use_sim_time: true
+    agv_id: AGV-01
+    capacity_wh: 1200.0
+    initial_percent: 85.0
+    idle_power_w: 60.0
+    motion_power_w_per_mps: 220.0
+    turn_power_w_per_radps: 80.0
+    payload_factor: 1.35
+    charge_power_w: 2400.0
+    # Demo acceleration of battery dynamics (1.0 = real time). Reported with all results.
+    time_scale: 10.0
+    dock_tolerance_m: 0.30

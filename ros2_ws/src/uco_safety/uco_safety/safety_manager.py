@@ -13,6 +13,7 @@ Responsibilities
 from __future__ import annotations
 
 import rclpy
+from rclpy.executors import ExternalShutdownException
 from geometry_msgs.msg import Twist
 from nav2_msgs.msg import CollisionMonitorState, SpeedLimit
 from rclpy.duration import Duration
@@ -207,7 +208,7 @@ def main(args=None):
     node = SafetyManager()
     try:
         rclpy.spin(node)
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
         node.destroy_node()

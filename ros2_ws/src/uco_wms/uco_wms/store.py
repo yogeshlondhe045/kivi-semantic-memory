@@ -461,12 +461,18 @@ class WarehouseStore:
             self._event('task', tid, 'ASSIGNED', agv=agv_id)
 
     def unassign(self, tid: str, reason: str) -> None:
-        """AGV rejected / became unavailable before starting: back to PENDING."""
+        """Return a task to the pool without counting a failed attempt.
+
+        Used when the AGV rejects a task or interrupts it for a non-fault reason (e.g. it must
+        charge) before the container was picked up.
+        """
         with self._lock, self.db:
             t = self._task_row(tid)
-            if t['status'] != ASSIGNED:
+            if t['status'] not in (ASSIGNED, IN_PROGRESS):
                 return
-            self.db.execute("UPDATE tasks SET status=?, assigned_agv='' WHERE id=?", (PENDING, tid))
+            if t['picked']:
+                raise WmsError(f'{tid}: container is on {t["assigned_agv"]}; cannot unassign')
+            self.db.execute("UPDATE tasks SET status=?, assigned_agv='', phase='' WHERE id=?", (PENDING, tid))
             self.db.execute("UPDATE containers SET assigned_agv='' WHERE id=?", (t['container_id'],))
             self._event('task', tid, 'UNASSIGNED', reason=reason)
 

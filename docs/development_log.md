@@ -96,3 +96,31 @@ Chronological record of what was built, what was run, what failed and how it was
   11/11 SUCCEEDED, 0 aborts; final 5-leg tour after all fixes: 5/5, mean AMCL error
   0.035–0.071 m, final position error 0.06–0.15 m (AMCL error + 0.10 m goal tolerance).
   Logs: `project_report/results/phase6_navigation_tour*.txt`.
+
+## Phases 8–10 — Inventory, storage allocation, task management
+Order note: Phase 7 (receiving) registers containers *in* the WMS, so the WMS core was built and
+tested first; receiving follows in Phase 7.
+- `uco_wms/store.py`: SQLite `WarehouseStore` (containers, slots, tasks, events, counters) with the
+  container state machine, nearest-slot allocation (Manhattan distance between access poses,
+  reservation until stored), quarantine routing, task lifecycle (retries before pick-up, unlimited
+  same-AGV retries once a container is on an AGV, cancellation rules), FIFO dispatch requests limited
+  by dispatch-buffer capacity, hand-over to processing, event history and a consistency checker.
+- `wms_node`: all operations as services, latched `/warehouse/inventory` and `/warehouse/tasks`,
+  `/warehouse/container_state` events, `/warehouse/markers` for RViz, REGISTRATION_FAILURE and
+  STORAGE_FULL fault handling.
+- `uco_fleet`: `dispatch_core` (priority/FIFO, nearest eligible AGV, battery & heartbeat gating,
+  time-outs), `task_manager` (assignment chain, feedback → WMS phases, result → COMPLETED / FAILED /
+  requeue), `agv_controller` (TransportContainer + NavigateToLocation, pause on safety stop,
+  low-battery interruption and charging, idle return, lift-deck transfer via `set_pose`, fault
+  hooks), `battery_simulator` (energy model, docking detection), `move_agv` CLI.
+- Bugs found by the tests and fixed:
+  - `-p db_path:=:memory:` cannot be parsed by the ROS argument parser → alias `memory`.
+  - `TaskManager.clients` shadowed rclpy's `Node.clients` property → node crashed on start.
+  - Fleet modules lacked `if __name__ == '__main__'` → `python -m` started nothing.
+  - Nodes printed `ExternalShutdownException` on SIGTERM → handled in every `main()`.
+  - Low-battery interruption should not burn a retry attempt → `unassign` now also covers
+    IN_PROGRESS tasks that have not picked up their container.
+- Verification: 36 WMS tests (33 unit + 2 ROS service integration + 1 added), 10 fleet unit tests,
+  5 fleet integration tests with real `wms_node` + `task_manager` + `agv_controller` against mock
+  Nav2/Gazebo (end-to-end STORE, low-battery charging/requeue, injected navigation failure + retry,
+  manual move with alias "A03"). Workspace total: 83 tests, 0 failures.
