@@ -70,7 +70,7 @@ flowchart LR
 | `task_manager` | `/warehouse/tasks`, `/agv/state` | alerts | – | – | `/warehouse/assign_agv`, `/warehouse/update_task`, `/agv_01/transport_container` |
 | `agv_controller` | `/agv/battery`, `/agv/odom`, `/agv/ground_truth`, `/safety/status`, faults, TF | `/agv/state`, alerts | – | `/agv_01/transport_container`, `/agv_01/navigate_to_location` | `/navigate_to_pose`, world `set_pose`, `/warehouse/update_task` |
 | `battery_simulator` | `/agv/odom`, `/agv/ground_truth`, `/agv/state`, faults | `/agv/battery`, `/agv/battery/consumed_wh`, alerts | – | – | – |
-| `safety_manager` | `/agv/scan_raw`, `/agv/scan_rear_raw`, `/agv/odom`, `/cmd_vel_safe`, `/agv/state`, `/agv/battery`, `/collision_monitor_state`, faults, TF | `/agv/scan`, `/agv/scan_rear`, `/agv/cmd_vel`, `/speed_limit`, `/safety/status`, alerts | `/safety/emergency_stop` | – | – |
+| `safety_manager` | `/agv/scan_raw`, `/agv/scan_rear_raw`, `/agv/odom`, `/cmd_vel_safe`, `/agv/state`, `/agv/battery`, `/collision_monitor_state`, `/map`, faults, TF | `/agv/scan`, `/agv/scan_rear`, `/agv/cmd_vel`, `/speed_limit`, `/safety/status`, `/safety/localization_score`, alerts | `/safety/emergency_stop` | – | – |
 | `fault_injector` | `/agv/ground_truth` | `/warehouse/faults`, alerts | `/faults/inject` | – | world `create` / `remove` |
 | `dashboard_server` | inventory, tasks, `/agv/state`, `/safety/status`, `/agv/battery`, alerts | – (HTTP :8080) | – | – | delivery, processing, fault, e-stop services; `navigate_to_location` |
 | `scenario_runner` | inventory, tasks, `/agv/state`, `/safety/status`, alerts | – (report) | – | – | delivery, processing, fault, e-stop; `navigate_to_location` |

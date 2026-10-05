@@ -9,6 +9,12 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "${ROOT}/scripts/env.sh"
 GUI=true; RVIZ=true
 [[ "${1:-}" == "--headless" ]] && { GUI=false; RVIZ=false; }
+# Isolate this run: stop leftovers of earlier runs (a Gazebo server can outlive its launch file
+# because ros_gz_sim's wrapper does not forward SIGINT) and use a private gz-transport partition so
+# a stray simulation can never publish into this one.
+"${ROOT}/scripts/stop_all.sh"
+export GZ_PARTITION="uco_$(date +%s)_$$"
+trap '"${ROOT}/scripts/stop_all.sh"' EXIT
 RUN="demo_$(date +%Y%m%d_%H%M%S)"
 RESULTS="${ROOT}/runtime/results"
 mkdir -p "${RESULTS}"

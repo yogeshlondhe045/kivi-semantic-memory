@@ -104,6 +104,33 @@ def plot_battery_and_state(trace, out):
     plt.close(fig)
 
 
+def plot_localization(trace, out):
+    rows = [r for r in trace if r.get('loc_error_m') not in (None, '')]
+    if not rows:
+        return
+    t0 = fnum(trace[0]['t_s'], 0.0)
+    fig, a1 = plt.subplots(figsize=(11, 3.6))
+    a1.plot([fnum(r['t_s']) - t0 for r in rows], [fnum(r['loc_error_m']) for r in rows], color='#dc2626', lw=1.2,
+            label='AMCL position error vs ground truth')
+    a1.set_ylabel('error [m]', color='#dc2626')
+    a1.set_xlabel('simulation time [s]')
+    a1.grid(alpha=0.3)
+    sc = [r for r in rows if r.get('loc_score') not in (None, '')]
+    if sc:
+        a2 = a1.twinx()
+        a2.plot([fnum(r['t_s']) - t0 for r in sc], [fnum(r['loc_score']) for r in sc], color='#2563eb', lw=0.8,
+                alpha=0.7, label='scan / map match score')
+        a2.axhline(0.4, color='#f59e0b', ls='--', lw=1, label='degraded < 0.4')
+        a2.axhline(0.2, color='#7f1d1d', ls='--', lw=1, label='lost < 0.2')
+        a2.set_ylim(0, 1.05)
+        a2.set_ylabel('match score', color='#2563eb')
+        a2.legend(loc='lower right', fontsize=8)
+    a1.legend(loc='upper left', fontsize=8)
+    a1.set_title('Localisation: AMCL error and scan-to-map match score')
+    fig.savefig(os.path.join(out, 'localization.png'), dpi=110, bbox_inches='tight')
+    plt.close(fig)
+
+
 def plot_occupancy(occ, out):
     t0 = fnum(occ[0]['t_s'], 0.0)
     t = [fnum(r['t_s'], t0) - t0 for r in occ]
@@ -187,6 +214,9 @@ def kpi_table(metrics, out):
         ('Storage occupancy (end / max)', f"{m['warehouse']['occupancy_now']:.1%} / {m['warehouse']['occupancy_max']:.1%}"
                                           f" of {m['warehouse']['storage_capacity']} positions"),
         ('AGV travel distance', f"{m['agv']['distance_m']} m"),
+        ('Localisation error (mean / p95 / max)',
+         f"{m['localization'].get('mean_error_m', '-')} / {m['localization'].get('p95_error_m', '-')} / "
+         f"{m['localization'].get('max_error_m', '-')} m" if 'localization' in m else '-'),
         ('AGV utilisation (busy / uptime)', f"{m['agv']['utilization']:.1%}" if m['agv']['utilization'] else '-'),
         ('Battery start → end', f"{m['agv']['battery_start_pct']} % → {m['agv']['battery_end_pct']} %"),
         ('Energy consumed', f"{m['agv']['energy_consumed_wh']} Wh at battery time scale ×{m['agv']['battery_time_scale']}"
@@ -215,6 +245,7 @@ def main():
     if trace:
         plot_trajectory(L, trace, out)
         plot_battery_and_state(trace, out)
+        plot_localization(trace, out)
     if occ:
         plot_occupancy(occ, out)
     plot_tasks(tasks, out)

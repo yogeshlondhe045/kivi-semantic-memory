@@ -204,3 +204,26 @@ measured:
    no longer subscribes to the 30 Hz odometry (statistics come from the 10 Hz ground truth),
    `/safety/status` published on change + 1 Hz.
 Result: real-time factor ≈ 1.0 with the full stack; AGV now reaches its 0.8 m/s limit in open areas.
+
+## Phases 15–16 — End-to-end runs, test hardening
+Findings while running the scenarios as reference runs:
+- **False OBSTACLE during lidar failure**: with stale scans the collision monitor reports STOP
+  ("invalid source"); the safety manager counted it as an obstacle. Now only STOPs from the
+  configured `StopZone` polygon count, and no obstacle is reported while a sensor fault is active
+  (unit test added).
+- **Weak scenario checks**: `alert` (since scenario start) matched an earlier, unrelated alert
+  ("OK after 0.0 s"). All fault checks now use `alert_since_step` (alerts after the last action).
+  The station-outage check matched the inspection station's own fault acknowledgement that raced
+  with the delivery step → the receiving line now raises a distinct `WAITING_AT_INSPECTION` code.
+- **Orphaned Gazebo server**: after `exit_after_scenario`, the `gz sim` server outlived the launch
+  (the ros_gz_sim wrapper does not forward SIGINT) and kept publishing the same gz topics, which
+  contaminated the next run (two robots on one partition). Run scripts now call `stop_all.sh` before
+  and after (trap) every run and use a private `GZ_PARTITION`. The contaminated run was discarded.
+- `run_sim_tests.sh` failed immediately: conda activation hooks are not `set -u` safe →
+  `scripts/env.sh` disables nounset while sourcing third-party scripts.
+- AGV state reported battery 100 % and pose (0, 0) before the first battery message / AMCL pose,
+  which drew a false line in the trajectory plot → unknown values are now -1 / NaN, skipped by the
+  metrics and plots; the dispatcher never assigns tasks to an unlocalised AGV or one with an unknown
+  battery (unit test added).
+- Test-count reconciliation: `colcon test-result` prints 114 because the three ament_cmake pytest
+  suites are additionally counted as CTest entries; the real number of test cases is 111.

@@ -224,7 +224,7 @@ class ReceivingStation(Node):
                        simulated_water_percent=it.truth.water_percent, simulated_contaminated=it.truth.contaminated)
         if r is None or not r.success:
             it.next_try = now + self.get_parameter('retry_period_s').value
-            self.alerts.warn('STATION_UNAVAILABLE', f'{it.cid} waiting at inspection: '
+            self.alerts.warn('WAITING_AT_INSPECTION', f'{it.cid} waiting at inspection: '
                              f'{r.message if r else "station not responding"}', dedup=True)
             return
         status = {'PASS': 'APPROVED', 'MARGINAL': 'QUARANTINED', 'FAIL': 'REJECTED'}[r.quality_status]

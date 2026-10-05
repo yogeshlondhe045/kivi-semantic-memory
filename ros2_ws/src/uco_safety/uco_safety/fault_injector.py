@@ -5,8 +5,9 @@ Service /faults/inject (uco_interfaces/InjectFault) publishes a uco_interfaces/F
 
   BLOCKED_PATH          fault_injector spawns / removes a pallet obstacle in Gazebo at `target`
                         (location id -> its AGV access pose, "x,y", or AHEAD = a pallet dropped
-                        1.0 m in front of the AGV: its near face lies inside the collision
-                        monitor's stop zone, clear of the AGV and of a carried drum)
+                        in front of the moving AGV: 1.05 m + 0.3 s of travel ahead of its last
+                        ground-truth pose, so that after the spawn latency its near face lies just
+                        inside the collision monitor's stop zone, clear of the AGV and a carried drum)
   SENSOR_FAILURE        safety_manager stops relaying lidar data (target scan | scan_rear | lidar)
   LOW_BATTERY           battery_simulator sets state of charge to `value` % (default 18)
   NAVIGATION_FAILURE    agv_controller fails the next `value` navigation attempts
@@ -44,7 +45,12 @@ FAULT_TYPES = (Fault.BLOCKED_PATH, Fault.SENSOR_FAILURE, Fault.LOW_BATTERY, Faul
 # one-shot faults: the event itself is the fault, nothing to clear later
 ONE_SHOT = (Fault.LOW_BATTERY, Fault.NAVIGATION_FAILURE, Fault.REGISTRATION_FAILURE)
 
-OBSTACLE_SDF = ('<?xml version="1.0"?><sdf version="1.9"><model name="{name}"><static>true</static><link name="l">'
+# A light *dynamic* pallet stack (25 kg): if it ever touches the AGV when it appears, the stack is
+# pushed, not the robot. A static obstacle spawned in contact once flung the AGV meters away
+# (physics resolving the interpenetration) and AMCL never recovered.
+OBSTACLE_SDF = ('<?xml version="1.0"?><sdf version="1.9"><model name="{name}"><link name="l">'
+                '<inertial><pose>0 0 0.5 0 0 0</pose><mass>25</mass><inertia><ixx>3.4</ixx><iyy>4.2</iyy>'
+                '<izz>3.4</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>'
                 '<collision name="c"><pose>0 0 0.5 0 0 0</pose><geometry><box><size>1.0 0.8 1.0</size></box>'
                 '</geometry></collision><visual name="v"><pose>0 0 0.5 0 0 0</pose><geometry><box>'
                 '<size>1.0 0.8 1.0</size></box></geometry><material><ambient>0.9 0.35 0.1 1</ambient>'
@@ -73,14 +79,16 @@ class FaultInjector(Node):
 
     def _on_gt(self, m: Odometry) -> None:
         q = m.pose.pose.orientation
-        self.agv_pose = (m.pose.pose.position.x, m.pose.pose.position.y, quaternion_to_yaw(q.x, q.y, q.z, q.w))
+        self.agv_pose = (m.pose.pose.position.x, m.pose.pose.position.y, quaternion_to_yaw(q.x, q.y, q.z, q.w),
+                         m.twist.twist.linear.x)
 
     def _xy(self, target: str):
         if target.upper() == 'AHEAD':
             if self.agv_pose is None:
                 return None
-            x, y, yaw = self.agv_pose
-            return x + 1.0 * math.cos(yaw), y + 1.0 * math.sin(yaw)
+            x, y, yaw, v = self.agv_pose
+            ahead = 1.05 + max(0.0, v) * 0.3        # compensate pose age + service latency
+            return x + ahead * math.cos(yaw), y + ahead * math.sin(yaw)
         loc = self.layout.resolve(target)
         if loc:
             p = self.layout.locations[loc].access or self.layout.locations[loc].slot
@@ -101,6 +109,7 @@ class FaultInjector(Node):
             req.entity_factory.name = name
             req.entity_factory.sdf = OBSTACLE_SDF.format(name=name)
             req.entity_factory.pose.position.x, req.entity_factory.pose.position.y = xy
+            req.entity_factory.pose.position.z = 0.005
             if not self.spawn_cli.service_is_ready():
                 return 'could not spawn obstacle (simulation not running?)'
             r = await self.spawn_cli.call_async(req)

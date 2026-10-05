@@ -8,3 +8,6 @@ safety_manager:
     battery_low_pct: 25.0
     battery_critical_pct: 10.0
     rate_hz: 10.0
+    localization_degraded_below: 0.4
+    localization_lost_below: 0.2
+    localization_persist_s: 5.0

@@ -12,6 +12,8 @@ Responsibilities
 """
 from __future__ import annotations
 
+import math
+
 import rclpy
 from rclpy.executors import ExternalShutdownException
 from geometry_msgs.msg import Twist
@@ -21,7 +23,9 @@ from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from rclpy.time import Time
 from sensor_msgs.msg import BatteryState, LaserScan
-from nav_msgs.msg import Odometry
+from nav_msgs.msg import OccupancyGrid, Odometry
+from std_msgs.msg import Float32
+import numpy as np
 from std_srvs.srv import SetBool
 from tf2_ros import Buffer, TransformListener
 
@@ -30,6 +34,7 @@ from uco_common.layout import load_layout
 from uco_common.qos import FAULTS, LATCHED
 from uco_interfaces.msg import AgvState, Fault, SafetyStatus
 
+from .localization_monitor import LocalizationMonitor, near_obstacle_mask, scan_match_score
 from .safety_core import ALARM, EMERGENCY_STOP, NORMAL, WARNING, SafetyConfig, SafetySupervisor
 
 
@@ -47,6 +52,10 @@ class SafetyManager(Node):
         # collision-monitor polygons that mean "obstacle". A STOP caused by stale sensor data
         # ("invalid source") is a sensor fault, not an obstacle.
         self.declare_parameter('obstacle_polygons', ['StopZone'])
+        # localisation quality: share of lidar endpoints near mapped obstacles (see localization_monitor)
+        self.declare_parameter('localization_degraded_below', 0.4)
+        self.declare_parameter('localization_lost_below', 0.2)
+        self.declare_parameter('localization_persist_s', 5.0)
         p = lambda n: self.get_parameter(n).value  # noqa: E731
         self.layout = load_layout(p('layout_file') or None)
         cfg = SafetyConfig(scan_timeout_s=p('scan_timeout_s'), odom_timeout_s=p('odom_timeout_s'),
@@ -79,6 +88,14 @@ class SafetyManager(Node):
         self.create_subscription(Fault, '/warehouse/faults', self._on_fault, FAULTS)
         self.create_service(SetBool, '/safety/emergency_stop', self._on_estop)
 
+        self.loc = LocalizationMonitor(p('localization_degraded_below'), p('localization_lost_below'),
+                                       p('localization_persist_s'))
+        self.map_mask = None
+        self.map_info = None
+        self.scan_count = 0
+        self.loc_state = 'OK'
+        self.score_pub = self.create_publisher(Float32, '/safety/localization_score', 10)
+        self.create_subscription(OccupancyGrid, '/map', self._on_map, LATCHED)
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self, spin_thread=True)  # /tf off the main executor
         self.last_speed_limit = None
@@ -96,6 +113,32 @@ class SafetyManager(Node):
             return
         self.sup.sensor_seen(name, self._now())
         pub.publish(msg)
+        if name == 'scan':
+            self.scan_count += 1
+            if self.scan_count % 5 == 0:          # 2 Hz is plenty for a localisation sanity check
+                self._score_localization(msg)
+
+    def _on_map(self, m: OccupancyGrid) -> None:
+        grid = np.array(m.data, dtype=np.int16).reshape(m.info.height, m.info.width)
+        self.map_mask = near_obstacle_mask(grid, m.info.resolution, 0.25)
+        self.map_info = m.info
+
+    def _score_localization(self, scan: LaserScan) -> None:
+        if self.map_mask is None:
+            return
+        try:
+            t = self.tf_buffer.lookup_transform('map', scan.header.frame_id, Time(), timeout=Duration(seconds=0.0))
+        except Exception:  # noqa: BLE001 - AMCL not ready
+            return
+        q = t.transform.rotation
+        yaw = math.atan2(2.0 * (q.w * q.z + q.x * q.y), 1.0 - 2.0 * (q.y * q.y + q.z * q.z))
+        info = self.map_info
+        score = scan_match_score(np.asarray(scan.ranges), scan.angle_min, scan.angle_increment,
+                                 t.transform.translation.x, t.transform.translation.y, yaw, self.map_mask,
+                                 info.origin.position.x, info.origin.position.y, info.resolution)
+        self.loc.update(score, self._now())
+        if score is not None:
+            self.score_pub.publish(Float32(data=float(score)))
 
     def _on_odom(self, _msg) -> None:
         if 'odom' not in self.failed_sensors:
@@ -167,6 +210,19 @@ class SafetyManager(Node):
     # ------------------------------------------------------------------ main loop
     def _tick(self) -> None:
         self._update_pose()
+        state = self.loc.state(self._now())
+        if state != self.loc_state:
+            self.sup.clear_condition('LOCALIZATION_DEGRADED')
+            self.sup.clear_condition('LOCALIZATION_LOST')
+            score = f'{self.loc.score:.2f}' if self.loc.score is not None else '-'
+            if state == 'DEGRADED':
+                self.sup.raise_condition('LOCALIZATION_DEGRADED', WARNING,
+                                         f'Localisation degraded (scan/map match {score})')
+            elif state == 'LOST':
+                self.sup.raise_condition('LOCALIZATION_LOST', ALARM,
+                                         f'Localisation lost (scan/map match {score}): AGV stopped, '
+                                         're-localise with /initialpose', blocks_motion=True)
+            self.loc_state = state
         d = self.sup.evaluate(self._now())
         prev_allowed = self.decision.motion_allowed if self.decision else True
         self.decision = d

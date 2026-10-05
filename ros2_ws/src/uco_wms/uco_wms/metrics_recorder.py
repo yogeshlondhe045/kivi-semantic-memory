@@ -11,6 +11,8 @@ All times are simulation seconds.
 """
 from __future__ import annotations
 
+import bisect
+import collections
 import csv
 import json
 import os
@@ -21,7 +23,8 @@ import rclpy
 from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from sensor_msgs.msg import BatteryState
-from std_msgs.msg import Float64
+from nav_msgs.msg import Odometry
+from std_msgs.msg import Float32, Float64
 
 from uco_common.qos import EVENTS, LATCHED
 from uco_interfaces.msg import AgvState, Alert, Inventory, SafetyStatus, TaskList
@@ -46,7 +49,8 @@ class MetricsRecorder(Node):
                              'created_s', 'assigned_s', 'started_s', 'completed_s', 'waiting_s', 'execution_s',
                              'total_s', 'failure_reason'])
         self._open('agv_trace', ['t_s', 'x', 'y', 'theta', 'state', 'speed', 'battery_pct', 'charging', 'distance_m',
-                                 'busy_s', 'uptime_s', 'task', 'carrying', 'safety_state'])
+                                 'busy_s', 'uptime_s', 'task', 'carrying', 'safety_state', 'gt_x', 'gt_y',
+                                 'loc_error_m', 'loc_score'])
         self._open('occupancy', ['t_s', 'storage_occupied', 'storage_capacity', 'occupancy', 'holding', 'quarantine',
                                  'dispatch_buffer', 'received_total', 'dispatched_total', 'stored_volume_l'])
         self._open('alerts', ['t_s', 'severity', 'source', 'code', 'message'])
@@ -68,6 +72,13 @@ class MetricsRecorder(Node):
         self.create_subscription(Alert, '/warehouse/alerts', self._on_alert, EVENTS)
         self.create_subscription(BatteryState, '/agv/battery', self._on_battery, 10)
         self.create_subscription(Float64, '/agv/battery/consumed_wh', lambda m: setattr(self, 'consumed_wh', m.data), 10)
+        self.gt = None
+        self.gt_hist = collections.deque(maxlen=100)     # (stamp, x, y): 10 s of ground truth at 10 Hz
+        self.loc_score = None
+        self.loc_errors = []
+        self.create_subscription(Odometry, '/agv/ground_truth', self._on_gt, 10)
+        self.create_subscription(Float32, '/safety/localization_score',
+                                 lambda m: setattr(self, 'loc_score', m.data), 10)
         self.create_timer(1.0, self._sample)
         self.create_timer(self.get_parameter('summary_period_s').value, self.write_summary)
         self.get_logger().info(f'[INFO] Recording metrics to {self.out}')
@@ -124,7 +135,7 @@ class MetricsRecorder(Node):
                 f'{now:.1f}', f'{a.pose.x:.3f}', f'{a.pose.y:.3f}', f'{a.pose.theta:.3f}', a.state,
                 f'{a.linear_speed:.3f}', f'{a.battery_percent:.2f}', int(a.charging), f'{a.distance_travelled_m:.2f}',
                 f'{a.busy_time_s:.1f}', f'{a.uptime_s:.1f}', a.current_task, a.carrying_container,
-                self.safety.state if self.safety else ''])
+                self.safety.state if self.safety else ''] + self._loc_columns(a))
         if inv is not None:
             kinds: Dict[str, int] = {}
             for s in inv.slots:
@@ -137,6 +148,36 @@ class MetricsRecorder(Node):
         for f in self.files.values():
             f.flush()
 
+    def _on_gt(self, m: Odometry) -> None:
+        self.gt = m.pose.pose
+        t = m.header.stamp.sec + m.header.stamp.nanosec * 1e-9
+        self.gt_hist.append((t, m.pose.pose.position.x, m.pose.pose.position.y))
+
+    def _gt_at(self, t: float):
+        """Ground-truth position interpolated at time t (the AGV state's own timestamp)."""
+        h = self.gt_hist
+        if len(h) < 2 or t < h[0][0] or t > h[-1][0] + 0.2:
+            return None
+        i = bisect.bisect_left([s[0] for s in h], t)
+        if i == 0:
+            return h[0][1:]
+        if i >= len(h):
+            return h[-1][1:]
+        (t0, x0, y0), (t1, x1, y1) = h[i - 1], h[i]
+        w = 0.0 if t1 == t0 else (t - t0) / (t1 - t0)
+        return x0 + w * (x1 - x0), y0 + w * (y1 - y0)
+
+    def _loc_columns(self, a):
+        score = '' if self.loc_score is None else f'{self.loc_score:.3f}'
+        # compare the AGV's AMCL pose with ground truth *at the same time*: the AGV state is published
+        # at 2 Hz, so comparing with the latest ground truth would add up to 0.4 m at 0.8 m/s
+        gt = self._gt_at(a.header.stamp.sec + a.header.stamp.nanosec * 1e-9)
+        if gt is None:
+            return ['', '', '', score]
+        err = ((a.pose.x - gt[0]) ** 2 + (a.pose.y - gt[1]) ** 2) ** 0.5
+        self.loc_errors.append(err)
+        return [f'{gt[0]:.3f}', f'{gt[1]:.3f}', f'{err:.3f}', score]
+
     def write_summary(self) -> None:
         now = self._now()
         kpis = compute_kpis(
@@ -144,7 +185,8 @@ class MetricsRecorder(Node):
             sim_duration_s=(now - self.start) if self.start else 0.0,
             agv=self.agv, inventory=self.inv, max_occupancy=self.max_occupancy,
             consumed_wh=self.consumed_wh, battery_first=self.battery_first, battery_last=self.battery_last,
-            battery_time_scale=self.get_parameter('battery_time_scale').value, alert_counts=self.alert_counts)
+            battery_time_scale=self.get_parameter('battery_time_scale').value, alert_counts=self.alert_counts,
+            localization_errors=self.loc_errors)
         with open(os.path.join(self.out, 'metrics.json'), 'w', encoding='utf-8') as f:
             json.dump(kpis, f, indent=2)
 

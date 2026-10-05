@@ -45,7 +45,7 @@ scenarios:
       - delivery: {supplier: "Cafe Roma", containers: [[DRUM_200L, 180]]}
       - wait_for: {alert_since_step: REGISTRATION_FAILED, timeout: 60}
       - wait_for: {received: 1, timeout: 60}
-      - wait_for: {alert_since_step: STATION_UNAVAILABLE, timeout: 120}
+      - wait_for: {alert_since_step: WAITING_AT_INSPECTION, timeout: 120}
       - expect: {holding: "==0"}                 # held at inspection while the station is down
       - wait_for: {holding: 1, timeout: 180}
       # --- speed zone + emergency stop during transport ------------------------------------------

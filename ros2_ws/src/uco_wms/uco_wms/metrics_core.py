@@ -10,10 +10,20 @@ def _avg(values: List[Optional[float]]) -> Optional[float]:
     return round(mean(vals), 2) if vals else None
 
 
+def _loc_stats(errors: List[float]) -> dict:
+    """AMCL position error against simulation ground truth (1 Hz samples)."""
+    if not errors:
+        return {'samples': 0}
+    e = sorted(errors)
+    return {'samples': len(e), 'mean_error_m': round(mean(e), 3), 'p95_error_m': round(e[int(0.95 * (len(e) - 1))], 3),
+            'max_error_m': round(e[-1], 3)}
+
+
 def compute_kpis(tasks: List[dict], sim_duration_s: float, agv=None, inventory=None, max_occupancy: float = 0.0,
                  consumed_wh: float = 0.0, battery_first: Optional[float] = None,
                  battery_last: Optional[float] = None, battery_time_scale: float = 1.0,
-                 alert_counts: Optional[Dict[str, int]] = None) -> dict:
+                 alert_counts: Optional[Dict[str, int]] = None,
+                 localization_errors: Optional[List[float]] = None) -> dict:
     """Return the KPI dictionary written to metrics.json.
 
     tasks: finished task records with keys type, status, attempts, waiting_s, execution_s, total_s.
@@ -69,6 +79,7 @@ def compute_kpis(tasks: List[dict], sim_duration_s: float, agv=None, inventory=N
             'energy_consumed_wh_real_time_equivalent': round(consumed_wh / battery_time_scale, 1)
             if battery_time_scale else None,
         },
+        'localization': _loc_stats(localization_errors or []),
         'alerts': dict(sorted((alert_counts or {}).items())),
     }
     return k

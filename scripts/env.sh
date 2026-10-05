@@ -2,6 +2,8 @@
 # Activates ROS 2 Jazzy (apt install or RoboStack env) and this workspace's overlay, and
 # provides a virtual display + software OpenGL when no display is available.
 _UCO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# ROS / conda activation scripts reference unset variables; allow that even if the caller uses `set -u`.
+case $- in *u*) _UCO_NOUNSET=1; set +u ;; *) _UCO_NOUNSET=0 ;; esac
 export UCO_ROOT="${_UCO_ROOT}"
 
 if [[ -z "${ROS_DISTRO:-}" ]]; then
@@ -13,6 +15,7 @@ if [[ -z "${ROS_DISTRO:-}" ]]; then
     source "${UCO_ROOT}/env/ros_env.sh"
   else
     echo "ROS 2 Jazzy not found - run scripts/install_environment.sh first" >&2
+    [[ "${_UCO_NOUNSET}" == 1 ]] && set -u
     return 1
   fi
 fi
@@ -34,3 +37,5 @@ if [[ -z "${DISPLAY:-}" ]]; then
 fi
 # Keep this project's DDS traffic separate from other ROS systems on the network.
 export ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-42}"
+[[ "${_UCO_NOUNSET}" == 1 ]] && set -u
+unset _UCO_NOUNSET
