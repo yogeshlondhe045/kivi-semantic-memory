@@ -1,0 +1,7 @@
+uint32 count                 # number of containers wanted (ignored if container_ids given)
+string[] container_ids       # optional explicit selection
+---
+bool success
+string message
+string[] container_ids
+string[] task_ids

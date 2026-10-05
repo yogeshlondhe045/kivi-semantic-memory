@@ -1,0 +1,13 @@
+string task_id
+string container_id
+string source_location
+string destination_location
+---
+bool success
+string message
+string failure_code          # NAV_FAILED | PICK_FAILED | DROP_FAILED | LOW_BATTERY | CANCELLED | ESTOP_TIMEOUT
+float64 duration_s
+float64 distance_m
+---
+string phase                 # TO_PICKUP | PICKING | TO_DROPOFF | DROPPING
+float32 distance_remaining

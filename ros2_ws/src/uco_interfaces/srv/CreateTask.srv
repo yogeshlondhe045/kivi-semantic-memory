@@ -1,0 +1,8 @@
+string task_type
+string container_id
+string destination           # empty -> WMS decides (e.g. reserved slot)
+int32 priority
+---
+bool success
+string message
+string task_id

@@ -1,0 +1,9 @@
+string container_id
+string status
+string quality_status        # empty -> unchanged
+float64 weight_kg            # <= 0 -> unchanged
+float64 measured_volume_l    # <= 0 -> unchanged
+string note
+---
+bool success
+string message

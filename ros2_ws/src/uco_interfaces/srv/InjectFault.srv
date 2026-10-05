@@ -1,0 +1,8 @@
+string fault_type            # one of uco_interfaces/Fault constants
+bool active                  # true = inject, false = clear
+string target
+float64 value
+float64 duration_s
+---
+bool success
+string message

@@ -1,0 +1,11 @@
+# Load-cell model. simulated_gross_kg is the physical truth supplied by the simulator
+# (receiving_station knows what it spawned); the station returns what its sensor measures.
+string container_id
+string container_type
+float64 simulated_gross_kg
+---
+bool success
+string message
+float64 gross_kg
+float64 net_kg
+float64 volume_l

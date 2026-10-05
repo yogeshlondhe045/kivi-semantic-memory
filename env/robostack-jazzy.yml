@@ -24,7 +24,8 @@ dependencies:
   - ninja
   - colcon-common-extensions
   - rosdep
-  - pytest
+  - pytest>=8,<9   # launch_testing (Jazzy) is not compatible with pytest 9
+  - setuptools<80   # colcon --symlink-install breaks with setuptools 80+
   - matplotlib
   - pyyaml
   - numpy

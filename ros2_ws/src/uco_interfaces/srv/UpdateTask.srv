@@ -1,0 +1,8 @@
+# Used by task_manager to report progress: status IN_PROGRESS (+phase), COMPLETED, FAILED.
+string task_id
+string status
+string phase
+string message
+---
+bool success
+string message

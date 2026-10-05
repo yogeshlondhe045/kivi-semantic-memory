@@ -1,0 +1,6 @@
+string container_id
+string kind                  # STORAGE (default if empty) | QUARANTINE
+---
+bool success
+string message
+string slot_id

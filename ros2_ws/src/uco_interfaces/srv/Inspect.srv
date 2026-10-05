@@ -1,0 +1,14 @@
+# Quality inspection model. simulated_* fields are the physical truth of the sample
+# supplied by the simulator; the station adds measurement noise and applies the
+# acceptance rules from its configuration.
+string container_id
+float64 simulated_ffa_percent
+float64 simulated_water_percent
+bool simulated_contaminated
+---
+bool success                 # false = station could not perform the test (unavailable)
+string message
+string quality_status        # PASS | MARGINAL | FAIL
+float64 ffa_percent
+float64 water_percent
+bool contamination_detected

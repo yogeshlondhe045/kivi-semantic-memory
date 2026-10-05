@@ -1,0 +1,8 @@
+# Simulate a delivery truck at the dock.
+string supplier
+string[] container_types     # one entry per container (DRUM_200L | IBC_1000L)
+float64[] declared_volumes_l # same length as container_types (0 -> nominal)
+---
+bool success
+string message
+string delivery_id

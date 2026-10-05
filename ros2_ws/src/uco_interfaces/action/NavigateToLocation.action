@@ -1,0 +1,9 @@
+# Drive the AGV to a named warehouse location (its access pose).
+string location_id           # e.g. A-03-R01, CHG-01, DSP-02 (aliases like A03 accepted)
+---
+bool success
+string message
+float64 travel_time_s
+---
+string state
+float32 distance_remaining

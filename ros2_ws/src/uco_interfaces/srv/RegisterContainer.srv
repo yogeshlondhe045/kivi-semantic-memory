@@ -1,0 +1,9 @@
+string container_id          # empty -> WMS generates UCO-NNNN
+string container_type
+string supplier
+float64 declared_volume_l
+string location              # where it is now (e.g. UNLOAD)
+---
+bool success
+string message
+string container_id
