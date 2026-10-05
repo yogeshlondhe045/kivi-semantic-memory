@@ -35,10 +35,10 @@ doors:
 
 zones:
   # kind: AREA (informational), SPEED (speed limit applies), RESTRICTED (keep-out + alarm)
-  - {id: RECEIVING, name: "Receiving area", kind: SPEED, rect: [0.2, 13.0, 12.0, 19.2], speed_limit: 0.3, color: [0.95, 0.75, 0.2]}
+  - {id: RECEIVING, name: "Receiving area", kind: SPEED, rect: [0.2, 13.0, 12.0, 19.2], speed_limit: 0.4, color: [0.95, 0.75, 0.2]}
   - {id: RECEIVING_PROCESS, name: "Unloading / weighing / inspection line", kind: RESTRICTED, rect: [0.2, 19.2, 12.0, 23.8], color: [0.9, 0.3, 0.2]}
-  - {id: STORAGE, name: "Automated storage", kind: SPEED, rect: [12.2, 0.2, 25.2, 12.8], speed_limit: 0.5, color: [0.3, 0.6, 0.95]}
-  - {id: DISPATCH, name: "Dispatch / processing buffer", kind: SPEED, rect: [29.0, 8.6, 35.8, 23.8], speed_limit: 0.4, color: [0.3, 0.85, 0.4]}
+  - {id: STORAGE, name: "Automated storage", kind: SPEED, rect: [12.2, 0.2, 25.2, 12.8], speed_limit: 0.6, color: [0.3, 0.6, 0.95]}
+  - {id: DISPATCH, name: "Dispatch / processing buffer", kind: SPEED, rect: [29.0, 8.6, 35.8, 23.8], speed_limit: 0.5, color: [0.3, 0.85, 0.4]}
   - {id: CHARGING, name: "Charging station", kind: SPEED, rect: [1.4, 0.2, 4.6, 3.0], speed_limit: 0.3, color: [0.6, 0.4, 0.9]}
   - {id: QUARANTINE, name: "Quarantine / rejected material", kind: AREA, rect: [6.2, 0.2, 11.4, 2.2], color: [0.95, 0.5, 0.1]}
   - {id: TANK_FARM, name: "Bulk UCO tank farm (bunded)", kind: RESTRICTED, rect: [29.3, 0.2, 35.8, 8.2], color: [0.9, 0.3, 0.2]}

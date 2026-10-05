@@ -13,11 +13,11 @@ the development environment. The *Verification* column states what was run.
 | 4 | AGV model | Xacro, diff-drive, casters, joint states | `xacro` + `check_urdf`; spawns and drives; odom vs ground truth < 3 mm, 0° yaw error | Done |
 | 5 | Sensors & bridge | Lidar, IMU, odometry, ground truth, optional depth camera, bridge YAML | All topics live with correct frames; RTF 0.97–1.0 | Done |
 | 6 | Navigation | Nav2 params, AMCL, keepout filter, collision monitor, RViz config | 11/11 goals across all zones; 0 phantom lidar points; AMCL error 4–7 cm | Done |
-| 7 | Receiving station | Receiving/weighing/inspection nodes, container spawning | Delivery spawns containers, pipeline reaches holding area | Planned |
+| 7 | Receiving station | Receiving/weighing/inspection nodes, container spawning | 5-container delivery spawned, weighed, inspected, held, STORE tasks created (Gazebo) | Done |
 | 8 | Inventory system | SQLite store, container state machine | Unit tests (inventory, state machine, persistence) | Done |
 | 9 | Storage allocation | Allocation policy, reservation | Unit tests (nearest/sequential, full, quarantine, 32-slot fill) | Done |
 | 10 | Task manager | Task lifecycle, AGV assignment, retries, timeouts, `wms_node` services | Unit + ROS integration tests (83 total pass) | Done |
-| 11 | AGV task execution | `agv_controller`, `battery_simulator`, pick/drop transfer | Integration test with mock Nav2; full run in Gazebo | Planned |
+| 11 | AGV task execution | `agv_controller`, `battery_simulator`, pick/drop transfer | 5 integration tests (mock Nav2); Gazebo: 2 STORE + 1 RETRIEVE, zero container slip | Done |
 | 12 | Safety system | `safety_manager`, zones, e-stop gate, watchdogs | Unit tests + simulation checks | Planned |
 | 13 | Fault injection | `fault_injector`, fault handlers in each node | Simulation fault tests | Planned |
 | 14 | Dashboard | Web UI | HTTP endpoint tests + screenshot | Planned |

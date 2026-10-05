@@ -2,7 +2,7 @@ from glob import glob
 
 from setuptools import setup
 
-package_name = 'uco_safety'
+package_name = 'uco_bringup'
 
 setup(
     name=package_name,
@@ -11,6 +11,7 @@ setup(
     data_files=[
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/launch', glob('launch/*.launch.py')),
         ('share/' + package_name + '/config', glob('config/*.yaml')),
     ],
     install_requires=['setuptools'],
@@ -18,11 +19,7 @@ setup(
     zip_safe=True,
     maintainer='UCO Warehouse Team',
     maintainer_email='dev@example.com',
-    description='Warehouse safety supervisor and fault injection',
+    description='Top-level launch and scenarios',
     license='Apache-2.0',
-    entry_points={'console_scripts': [
-        'safety_manager = uco_safety.safety_manager:main',
-        'fault_injector = uco_safety.fault_injector:main',
-        'inject_fault = uco_safety.fault_injector:cli',
-    ]},
+    entry_points={'console_scripts': []},
 )

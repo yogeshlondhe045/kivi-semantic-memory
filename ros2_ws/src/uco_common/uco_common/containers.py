@@ -50,7 +50,7 @@ def container_sdf(ctype: ContainerType, model_name: str, volume_l: float,
             f'<radius>{r:.3f}</radius><length>{dh:.3f}</length></cylinder></geometry><material>'
             f'<ambient>{_DRUM_COLOR}</ambient><diffuse>{_DRUM_COLOR}</diffuse></material></visual>')
         visuals.append(
-            f'<visual name="lid"><pose>0 0 {h - 0.005:.3f} 0 0 0</pose><geometry><cylinder>'
+            f'<visual name="lid"><pose>0 0 {h + 0.003:.3f} 0 0 0</pose><geometry><cylinder>'
             f'<radius>{r * 0.98:.3f}</radius><length>0.01</length></cylinder></geometry><material>'
             f'<ambient>0.8 0.8 0.8 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>')
     else:

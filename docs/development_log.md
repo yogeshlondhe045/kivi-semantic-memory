@@ -124,3 +124,33 @@ tested first; receiving follows in Phase 7.
   5 fleet integration tests with real `wms_node` + `task_manager` + `agv_controller` against mock
   Nav2/Gazebo (end-to-end STORE, low-battery charging/requeue, injected navigation failure + retry,
   manual move with alias "A03"). Workspace total: 83 tests, 0 failures.
+
+## Phase 7 — Receiving station
+- `uco_stations`: `station_models` (supplier quality profiles, load-cell model with noise +
+  0.5 kg resolution, lab measurement noise, acceptance rules PASS/MARGINAL/FAIL),
+  `weighing_station`, `inspection_station`, `receiving_station` (conveyor-line pipeline with one
+  container per station, Gazebo spawning via the bridged `create` service, registration retry,
+  station-outage wait, storage-full retry), `dispatch_manager` (processing requests, hand-over
+  after a dwell time, removal through the transfer door). `fault_injector` + `inject_fault` CLI
+  added early because the stations consume its events.
+- `uco_bringup/launch/warehouse.launch.py`: one launch file with switches per subsystem.
+- Verification (Gazebo, headless): delivery of 3 drums + 2 IBCs → all registered (UCO-0001..5),
+  weighed (e.g. UCO-0003 867.0 kg gross → 875 L), inspected (all PASS with the `good` profile),
+  placed in HOLD-01..05, storage assigned nearest-first (A-01-R01, A-01-R02, A-02-R01, ...),
+  STORE tasks T-0001..5 created. Image: `project_report/figures/receiving_holding.png`.
+  12 station-model unit tests.
+- Fixed: drum lid z-fighting (lid lifted 3 mm).
+
+## Phase 11 — AGV task execution (Gazebo)
+- Full stack (Gazebo + Nav2 + safety + WMS + stations + fleet): STORE T-0001 (890 kg IBC,
+  HOLD-01 → A-01-R01) 110 s / 30.8 m; STORE T-0002 (drum HOLD-02 → A-01-R02); processing request
+  → RETRIEVE T-0003 (A-01-R01 → DSP-01) 64 s / 20.8 m → hand-over to the processing plant after 20 s.
+- Physical carry check: container pose sampled in the AGV frame during the whole RETRIEVE trip
+  (79 samples incl. turns on the spot): offset (0.000, 0.000) m, relative yaw 0.0° → the container
+  rides on the deck under friction without slipping. Final slot placement verified from Gazebo
+  pose: UCO-0001 at exactly (13.0, 12.0) = A-01-R01. Trace: `project_report/results/phase11_container_carry_trace.txt`.
+- Bug found: `FaultInjector.timers` shadowed rclpy `Node.timers` (crash at start) → renamed; all
+  nodes grepped for other shadowed Node properties (none).
+- Tuning: zone speed limits raised (receiving 0.3 → 0.4, storage 0.5 → 0.6, dispatch 0.4 → 0.5 m/s)
+  after observing ~0.25 m/s average task speed.
+- Workspace tests: 95, 0 failures.

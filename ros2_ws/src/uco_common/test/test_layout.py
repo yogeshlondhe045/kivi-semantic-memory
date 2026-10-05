@@ -82,8 +82,8 @@ def test_slots_do_not_overlap(layout):
 
 
 def test_speed_limits(layout):
-    assert layout.speed_limit_at(5.0, 15.0) == pytest.approx(0.3)   # receiving
-    assert layout.speed_limit_at(18.0, 9.8) == pytest.approx(0.5)   # storage aisle
+    assert layout.speed_limit_at(5.0, 15.0) == pytest.approx(0.4)   # receiving
+    assert layout.speed_limit_at(18.0, 9.8) == pytest.approx(0.6)   # storage aisle
     assert layout.speed_limit_at(27.0, 14.5) == pytest.approx(layout.default_speed_limit)
 
 

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>uco_bringup</name>
+  <version>0.1.0</version>
+  <description>Top-level launch files and demonstration scenarios for the UCO warehouse digital twin.</description>
+  <maintainer email="dev@example.com">UCO Warehouse Team</maintainer>
+  <license>Apache-2.0</license>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>uco_common</exec_depend>
+  <exec_depend>uco_interfaces</exec_depend>
+  <exec_depend>uco_simulation</exec_depend>
+  <exec_depend>uco_navigation</exec_depend>
+  <exec_depend>uco_wms</exec_depend>
+  <exec_depend>uco_stations</exec_depend>
+  <exec_depend>uco_fleet</exec_depend>
+  <exec_depend>uco_safety</exec_depend>
+  <exec_depend>uco_dashboard</exec_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

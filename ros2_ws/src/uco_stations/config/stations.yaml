@@ -1,0 +1,35 @@
+receiving_station:
+  ros__parameters:
+    use_sim_time: true
+    quality_profile: good      # good | mixed | poor  (supplier quality distribution)
+    seed: 2024                 # reproducible physical truth
+    unload_time_s: 6.0
+    weigh_time_s: 5.0
+    inspect_time_s: 8.0
+    station_height: 0.7        # conveyor top
+    retry_period_s: 5.0
+
+weighing_station:
+  ros__parameters:
+    use_sim_time: true
+    noise_sd_kg: 0.3
+    resolution_kg: 0.5
+    calibration_offset_kg: 0.0
+    seed: 11
+
+inspection_station:
+  ros__parameters:
+    use_sim_time: true
+    pass_max_ffa: 5.0          # % free fatty acids
+    pass_max_water: 1.0        # % water
+    marginal_max_ffa: 15.0
+    marginal_max_water: 3.0
+    ffa_noise_sd: 0.15
+    water_noise_sd: 0.05
+    contamination_detection_p: 0.95
+    seed: 23
+
+dispatch_manager:
+  ros__parameters:
+    use_sim_time: true
+    handover_delay_s: 20.0

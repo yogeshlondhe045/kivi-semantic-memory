@@ -2,7 +2,7 @@ from glob import glob
 
 from setuptools import setup
 
-package_name = 'uco_safety'
+package_name = 'uco_stations'
 
 setup(
     name=package_name,
@@ -18,11 +18,12 @@ setup(
     zip_safe=True,
     maintainer='UCO Warehouse Team',
     maintainer_email='dev@example.com',
-    description='Warehouse safety supervisor and fault injection',
+    description='Receiving and dispatch stations',
     license='Apache-2.0',
     entry_points={'console_scripts': [
-        'safety_manager = uco_safety.safety_manager:main',
-        'fault_injector = uco_safety.fault_injector:main',
-        'inject_fault = uco_safety.fault_injector:cli',
+        'receiving_station = uco_stations.receiving_station:main',
+        'weighing_station = uco_stations.weighing_station:main',
+        'inspection_station = uco_stations.inspection_station:main',
+        'dispatch_manager = uco_stations.dispatch_manager:main',
     ]},
 )
