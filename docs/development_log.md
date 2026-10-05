@@ -66,3 +66,33 @@ Chronological record of what was built, what was run, what failed and how it was
 - Real-time factor on 4 CPU cores with software rendering: 0.97 (2 lidars), 1.00 (2 lidars + RGB-D).
 - TF tree: odom → base_footprint → base_link → {wheels, casters, deck, lidars, imu, e-stop, beacon, camera}.
 - `colcon test`: 27 tests, 0 failures (adds URDF expansion / frames / deck height / check_urdf).
+
+## Phase 6 — Navigation
+- Nav2 (Jazzy): map_server + AMCL, keepout filter (mask generated from restricted zones),
+  NavFn A* planner, Regulated Pure Pursuit controller, behavior server, BT navigator, velocity
+  smoother, collision monitor (stop + slowdown polygons from both lidars). Velocity chain ends in
+  the `uco_safety` gate, which also serves as lidar gateway and speed-zone publisher (`/speed_limit`).
+- RViz2 configuration with map, keepout, costmaps, robot model, TF, both scans, odometry, AMCL pose,
+  global/local plan, goal, collision polygons.
+- Problems found and fixed (each confirmed by measurement before and after):
+  1. **Undocking stall** (first leg 165 s): collision-monitor stop polygon (corner radius 0.81 m) hit
+     the charger unit (0.775 m) while turning on the spot → stop/slowdown flapping. Stop polygon
+     shrunk to footprint +7/+5 cm (radius 0.766 m) → 0 stop events, leg time 61 s.
+  2. **Alert flapping**: safety obstacle condition now has 1 s debounce / 2 s clear hysteresis.
+  3. **AMCL bias ~0.1 m towards walls**: sensor geometry checked against ground truth (4 rays within
+     1 cm), scan endpoints against the map (median 2.5 cm) → root cause was solid-filled obstacles
+     in the generated map (flat likelihood plateau inside walls). Map now contains obstacle
+     outlines only (as a SLAM map would). Mean AMCL error 0.08–0.11 → 0.04–0.08 m. A residual
+     ~3–5 cm is AMCL's half-cell map indexing and is accepted.
+  4. **Goal aborted** ("Timed out waiting for follow_path ack"): `default_server_timeout` 20 → 200 ms;
+     controller 10 → 8 Hz (measured loop rate 7 Hz under load); progress allowance 30 s.
+  5. **Phantom obstacles in the costmap** (cells in open floor, even inside the office): a
+     ground-truth projection monitor showed all of them came from the first ray (−135°) of the
+     front lidar, which runs parallel to the chassis face and grazed the 5 mm protruding bumper.
+     FOV reduced to ±132° (front + rear still cover 360°), bumpers made flush → 0 phantom points
+     in 7202 scans.
+  6. RViz LaserScan displays set to Best Effort (sensor QoS).
+- Verification: 11-leg tour across all zones (storage, dispatch, holding, quarantine, charger):
+  11/11 SUCCEEDED, 0 aborts; final 5-leg tour after all fixes: 5/5, mean AMCL error
+  0.035–0.071 m, final position error 0.06–0.15 m (AMCL error + 0.10 m goal tolerance).
+  Logs: `project_report/results/phase6_navigation_tour*.txt`.

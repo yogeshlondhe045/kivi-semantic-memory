@@ -1,0 +1,150 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+  - Class: rviz_common/Tool Properties
+    Name: Tool Properties
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: false
+      Cell Size: 1
+      Plane Cell Count: 40
+      Reference Frame: map
+    - Class: rviz_default_plugins/Map
+      Name: Map
+      Enabled: true
+      Topic:
+        Value: /map
+        Durability Policy: Transient Local
+      Alpha: 0.8
+      Color Scheme: map
+    - Class: rviz_default_plugins/Map
+      Name: Keepout zones
+      Enabled: true
+      Topic:
+        Value: /keepout_filter_mask
+        Durability Policy: Transient Local
+      Alpha: 0.25
+      Color Scheme: costmap
+    - Class: rviz_default_plugins/Map
+      Name: Global costmap
+      Enabled: true
+      Topic:
+        Value: /global_costmap/costmap
+      Alpha: 0.35
+      Color Scheme: costmap
+    - Class: rviz_default_plugins/Map
+      Name: Local costmap
+      Enabled: true
+      Topic:
+        Value: /local_costmap/costmap
+      Alpha: 0.5
+      Color Scheme: costmap
+    - Class: rviz_default_plugins/RobotModel
+      Name: AGV-01 model
+      Enabled: true
+      Description Source: Topic
+      Description Topic:
+        Value: /robot_description
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Enabled: true
+      Show Names: false
+      Marker Scale: 0.6
+    - Class: rviz_default_plugins/LaserScan
+      Name: Front lidar
+      Enabled: true
+      Topic:
+        Value: /agv/scan
+        Reliability Policy: Best Effort
+      Size (m): 0.05
+      Color Transformer: FlatColor
+      Color: 255; 30; 30
+    - Class: rviz_default_plugins/LaserScan
+      Name: Rear lidar
+      Enabled: true
+      Topic:
+        Value: /agv/scan_rear
+        Reliability Policy: Best Effort
+      Size (m): 0.05
+      Color Transformer: FlatColor
+      Color: 255; 140; 0
+    - Class: rviz_default_plugins/Odometry
+      Name: Odometry
+      Enabled: true
+      Topic:
+        Value: /agv/odom
+      Keep: 30
+      Shape:
+        Value: Arrow
+        Shaft Length: 0.4
+    - Class: rviz_default_plugins/PoseWithCovariance
+      Name: AMCL pose
+      Enabled: true
+      Topic:
+        Value: /amcl_pose
+    - Class: rviz_default_plugins/Path
+      Name: Global plan
+      Enabled: true
+      Topic:
+        Value: /plan
+      Color: 25; 120; 255
+      Line Style: Billboards
+      Line Width: 0.06
+    - Class: rviz_default_plugins/Path
+      Name: Local plan
+      Enabled: true
+      Topic:
+        Value: /local_plan
+      Color: 0; 200; 80
+    - Class: rviz_default_plugins/Pose
+      Name: Navigation goal
+      Enabled: true
+      Topic:
+        Value: /goal_pose
+      Shape: Arrow
+      Color: 255; 0; 255
+    - Class: rviz_default_plugins/Polygon
+      Name: Stop zone
+      Enabled: true
+      Topic:
+        Value: /collision_monitor/stop_zone
+      Color: 255; 0; 0
+    - Class: rviz_default_plugins/Polygon
+      Name: Slowdown zone
+      Enabled: true
+      Topic:
+        Value: /collision_monitor/slowdown_zone
+      Color: 255; 200; 0
+    - Class: rviz_default_plugins/MarkerArray
+      Name: Warehouse state
+      Enabled: true
+      Topic:
+        Value: /warehouse/markers
+  Global Options:
+    Fixed Frame: map
+    Background Color: 48; 48; 48
+    Frame Rate: 15
+  Tools:
+    - Class: rviz_default_plugins/Interact
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/SetInitialPose
+      Topic:
+        Value: /initialpose
+    - Class: rviz_default_plugins/SetGoal
+      Topic:
+        Value: /goal_pose
+    - Class: rviz_default_plugins/Measure
+  Views:
+    Current:
+      Class: rviz_default_plugins/TopDownOrtho
+      Name: Current View
+      Scale: 28
+      X: 18
+      Y: 12
+      Angle: 0
+Window Geometry:
+  Width: 1500
+  Height: 950

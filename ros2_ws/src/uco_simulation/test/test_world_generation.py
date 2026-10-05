@@ -43,8 +43,10 @@ def test_map_free_at_access_poses_and_blocked_at_walls():
         if loc.access is not None:
             assert img[cell(loc.access.x, loc.access.y)] == 254, loc.id
             assert keep[cell(loc.access.x, loc.access.y)] == 254, loc.id
-    assert img[cell(-0.1, 5.0)] == 0          # west wall
-    assert img[cell(-0.1, 20.0)] == 0         # dock door (closed shutter)
-    assert img[cell(31.2, 2.6)] == 0          # tank 1
+    assert img[cell(-0.02, 5.0)] == 0         # west wall inner face
+    assert img[cell(-0.12, 5.0)] == 205       # wall interior -> unknown (outline-only map)
+    assert img[cell(-0.02, 20.0)] == 0        # dock door (closed shutter)
+    assert img[cell(31.2, 2.6 - 1.08)] == 0   # tank 1 surface
+    assert img[cell(31.2, 2.6)] == 205        # tank 1 interior
     assert keep[cell(32.0, 4.0)] == 0         # tank farm keep-out
     assert np.count_nonzero(img == 0) > 1000

@@ -12,7 +12,7 @@ the development environment. The *Verification* column states what was run.
 | 3 | Gazebo warehouse world | Layout YAML, world generator, generated SDF, container models, map + keepout mask | Generator tests (3 pass); world runs in `gz sim -s` without errors; `gz sdf -k` valid; rendered images | Done |
 | 4 | AGV model | Xacro, diff-drive, casters, joint states | `xacro` + `check_urdf`; spawns and drives; odom vs ground truth < 3 mm, 0° yaw error | Done |
 | 5 | Sensors & bridge | Lidar, IMU, odometry, ground truth, optional depth camera, bridge YAML | All topics live with correct frames; RTF 0.97–1.0 | Done |
-| 6 | Navigation | Nav2 params, AMCL, keepout filter, collision monitor, RViz config | Robot reaches goals across the warehouse in simulation | Planned |
+| 6 | Navigation | Nav2 params, AMCL, keepout filter, collision monitor, RViz config | 11/11 goals across all zones; 0 phantom lidar points; AMCL error 4–7 cm | Done |
 | 7 | Receiving station | Receiving/weighing/inspection nodes, container spawning | Delivery spawns containers, pipeline reaches holding area | Planned |
 | 8 | Inventory system | SQLite store, container state machine | Unit tests | Planned |
 | 9 | Storage allocation | Allocation policy, reservation | Unit tests | Planned |

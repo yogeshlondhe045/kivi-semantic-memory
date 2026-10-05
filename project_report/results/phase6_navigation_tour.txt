@@ -1,0 +1,14 @@
+A-03-R01   status=4 wall=  56.9s pos_err=0.071m yaw_err=3.7deg amcl_err mean=0.076 max=0.124 (n=229)
+DSP-02     status=4 wall=  51.2s pos_err=0.086m yaw_err=5.7deg amcl_err mean=0.044 max=0.097 (n=202)
+HOLD-03    status=4 wall=  80.3s pos_err=0.132m yaw_err=8.7deg amcl_err mean=0.076 max=0.174 (n=391)
+B-06-R02   status=4 wall=  64.8s pos_err=0.099m yaw_err=5.4deg amcl_err mean=0.054 max=0.108 (n=298)
+CHG-01     status=4 wall=  67.7s pos_err=0.152m yaw_err=5.1deg amcl_err mean=0.070 max=0.119 (n=242)
+B-01-R01   status=4 wall=  42.5s pos_err=0.026m yaw_err=3.4deg amcl_err mean=0.062 max=0.094 (n=182)
+DSP-04     status=4 wall=  70.5s pos_err=0.087m yaw_err=5.2deg amcl_err mean=0.046 max=0.109 (n=301)
+HOLD-05    status=4 wall=  57.6s pos_err=0.136m yaw_err=3.7deg amcl_err mean=0.064 max=0.114 (n=319)
+A-08-R02   status=4 wall=  59.7s pos_err=0.107m yaw_err=3.2deg amcl_err mean=0.061 max=0.136 (n=239)
+Q-02       status=4 wall=  47.9s pos_err=0.154m yaw_err=8.0deg amcl_err mean=0.078 max=0.146 (n=218)
+CHG-01     status=4 wall=  39.3s pos_err=0.152m yaw_err=5.4deg amcl_err mean=0.068 max=0.084 (n=115)
+0
+
+[exited with code 1]

@@ -39,7 +39,7 @@ zones:
   - {id: RECEIVING_PROCESS, name: "Unloading / weighing / inspection line", kind: RESTRICTED, rect: [0.2, 19.2, 12.0, 23.8], color: [0.9, 0.3, 0.2]}
   - {id: STORAGE, name: "Automated storage", kind: SPEED, rect: [12.2, 0.2, 25.2, 12.8], speed_limit: 0.5, color: [0.3, 0.6, 0.95]}
   - {id: DISPATCH, name: "Dispatch / processing buffer", kind: SPEED, rect: [29.0, 8.6, 35.8, 23.8], speed_limit: 0.4, color: [0.3, 0.85, 0.4]}
-  - {id: CHARGING, name: "Charging station", kind: SPEED, rect: [1.4, 0.2, 4.6, 3.0], speed_limit: 0.25, color: [0.6, 0.4, 0.9]}
+  - {id: CHARGING, name: "Charging station", kind: SPEED, rect: [1.4, 0.2, 4.6, 3.0], speed_limit: 0.3, color: [0.6, 0.4, 0.9]}
   - {id: QUARANTINE, name: "Quarantine / rejected material", kind: AREA, rect: [6.2, 0.2, 11.4, 2.2], color: [0.95, 0.5, 0.1]}
   - {id: TANK_FARM, name: "Bulk UCO tank farm (bunded)", kind: RESTRICTED, rect: [29.3, 0.2, 35.8, 8.2], color: [0.9, 0.3, 0.2]}
   - {id: MAINTENANCE, name: "Maintenance bay", kind: RESTRICTED, rect: [25.6, 19.5, 29.0, 23.8], color: [0.9, 0.3, 0.2]}
@@ -110,7 +110,7 @@ locations:
   - {id: DSP-02, kind: DISPATCH, zone: DISPATCH, slot: [34.4, 12.6], face: 0}
   - {id: DSP-03, kind: DISPATCH, zone: DISPATCH, slot: [34.4, 14.2], face: 0}
   - {id: DSP-04, kind: DISPATCH, zone: DISPATCH, slot: [34.4, 15.8], face: 0}
-  - {id: CHG-01, kind: CHARGER, zone: CHARGING, slot: [3.0, 0.4], face: -90, access: [3.0, 1.35, -90]}
+  - {id: CHG-01, kind: CHARGER, zone: CHARGING, slot: [3.0, 0.4], face: -90, access: [3.0, 1.45, -90]}
   - {id: PARK-01, kind: PARKING, zone: STORAGE, slot: [27.2, 14.5], face: 180, access: [27.2, 14.5, 180]}
 
 # Storage grid generator: one location per (aisle, bay, row).

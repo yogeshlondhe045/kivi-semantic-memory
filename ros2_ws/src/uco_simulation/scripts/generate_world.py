@@ -262,7 +262,25 @@ def occupancy(layout: Layout) -> np.ndarray:
             img[g.rect_mask(ob.center[0], ob.center[1], ob.size[0], ob.size[1], ob.yaw)] = 0
         else:
             img[g.circle_mask(ob.center[0], ob.center[1], ob.radius)] = 0
-    return img
+    return outline_only(img)
+
+
+def outline_only(img: np.ndarray) -> np.ndarray:
+    """Keep only occupied cells that border free space; interiors become unknown.
+
+    A lidar only ever sees obstacle surfaces. With solid-filled obstacles AMCL's likelihood field
+    scores every beam endpoint that lands *inside* an obstacle as a perfect hit, producing a flat
+    likelihood plateau as deep as the obstacle; the pose estimate then slides "into" walls
+    (measured: ~0.1 m bias towards walls). Outline maps match what SLAM would produce. Interiors
+    stay unreachable for the planner because they are enclosed by lethal outline cells.
+    """
+    occ = img == 0
+    free = img == 254
+    pad = np.pad(free, 1, constant_values=False)
+    touches_free = pad[:-2, 1:-1] | pad[2:, 1:-1] | pad[1:-1, :-2] | pad[1:-1, 2:]
+    out = img.copy()
+    out[occ & ~touches_free] = 205
+    return out
 
 
 def keepout_mask(layout: Layout) -> np.ndarray:

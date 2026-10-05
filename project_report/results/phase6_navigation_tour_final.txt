@@ -1,0 +1,5 @@
+A-03-R01   status=4 wall=  55.9s pos_err=0.055m yaw_err=5.8deg amcl_err mean=0.071 max=0.120 (n=237)
+DSP-02     status=4 wall=  51.4s pos_err=0.074m yaw_err=5.2deg amcl_err mean=0.035 max=0.099 (n=203)
+HOLD-03    status=4 wall=  76.8s pos_err=0.133m yaw_err=5.6deg amcl_err mean=0.069 max=0.118 (n=390)
+B-06-R02   status=4 wall=  59.3s pos_err=0.129m yaw_err=4.4deg amcl_err mean=0.069 max=0.132 (n=289)
+CHG-01     status=4 wall=  58.5s pos_err=0.154m yaw_err=5.8deg amcl_err mean=0.062 max=0.108 (n=237)
