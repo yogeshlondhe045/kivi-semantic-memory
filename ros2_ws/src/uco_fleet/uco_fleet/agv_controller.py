@@ -32,9 +32,8 @@ from nav_msgs.msg import Odometry
 from rclpy.action import ActionClient, ActionServer, CancelResponse, GoalResponse
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.duration import Duration
-from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.task import Future
 from rclpy.time import Time
 from ros_gz_interfaces.srv import SetEntityPose
 from sensor_msgs.msg import BatteryState
@@ -81,7 +80,7 @@ class AgvController(Node):
         self.current_task = ''
         self.carrying = ''
         self.goal_location = ''
-        self.battery_pct = 100.0
+        self.battery_pct = -1.0            # unknown until the first BatteryState arrives
         self.charging = False
         self.needs_charge = False          # low-battery episode: unavailable until resume_pct
         self.motion_allowed = True
@@ -104,10 +103,9 @@ class AgvController(Node):
 
         # ---- interfaces
         self.tf_buffer = Buffer()
-        self.tf_listener = TransformListener(self.tf_buffer, self)
+        self.tf_listener = TransformListener(self.tf_buffer, self, spin_thread=True)  # /tf off the main executor
         self.state_pub = self.create_publisher(AgvState, '/agv/state', 10)
         self.create_subscription(BatteryState, '/agv/battery', self._on_battery, 10, callback_group=cb)
-        self.create_subscription(Odometry, '/agv/odom', self._on_odom, qos_profile_sensor_data, callback_group=cb)
         self.create_subscription(Odometry, '/agv/ground_truth', self._on_gt, 10, callback_group=cb)
         self.create_subscription(SafetyStatus, '/safety/status', self._on_safety, 10, callback_group=cb)
         self.create_subscription(Fault, '/warehouse/faults', self._on_fault, FAULTS, callback_group=cb)
@@ -135,18 +133,20 @@ class AgvController(Node):
         self.charging = m.power_supply_status in (BatteryState.POWER_SUPPLY_STATUS_CHARGING,
                                                   BatteryState.POWER_SUPPLY_STATUS_FULL)
 
-    def _on_odom(self, m: Odometry) -> None:
-        self.speed = m.twist.twist.linear.x
-        xy = (m.pose.pose.position.x, m.pose.pose.position.y)
-        if self.last_odom_xy is not None:
-            d = math.hypot(xy[0] - self.last_odom_xy[0], xy[1] - self.last_odom_xy[1])
-            if d < 1.0:       # ignore odometry resets
-                self.distance += d
-        self.last_odom_xy = xy
-
     def _on_gt(self, m: Odometry) -> None:
+        """Ground truth (10 Hz): payload placement plus speed / distance statistics only.
+
+        Navigation never uses it. (Subscribing to the 30 Hz wheel odometry as well cost ~15 % CPU
+        in this Python node for statistics alone.)"""
         q = m.pose.pose.orientation
         self.gt = Pose2D(m.pose.pose.position.x, m.pose.pose.position.y, quaternion_to_yaw(q.x, q.y, q.z, q.w))
+        self.speed = m.twist.twist.linear.x
+        xy = (self.gt.x, self.gt.y)
+        if self.last_odom_xy is not None:
+            d = math.hypot(xy[0] - self.last_odom_xy[0], xy[1] - self.last_odom_xy[1])
+            if d < 1.0:       # ignore teleports / resets
+                self.distance += d
+        self.last_odom_xy = xy
 
     def _on_safety(self, m: SafetyStatus) -> None:
         self.motion_allowed = m.motion_allowed
@@ -196,12 +196,15 @@ class AgvController(Node):
         m = AgvState()
         m.header.stamp = self.get_clock().now().to_msg()
         m.header.frame_id = 'map'
-        m.agv_id = self.agv_id
+        m.agv_id = self.agv_id   # battery_percent < 0 means not yet known
         m.state = self.mode
         m.current_task = self.current_task
         m.carrying_container = self.carrying
         m.goal_location = self.goal_location
-        if self.pose is not None:
+        if self.pose is None:
+            m.current_location = ''
+            m.pose.x = m.pose.y = float('nan')     # not localised yet
+        else:
             m.pose.x, m.pose.y, m.pose.theta = self.pose.x, self.pose.y, self.pose.yaw
             m.current_location = self.layout.nearest_location(self.pose.x, self.pose.y) or ''
         m.linear_speed = float(self.speed)
@@ -277,7 +280,7 @@ class AgvController(Node):
                 outcome = self._wait_motion_allowed(cancel_requested)
                 if outcome != OK:
                     return outcome
-            if abort_on_low_battery and self.battery_pct < self.low_pct:
+            if abort_on_low_battery and 0.0 <= self.battery_pct < self.low_pct:
                 return LOW_BATTERY
             if self.fail_next_nav > 0:
                 self.fail_next_nav -= 1
@@ -336,7 +339,7 @@ class AgvController(Node):
             elif not self.motion_allowed:
                 reason = 'PAUSED'
                 self.alerts.warn('AGV_PAUSED', f'{self.agv_id} paused by safety system')
-            elif abort_on_low_battery and self.battery_pct < self.low_pct:
+            elif abort_on_low_battery and 0.0 <= self.battery_pct < self.low_pct:
                 reason = LOW_BATTERY
             if reason:
                 cfut = handle.cancel_goal_async()
@@ -367,7 +370,30 @@ class AgvController(Node):
         self.motion_lock.acquire()
         self.preempt_auto.clear()
 
-    def _exec_transport(self, goal_handle):
+    # ------------------------------------------------------------------ execution in worker threads
+    # The node runs on a SingleThreadedExecutor (rclpy's MultiThreadedExecutor cost 43 % CPU at
+    # idle vs 8 % single-threaded). Action execution blocks for minutes, so the execute callbacks
+    # are coroutines that run the blocking sequence in a worker thread and await its completion;
+    # the executor thread stays free to deliver the Nav2 / service responses the worker waits for.
+    @staticmethod
+    def _in_thread(fn, *args) -> Future:
+        fut = Future()
+
+        def run():
+            try:
+                fut.set_result(fn(*args))
+            except Exception as e:  # noqa: BLE001 - re-raised in the awaiting coroutine
+                fut.set_exception(e)
+        threading.Thread(target=run, daemon=True).start()
+        return fut
+
+    async def _exec_transport(self, goal_handle):
+        return await self._in_thread(self._run_transport, goal_handle)
+
+    async def _exec_navigate_location(self, goal_handle):
+        return await self._in_thread(self._run_navigate_location, goal_handle)
+
+    def _run_transport(self, goal_handle):
         g = goal_handle.request
         res = TransportContainer.Result()
         t0, d0 = self._now(), self.distance
@@ -460,7 +486,7 @@ class AgvController(Node):
             self.alerts.info('CONTAINER_DELIVERED', f'{self.agv_id} delivered {container_id} to {location_id}')
         return ok
 
-    def _exec_navigate_location(self, goal_handle):
+    def _run_navigate_location(self, goal_handle):
         res = NavigateToLocation.Result()
         loc_id = self.layout.resolve(goal_handle.request.location_id)
         t0 = self._now()
@@ -509,7 +535,7 @@ class AgvController(Node):
             self.mode = AgvState.STATE_IDLE
         if self.current_task or (self.auto_thread and self.auto_thread.is_alive()):
             return
-        if self.battery_pct < self.low_pct and not self.charging:
+        if 0.0 <= self.battery_pct < self.low_pct and not self.charging:
             if not self.needs_charge:
                 self.needs_charge = True
                 self.alerts.error('BATTERY_LOW', f'{self.agv_id} battery below threshold ({self.battery_pct:.0f} %)')
@@ -547,10 +573,8 @@ class AgvController(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = AgvController()
-    executor = MultiThreadedExecutor(num_threads=6)
-    executor.add_node(node)
     try:
-        executor.spin()
+        rclpy.spin(node)        # single-threaded; blocking work runs in worker threads
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:

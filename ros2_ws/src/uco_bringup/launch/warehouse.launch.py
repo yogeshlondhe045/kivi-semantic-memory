@@ -64,7 +64,7 @@ def generate_launch_description():
         node('uco_dashboard', 'dashboard_server', extra={'port': L('dashboard_port')}, cond='dashboard'),
     ]
     scenario = Node(package='uco_bringup', executable='scenario_runner', name='scenario_runner', output='screen',
-                    parameters=[layout, {'scenario_file': L('scenario_file'), 'scenario': L('scenario')}],
+                    parameters=[layout, results_dir, {'scenario_file': L('scenario_file'), 'scenario': L('scenario')}],
                     condition=LaunchConfigurationNotEquals('scenario', ''))
     shutdown_after_scenario = RegisterEventHandler(OnProcessExit(
         target_action=scenario, on_exit=[EmitEvent(event=Shutdown(reason='scenario finished'))]),

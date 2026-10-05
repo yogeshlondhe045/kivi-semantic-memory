@@ -44,6 +44,9 @@ class SafetyManager(Node):
         self.declare_parameter('battery_low_pct', 25.0)
         self.declare_parameter('battery_critical_pct', 10.0)
         self.declare_parameter('rate_hz', 10.0)
+        # collision-monitor polygons that mean "obstacle". A STOP caused by stale sensor data
+        # ("invalid source") is a sensor fault, not an obstacle.
+        self.declare_parameter('obstacle_polygons', ['StopZone'])
         p = lambda n: self.get_parameter(n).value  # noqa: E731
         self.layout = load_layout(p('layout_file') or None)
         cfg = SafetyConfig(scan_timeout_s=p('scan_timeout_s'), odom_timeout_s=p('odom_timeout_s'),
@@ -77,8 +80,10 @@ class SafetyManager(Node):
         self.create_service(SetBool, '/safety/emergency_stop', self._on_estop)
 
         self.tf_buffer = Buffer()
-        self.tf_listener = TransformListener(self.tf_buffer, self)
+        self.tf_listener = TransformListener(self.tf_buffer, self, spin_thread=True)  # /tf off the main executor
         self.last_speed_limit = None
+        self.last_status = None
+        self.last_status_time = -1e9
         self.create_timer(1.0 / p('rate_hz'), self._tick)
         self.get_logger().info('[INFO] Safety manager running (layout: %s)' % self.layout.name)
 
@@ -112,7 +117,9 @@ class SafetyManager(Node):
                                                                  AgvState.STATE_GOING_TO_CHARGE))
 
     def _on_cm_state(self, msg: CollisionMonitorState) -> None:
-        self.sup.set_obstacle_stop(msg.action_type == CollisionMonitorState.STOP, self._now())
+        obstacle = (msg.action_type == CollisionMonitorState.STOP
+                    and msg.polygon_name in self.get_parameter('obstacle_polygons').value)
+        self.sup.set_obstacle_stop(obstacle, self._now())
 
     def _on_estop(self, req, res):
         self.sup.set_estop(req.data, 'operator request')
@@ -177,6 +184,12 @@ class SafetyManager(Node):
             sl.speed_limit = float(d.speed_limit) if d.motion_allowed else 0.01
             self.speed_pub.publish(sl)
             self.last_speed_limit = d.speed_limit
+        # publish on change, otherwise once per second (each message wakes every subscriber)
+        signature = (d.state, self.sup.estop, d.motion_allowed, round(d.speed_limit, 3), d.zone, tuple(d.codes))
+        now = self._now()
+        if signature == self.last_status and now - self.last_status_time < 1.0:
+            return
+        self.last_status, self.last_status_time = signature, now
         st = SafetyStatus()
         st.header.stamp = self.get_clock().now().to_msg()
         st.state = d.state

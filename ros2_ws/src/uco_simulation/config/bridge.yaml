@@ -1,5 +1,6 @@
 # ros_gz_bridge configuration: Gazebo <-> ROS 2 topics and services for the warehouse simulation.
-- ros_topic_name: /clock
+# Full-rate clock goes to /clock_gz; clock_throttle republishes /clock at 25 Hz (src/clock_throttle.cpp)
+- ros_topic_name: /clock_gz
   gz_topic_name: /clock
   ros_type_name: rosgraph_msgs/msg/Clock
   gz_type_name: gz.msgs.Clock

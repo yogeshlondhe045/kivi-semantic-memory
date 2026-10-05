@@ -66,7 +66,7 @@ one database live together. Mapping:
 | `uco_interfaces` | ament_cmake | Custom msgs / srvs / actions for warehouse-domain data | simulation_interfaces* |
 | `uco_common` | ament_python | Layout model (`warehouse_layout.yaml`), location lookup, shared constants and logging helpers | – |
 | `uco_description` | ament_cmake | AGV URDF/Xacro + Gazebo sensor/drive plugins | – |
-| `uco_simulation` | ament_cmake | World generator, generated world, container models, ros_gz bridge config, Gazebo launch | – |
+| `uco_simulation` | ament_cmake | World generator, generated world, ros_gz bridge config, Gazebo launch, `clock_throttle` (C++) | – |
 | `uco_navigation` | ament_cmake | Nav2 params, generated map + keepout mask, RViz config, navigation launch | navigation_manager |
 | `uco_wms` | ament_python | SQLite inventory, storage allocation, task records, `wms_node`, `metrics_recorder` | warehouse_manager, inventory_manager, storage_manager |
 | `uco_stations` | ament_python | `receiving_station`, `weighing_station`, `inspection_station`, `dispatch_manager` | receiving_station, weighing_station, inspection_station, dispatch_manager |
@@ -177,14 +177,14 @@ stateDiagram-v2
   WEIGHED --> REJECTED
   APPROVED --> STORAGE_ASSIGNED
   QUARANTINED --> STORAGE_ASSIGNED: quarantine slot
+  REJECTED --> STORAGE_ASSIGNED: quarantine slot
   STORAGE_ASSIGNED --> IN_TRANSIT
   IN_TRANSIT --> STORED
   IN_TRANSIT --> STORAGE_ASSIGNED: task failed / retry
   STORED --> RESERVED: processing request
   RESERVED --> IN_TRANSIT
   IN_TRANSIT --> DISPATCHED
-  DISPATCHED --> [*]
-  REJECTED --> [*]: returned to supplier
+  DISPATCHED --> [*]: hand-over to the processing plant
 ```
 
 ### Task state machine
@@ -281,5 +281,9 @@ flowchart LR
    (zones, e-stop gate, heartbeat, blocked detection).
 4. **Faults are events** on `/warehouse/faults`; each node handles only faults it owns,
    so the injector never reaches into another node's internals.
-5. **Ground-truth pose is used only for payload placement and metrics**, never for navigation
+5. **Ground-truth pose is used only for payload placement and statistics**, never for navigation
    (navigation uses AMCL + odometry like a real robot).
+6. **CPU budget** (the reference machine has 4 cores and no GPU): Gazebo's 500 Hz clock is
+   throttled to 25 Hz for ROS (`clock_throttle`), every Python node uses rclpy's single-threaded
+   executor (blocking work in worker threads or `async` callbacks), and state topics are
+   published on change. Measured effect: real-time factor 0.1–0.3 → ≈ 1.0 (see development log).

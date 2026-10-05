@@ -24,7 +24,7 @@ from typing import Dict, List, Optional
 
 import rclpy
 from rclpy.callback_groups import ReentrantCallbackGroup
-from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor
+from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 
 from uco_common.alerts import AlertPublisher
@@ -268,10 +268,8 @@ class ReceivingStation(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = ReceivingStation()
-    ex = MultiThreadedExecutor(num_threads=4)
-    ex.add_node(node)
     try:
-        ex.spin()
+        rclpy.spin(node)   # blocking service calls run in the pipeline worker thread, not here
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:

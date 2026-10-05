@@ -18,9 +18,9 @@ the development environment. The *Verification* column states what was run.
 | 9 | Storage allocation | Allocation policy, reservation | Unit tests (nearest/sequential, full, quarantine, 32-slot fill) | Done |
 | 10 | Task manager | Task lifecycle, AGV assignment, retries, timeouts, `wms_node` services | Unit + ROS integration tests (83 total pass) | Done |
 | 11 | AGV task execution | `agv_controller`, `battery_simulator`, pick/drop transfer | 5 integration tests (mock Nav2); Gazebo: 2 STORE + 1 RETRIEVE, zero container slip | Done |
-| 12 | Safety system | `safety_manager`, zones, e-stop gate, watchdogs | Unit tests + simulation checks | Planned |
-| 13 | Fault injection | `fault_injector`, fault handlers in each node | Simulation fault tests | Planned |
-| 14 | Dashboard | Web UI | HTTP endpoint tests + screenshot | Planned |
+| 12 | Safety system | `safety_manager`, zones, e-stop gate, watchdogs | 11 unit tests; fault_suite in Gazebo (e-stop, lidar failure, obstacle, zones, heartbeat) | Done |
+| 13 | Fault injection | `fault_injector`, fault handlers in each node | fault_suite: 9 fault types, 38/38 checks passed | Done |
+| 14 | Dashboard | Web UI | 5 HTTP API tests + headless-browser screenshot | Done |
 | 15 | End-to-end demo | Scenario runner, one-command launch | Full scenario run, results captured | Planned |
 | 16 | Testing & metrics | Test suite, metrics recorder, plotting | `colcon test`, sim tests, generated graphs | Planned |
 | 17 | Project report | `project_report/report.md` with real results | Generated from recorded runs | Planned |

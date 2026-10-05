@@ -56,6 +56,9 @@ def generate_launch_description():
 
     bridge = Node(package='ros_gz_bridge', executable='parameter_bridge', name='gz_bridge', output='screen',
                   parameters=[{'config_file': os.path.join(sim_share, 'config', 'bridge.yaml')}, use_sim_time])
+    # Gazebo publishes its clock every physics step; throttle it before ROS nodes see it.
+    clock = Node(package='uco_simulation', executable='clock_throttle', output='screen',
+                 parameters=[{'rate_hz': 25.0, 'use_sim_time': False}])
     camera_bridge = Node(package='ros_gz_bridge', executable='parameter_bridge', name='gz_camera_bridge',
                          output='screen', condition=IfCondition(camera),
                          parameters=[{'config_file': os.path.join(sim_share, 'config', 'bridge_camera.yaml')},
@@ -68,5 +71,5 @@ def generate_launch_description():
         DeclareLaunchArgument('x', default_value=sx, description='spawn x (default: charger dock)'),
         DeclareLaunchArgument('y', default_value=sy),
         DeclareLaunchArgument('yaw', default_value=syaw),
-        gz, rsp, spawn, bridge, camera_bridge,
+        gz, clock, rsp, spawn, bridge, camera_bridge,
     ])

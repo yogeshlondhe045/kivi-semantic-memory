@@ -21,5 +21,7 @@ setup(
     maintainer_email='dev@example.com',
     description='Top-level launch and scenarios',
     license='Apache-2.0',
-    entry_points={'console_scripts': []},
+    entry_points={'console_scripts': [
+        'scenario_runner = uco_bringup.scenario_runner:main',
+    ]},
 )

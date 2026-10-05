@@ -285,7 +285,7 @@
       <robot_base_frame>base_footprint</robot_base_frame>
       <odom_topic>/${ns}/ground_truth</odom_topic>
       <tf_topic>/${ns}/ground_truth_tf</tf_topic>
-      <odom_publish_frequency>20</odom_publish_frequency>
+      <odom_publish_frequency>10</odom_publish_frequency>
       <dimensions>2</dimensions>
     </plugin>
   </gazebo>

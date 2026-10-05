@@ -154,3 +154,53 @@ tested first; receiving follows in Phase 7.
 - Tuning: zone speed limits raised (receiving 0.3 → 0.4, storage 0.5 → 0.6, dispatch 0.4 → 0.5 m/s)
   after observing ~0.25 m/s average task speed.
 - Workspace tests: 95, 0 failures.
+
+## Phase 12 — Safety system
+- `safety_core.SafetySupervisor` (pure Python): e-stop, lidar / odometry watchdogs with start-up
+  grace period, heartbeat watchdog (armed on first AGV state), speed and restricted zones (stop
+  then crawl), obstacle episodes with debounce/hysteresis → OBSTACLE warning / PATH_BLOCKED alarm,
+  battery low / critical, external conditions (station down, storage full); aggregated state
+  NORMAL < WARNING < ALARM < EMERGENCY_STOP. `safety_manager` adds the lidar gateway, the velocity
+  gate, `/speed_limit`, `/safety/emergency_stop` and alerts.
+- Bug found by the unit tests: the obstacle hysteresis measured "time since the last stop message",
+  but the collision monitor publishes its state on change only, so a 20 s stop looked like it had
+  cleared long ago → the clear timer now starts when the zone actually becomes free.
+- A vacuous assertion (`... or True`) in a test was replaced with a real check.
+- 10 safety-core unit tests.
+
+## Phase 13 — Fault injection
+- `fault_injector` service + `inject_fault` CLI, nine fault types, auto-clear by duration,
+  BLOCKED_PATH spawns a physical pallet (location, `x,y` or `AHEAD` = 1.0 m in front of the
+  moving AGV so its near face lies inside the collision-monitor stop zone). Faults are events on
+  `/warehouse/faults` (transient local), consumed by the owning nodes only.
+- `scenario_runner` + `config/scenarios.yaml`: scripted scenarios with `wait_for` / `expect`
+  conditions, snapshots and a JSON report; `fault_suite` exercises every fault and safety function.
+- Scenario-runner bug: `alert_since_step` reset its window at every step, including the `sleep`
+  between a fault and its check, so it missed alerts raised during the sleep → the window now
+  starts at the last *action* step.
+
+## Phase 14 — Dashboard
+- `dashboard_server`: std-lib HTTP server, `/api/layout`, `/api/state`, `/api/stream` (SSE, 1 Hz),
+  POST endpoints for delivery, processing request, AGV move, e-stop and faults; vanilla JS canvas UI.
+- 5 HTTP API tests (static files, layout, state without a running system, service-unavailable
+  reporting, path traversal blocked). Screenshot with headless Chromium (Playwright).
+- Zone labels overlapped in the first version → drawn last, clipped to their zone.
+
+## Performance investigation (during Phases 13–15)
+The second fault-suite run slowed to a real-time factor of 0.1–0.3. Findings and fixes, each
+measured:
+1. An orphaned `lifecycle_manager` from an earlier run spun at 100 % CPU (125 min of CPU time) →
+   `stop_all.sh` now escalates SIGINT → SIGKILL and also kills test-spawned nodes.
+2. Gazebo publishes `/clock` every physics step (≈500 Hz simulation time); each of ~15 Python nodes
+   processed every message. New C++ `clock_throttle` (in `uco_simulation`) republishes `/clock`
+   at 25 Hz of simulation time; Gazebo's full-rate clock is bridged to `/clock_gz`.
+3. rclpy's `MultiThreadedExecutor` costs a lot per wake-up: the same idle `agv_controller` used
+   8.3 % CPU single-threaded, 24.8 % with 2 threads, 42.7 % with 4. All Python nodes now use the
+   single-threaded executor: blocking service waits moved to `async` callbacks (dispatch manager,
+   fault injector) or to their own worker / HTTP threads (receiving station, dashboard); the AGV
+   controller runs its action executions in worker threads awaited by coroutine callbacks
+   (py-spy profile showed 63 % of its time in rclpy wait-set rebuilding).
+4. Wake-up reduction: TF listeners on their own thread, ground truth 20 → 10 Hz, the AGV controller
+   no longer subscribes to the 30 Hz odometry (statistics come from the 10 Hz ground truth),
+   `/safety/status` published on change + 1 Hz.
+Result: real-time factor ≈ 1.0 with the full stack; AGV now reaches its 0.8 m/s limit in open areas.

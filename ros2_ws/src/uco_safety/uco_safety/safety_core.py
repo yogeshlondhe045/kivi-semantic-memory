@@ -69,7 +69,7 @@ class SafetySupervisor:
         self.navigating = False
         self.obstacle_stop = False
         self.obstacle_since: Optional[float] = None   # start of the current stop episode
-        self.obstacle_last: float = -1e9              # last time the stop zone was occupied
+        self.obstacle_last: float = -1e9              # last time the stop zone became free
         self.battery_pct: Optional[float] = None
         self.restricted_since: Optional[float] = None
         self.restricted_zone: str = ''
@@ -93,11 +93,15 @@ class SafetySupervisor:
         self.pose = (x, y)
 
     def set_obstacle_stop(self, active: bool, now: float) -> None:
-        """Collision-monitor stop zone state. Short gaps (< obstacle_clear_s) do not end an episode."""
-        if active:
-            if self.obstacle_since is None:
-                self.obstacle_since = now
-            self.obstacle_last = now
+        """Collision-monitor stop zone state (published on change only).
+
+        An episode starts when the stop zone becomes occupied and ends only after it has been
+        free for obstacle_clear_s, so short gaps do not split one blockage into several.
+        """
+        if active and self.obstacle_since is None:
+            self.obstacle_since = now
+        if not active and self.obstacle_stop:
+            self.obstacle_last = now          # moment the zone became free
         self.obstacle_stop = active
 
     def _obstacle_episode(self, now: float) -> Optional[float]:
@@ -161,7 +165,8 @@ class SafetySupervisor:
                 self.restricted_since, self.restricted_zone = None, ''
 
         waited = self._obstacle_episode(now)
-        if waited is not None and waited >= self.cfg.obstacle_debounce_s:
+        sensor_fault = any(c.code.startswith('SENSOR_FAULT') for c in conds)
+        if waited is not None and waited >= self.cfg.obstacle_debounce_s and not sensor_fault:
             if waited > self.cfg.blocked_timeout_s:
                 conds.append(Condition('PATH_BLOCKED', ALARM, f'Navigation path blocked for {waited:.0f} s'))
             else:

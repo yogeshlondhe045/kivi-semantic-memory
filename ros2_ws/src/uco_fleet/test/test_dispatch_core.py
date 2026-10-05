@@ -60,3 +60,8 @@ def test_non_pending_ignored_and_timeouts():
     t2.started_time = 50
     assert choose_assignments([t1], {'A': agv('A')}, locate, 101, P) == []
     assert timed_out_tasks([t1, t2], 120, P) == ['T1']
+
+
+def test_unlocalised_or_unknown_battery_not_eligible():
+    agvs = {'A': agv('A', x=float('nan'), y=float('nan')), 'B': agv('B', battery_pct=-1.0)}
+    assert choose_assignments([task('T1')], agvs, locate, 101, P) == []

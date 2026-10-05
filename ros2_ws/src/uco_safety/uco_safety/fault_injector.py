@@ -4,7 +4,9 @@ Service /faults/inject (uco_interfaces/InjectFault) publishes a uco_interfaces/F
 /warehouse/faults; every node reacts only to the faults it owns:
 
   BLOCKED_PATH          fault_injector spawns / removes a pallet obstacle in Gazebo at `target`
-                        (location id -> its AGV access pose, or "x,y")
+                        (location id -> its AGV access pose, "x,y", or AHEAD = a pallet dropped
+                        1.0 m in front of the AGV: its near face lies inside the collision
+                        monitor's stop zone, clear of the AGV and of a carried drum)
   SENSOR_FAILURE        safety_manager stops relaying lidar data (target scan | scan_rear | lidar)
   LOW_BATTERY           battery_simulator sets state of charge to `value` % (default 18)
   NAVIGATION_FAILURE    agv_controller fails the next `value` navigation attempts
@@ -19,18 +21,19 @@ A fault with duration_s > 0 is cleared automatically. CLI: `ros2 run uco_safety 
 from __future__ import annotations
 
 import argparse
+import math
 import sys
-import threading
 
 import rclpy
 from rclpy.callback_groups import ReentrantCallbackGroup
-from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor
+from rclpy.executors import ExternalShutdownException
+from nav_msgs.msg import Odometry
 from rclpy.node import Node
 from ros_gz_interfaces.msg import Entity
 from ros_gz_interfaces.srv import DeleteEntity, SpawnEntity
 
 from uco_common.alerts import AlertPublisher
-from uco_common.layout import load_layout
+from uco_common.layout import load_layout, quaternion_to_yaw
 from uco_common.qos import FAULTS
 from uco_interfaces.msg import Fault
 from uco_interfaces.srv import InjectFault
@@ -59,6 +62,8 @@ class FaultInjector(Node):
         self.spawn_cli = self.create_client(SpawnEntity, f'/world/{self.layout.world_name}/create', callback_group=cb)
         self.remove_cli = self.create_client(DeleteEntity, f'/world/{self.layout.world_name}/remove', callback_group=cb)
         self.create_service(InjectFault, '/faults/inject', self._on_inject, callback_group=cb)
+        self.agv_pose = None
+        self.create_subscription(Odometry, '/agv/ground_truth', self._on_gt, 10, callback_group=cb)
         self.active = {}           # (type, target) -> Fault
         self.obstacles = {}        # target -> model name
         self.fault_timers = {}
@@ -66,13 +71,16 @@ class FaultInjector(Node):
     def _now(self):
         return self.get_clock().now()
 
-    @staticmethod
-    def _wait(fut, timeout=10.0):
-        ev = threading.Event()
-        fut.add_done_callback(lambda _: ev.set())
-        return ev.wait(timeout) and fut.result() is not None and fut.result().success
+    def _on_gt(self, m: Odometry) -> None:
+        q = m.pose.pose.orientation
+        self.agv_pose = (m.pose.pose.position.x, m.pose.pose.position.y, quaternion_to_yaw(q.x, q.y, q.z, q.w))
 
     def _xy(self, target: str):
+        if target.upper() == 'AHEAD':
+            if self.agv_pose is None:
+                return None
+            x, y, yaw = self.agv_pose
+            return x + 1.0 * math.cos(yaw), y + 1.0 * math.sin(yaw)
         loc = self.layout.resolve(target)
         if loc:
             p = self.layout.locations[loc].access or self.layout.locations[loc].slot
@@ -83,18 +91,21 @@ class FaultInjector(Node):
         except ValueError:
             return None
 
-    def _blocked_path(self, target: str, active: bool) -> str:
+    async def _blocked_path(self, target: str, active: bool) -> str:
         if active:
             xy = self._xy(target)
             if xy is None:
-                return f'BLOCKED_PATH needs a location id or "x,y" target, got "{target}"'
+                return f'BLOCKED_PATH needs a location id, "x,y" or AHEAD as target, got "{target}"'
             name = f'fault_obstacle_{len(self.obstacles) + 1}'
             req = SpawnEntity.Request()
             req.entity_factory.name = name
             req.entity_factory.sdf = OBSTACLE_SDF.format(name=name)
             req.entity_factory.pose.position.x, req.entity_factory.pose.position.y = xy
-            if not self.spawn_cli.wait_for_service(timeout_sec=5.0) or not self._wait(self.spawn_cli.call_async(req)):
+            if not self.spawn_cli.service_is_ready():
                 return 'could not spawn obstacle (simulation not running?)'
+            r = await self.spawn_cli.call_async(req)
+            if r is None or not r.success:
+                return 'could not spawn obstacle'
             self.obstacles[target] = name
             return ''
         name = self.obstacles.pop(target, None)
@@ -102,17 +113,20 @@ class FaultInjector(Node):
             return f'no obstacle at {target}'
         req = DeleteEntity.Request()
         req.entity.name, req.entity.type = name, Entity.MODEL
-        if not self.remove_cli.wait_for_service(timeout_sec=5.0) or not self._wait(self.remove_cli.call_async(req)):
+        if not self.remove_cli.service_is_ready():
+            return 'could not remove obstacle (simulation not running?)'
+        r = await self.remove_cli.call_async(req)
+        if r is None or not r.success:
             return 'could not remove obstacle'
         return ''
 
-    def _on_inject(self, req, res):
+    async def _on_inject(self, req, res):
         ft = req.fault_type.upper()
         if ft not in FAULT_TYPES:
             res.success, res.message = False, f'unknown fault type {req.fault_type}; one of {", ".join(FAULT_TYPES)}'
             return res
         if ft == Fault.BLOCKED_PATH:
-            err = self._blocked_path(req.target, req.active)
+            err = await self._blocked_path(req.target, req.active)
             if err:
                 res.success, res.message = False, err
                 return res
@@ -123,20 +137,23 @@ class FaultInjector(Node):
             if req.duration_s > 0:
                 if key in self.fault_timers:
                     self.fault_timers[key].cancel()
-                self.fault_timers[key] = self.create_timer(req.duration_s, lambda k=key: self._auto_clear(k))
+                self.fault_timers[key] = self.create_timer(req.duration_s, lambda k=key: self._schedule_clear(k))
         else:
             self.active.pop(key, None)
         res.success = True
         res.message = f'{ft} {"injected" if req.active else "cleared"}' + (f' at {req.target}' if req.target else '')
         return res
 
-    def _auto_clear(self, key):
+    def _schedule_clear(self, key):
         timer = self.fault_timers.pop(key, None)
         if timer is not None:
             timer.cancel()
+        self.executor.create_task(self._auto_clear(key))
+
+    async def _auto_clear(self, key):
         ft, target = key
         if ft == Fault.BLOCKED_PATH:
-            self._blocked_path(target, False)
+            await self._blocked_path(target, False)
         self.publish(ft, False, target, 0.0, 0.0)
         self.active.pop(key, None)
 
@@ -158,10 +175,8 @@ class FaultInjector(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = FaultInjector()
-    ex = MultiThreadedExecutor(num_threads=3)
-    ex.add_node(node)
     try:
-        ex.spin()
+        rclpy.spin(node)
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:

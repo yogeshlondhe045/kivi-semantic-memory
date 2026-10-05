@@ -13,7 +13,7 @@ from typing import Dict
 
 import rclpy
 from rclpy.callback_groups import ReentrantCallbackGroup
-from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor
+from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 
 from uco_common.alerts import AlertPublisher
@@ -51,11 +51,12 @@ class DispatchManager(Node):
         fut.add_done_callback(lambda _: ev.set())
         return fut.result() if ev.wait(timeout) else None
 
-    def _on_request(self, req, res):
-        if not self.wms_dispatch.wait_for_service(timeout_sec=5.0):
+    async def _on_request(self, req, res):
+        # coroutine callback: awaits the WMS without blocking the single-threaded executor
+        if not self.wms_dispatch.service_is_ready():
             res.success, res.message = False, 'WMS not available'
             return res
-        r = self._wait(self.wms_dispatch.call_async(req))
+        r = await self.wms_dispatch.call_async(req)
         if r is None:
             res.success, res.message = False, 'WMS did not answer'
             return res
@@ -96,10 +97,8 @@ class DispatchManager(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = DispatchManager()
-    ex = MultiThreadedExecutor(num_threads=4)
-    ex.add_node(node)
     try:
-        ex.spin()
+        rclpy.spin(node)
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:

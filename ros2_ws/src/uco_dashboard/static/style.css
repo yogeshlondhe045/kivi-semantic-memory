@@ -1,0 +1,34 @@
+* { box-sizing: border-box; }
+body { margin: 0; font: 13px/1.4 system-ui, sans-serif; background: #0f172a; color: #e2e8f0; }
+header { display: flex; gap: 12px; align-items: center; padding: 8px 14px; background: #1e293b; }
+h1 { font-size: 18px; margin: 0 12px 0 0; }
+h2 { font-size: 13px; margin: 0 0 6px; color: #93c5fd; text-transform: uppercase; letter-spacing: .05em; }
+main { display: flex; gap: 10px; padding: 10px; }
+.map-panel { flex: 0 0 auto; }
+canvas { background: #f1f5f9; border-radius: 6px; max-width: 100%; }
+aside { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 320px; }
+.card { background: #1e293b; border-radius: 6px; padding: 10px; }
+.tables { display: grid; grid-template-columns: 1.2fr 1.2fr 1fr; gap: 10px; padding: 0 10px 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th, td { text-align: left; padding: 2px 4px; border-bottom: 1px solid #334155; white-space: nowrap; }
+th { color: #94a3b8; }
+.badge { padding: 3px 10px; border-radius: 12px; font-weight: 600; background: #475569; }
+.OK, .NORMAL { background: #15803d; } .WARNING { background: #b45309; }
+.ALARM, .EMERGENCY_STOP, .OFFLINE { background: #b91c1c; }
+.muted { color: #94a3b8; }
+.kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; }
+.kpis b { font-size: 15px; color: #f8fafc; }
+.row { display: flex; gap: 6px; margin: 4px 0; align-items: center; }
+button { background: #2563eb; color: white; border: 0; border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+button.danger { background: #dc2626; font-weight: 700; }
+input, select { background: #0f172a; color: #e2e8f0; border: 1px solid #475569; border-radius: 4px; padding: 3px; }
+input[type=number] { width: 52px; }
+.bar { position: relative; height: 18px; background: #334155; border-radius: 4px; margin-top: 6px; overflow: hidden; }
+#battery-bar { height: 100%; background: #22c55e; }
+#battery-text { position: absolute; left: 8px; top: 0; font-weight: 600; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; font-size: 11px; color: #cbd5e1; }
+.legend i { display: inline-block; width: 10px; height: 10px; margin-right: 4px; border-radius: 2px; }
+.alert { padding: 2px 0; border-bottom: 1px solid #334155; font-size: 12px; }
+.sev-WARN { color: #fbbf24; } .sev-ERROR { color: #f87171; } .sev-ALARM { color: #fff; background: #991b1b; }
+#alerts { max-height: 260px; overflow-y: auto; }
+@media (max-width: 1500px) { main { flex-direction: column; } .tables { grid-template-columns: 1fr; } }

@@ -52,7 +52,9 @@ def agv_online(agv: AgvInfo, now: float, policy: DispatchPolicy) -> bool:
 
 
 def eligible(agv: AgvInfo, now: float, policy: DispatchPolicy) -> bool:
+    """Available, idle, online, localised (finite pose) and charged enough (unknown battery = -1)."""
     return (agv.available and not agv.current_task and agv_online(agv, now, policy)
+            and math.isfinite(agv.x) and math.isfinite(agv.y)
             and agv.battery_pct >= policy.min_task_battery_pct)
 
 

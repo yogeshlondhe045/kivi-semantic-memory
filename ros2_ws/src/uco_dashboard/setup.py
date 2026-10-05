@@ -2,7 +2,7 @@ from glob import glob
 
 from setuptools import setup
 
-package_name = 'uco_wms'
+package_name = 'uco_dashboard'
 
 setup(
     name=package_name,
@@ -11,17 +11,16 @@ setup(
     data_files=[
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('share/' + package_name + '/config', glob('config/*.yaml')),
+        ('share/' + package_name + '/static', glob('static/*')),
     ],
     install_requires=['setuptools'],
     extras_require={'test': ['pytest']},
     zip_safe=True,
     maintainer='UCO Warehouse Team',
     maintainer_email='dev@example.com',
-    description='Warehouse management system',
+    description='Web dashboard',
     license='Apache-2.0',
     entry_points={'console_scripts': [
-        'wms_node = uco_wms.wms_node:main',
-        'metrics_recorder = uco_wms.metrics_recorder:main',
+        'dashboard_server = uco_dashboard.dashboard_server:main',
     ]},
 )

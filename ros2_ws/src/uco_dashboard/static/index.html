@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UCO Warehouse Monitor</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>UCO Warehouse Digital Twin</h1>
+  <span id="status" class="badge">CONNECTING</span>
+  <span id="safety" class="badge">SAFETY ?</span>
+  <span id="clock" class="muted"></span>
+</header>
+<main>
+  <section class="map-panel">
+    <canvas id="map" width="1080" height="740"></canvas>
+    <div class="legend">
+      <span><i style="background:#3b82f6"></i>stored</span><span><i style="background:#f59e0b"></i>approved / assigned</span>
+      <span><i style="background:#22d3ee"></i>in transit</span><span><i style="background:#a855f7"></i>reserved</span>
+      <span><i style="background:#22c55e"></i>at dispatch</span><span><i style="background:#ef4444"></i>rejected / quarantine</span>
+      <span><i style="background:#fde68a"></i>slot reserved</span>
+    </div>
+  </section>
+  <aside>
+    <div class="card" id="agv-card"><h2>AGV-01</h2><div id="agv"></div>
+      <div class="bar"><div id="battery-bar"></div><span id="battery-text"></span></div></div>
+    <div class="card"><h2>Key figures</h2><div id="kpis" class="kpis"></div></div>
+    <div class="card"><h2>Operator controls</h2>
+      <div class="row"><button id="btn-delivery">New delivery</button>
+        <select id="del-type"><option>DRUM_200L</option><option>IBC_1000L</option></select>
+        <input id="del-count" type="number" min="1" max="10" value="3" title="containers"></div>
+      <div class="row"><button id="btn-processing">Processing request</button>
+        <input id="proc-count" type="number" min="1" max="4" value="2"></div>
+      <div class="row"><button id="btn-move">Move AGV to</button><input id="move-loc" value="A03" size="8"></div>
+      <div class="row"><button id="btn-estop" class="danger">E-STOP</button><button id="btn-release">Release</button></div>
+      <div class="row"><select id="fault-type">
+        <option>BLOCKED_PATH</option><option>SENSOR_FAILURE</option><option>LOW_BATTERY</option>
+        <option>NAVIGATION_FAILURE</option><option>REGISTRATION_FAILURE</option><option>STORAGE_FULL</option>
+        <option>STATION_UNAVAILABLE</option><option>COMMUNICATION_FAILURE</option><option>EMERGENCY_STOP</option></select>
+        <input id="fault-target" placeholder="target" size="8"><input id="fault-value" placeholder="value" size="4">
+        <input id="fault-dur" placeholder="s" size="3" value="20"></div>
+      <div class="row"><button id="btn-fault">Inject fault</button><button id="btn-clear">Clear fault</button></div>
+      <div id="cmd-result" class="muted"></div>
+    </div>
+  </aside>
+</main>
+<section class="tables">
+  <div class="card"><h2>Tasks</h2><table id="tasks"></table></div>
+  <div class="card"><h2>Inventory</h2><table id="inventory"></table></div>
+  <div class="card"><h2>Alarms &amp; events</h2><div id="alerts"></div></div>
+</section>
+<script src="app.js"></script>
+</body>
+</html>

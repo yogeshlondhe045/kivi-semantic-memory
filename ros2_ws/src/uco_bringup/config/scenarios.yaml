@@ -1,0 +1,110 @@
+# Scenario definitions for scenario_runner. See uco_bringup/scenario_runner.py for the step language.
+scenarios:
+
+  demo:
+    description: >
+      A restaurant delivery vehicle arrives with five containers of used cooking oil. They are
+      registered, weighed, inspected, approved and stored by AGV-01. A processing request then
+      retrieves the two oldest containers to the dispatch / processing buffer.
+    steps:
+      - log: "Restaurant delivery vehicle arrives at the receiving dock"
+      - snapshot: {name: demo_00_empty_warehouse, view: overview}
+      - delivery:
+          supplier: "Restaurant Bella Napoli"
+          containers: [[DRUM_200L, 190], [DRUM_200L, 175], [IBC_1000L, 900], [DRUM_200L, 160], [IBC_1000L, 850]]
+      - wait_for: {received: 5, timeout: 300}
+      - log: "All five containers registered; weighing and inspection in progress"
+      - wait_for: {holding: ">=3", timeout: 300}
+      - snapshot: {name: demo_01_receiving, view: receiving}
+      - wait_for: {stored: 1, timeout: 600}
+      - snapshot: {name: demo_02_first_stored, view: storage}
+      - wait_for: {stored: 5, tasks_active: "==0", timeout: 2400}
+      - expect: {stored: 5, tasks_completed: 5, tasks_failed: "==0", holding: "==0"}
+      - snapshot: {name: demo_03_all_stored, view: overview}
+      - log: "Biodiesel plant requests two containers for processing"
+      - processing_request: {count: 2}
+      - wait_for: {tasks_completed: 7, timeout: 1200}
+      - snapshot: {name: demo_04_dispatch_buffer, view: dispatch}
+      - wait_for: {dispatched: 2, timeout: 300}
+      - expect: {stored: 3, dispatched: 2, tasks_completed: 7, tasks_failed: "==0"}
+      - log: "Operator command: move AGV-01 to storage position A03"
+      - move_agv: {location: A03, wait: true, timeout: 600}
+      - expect: {agv_at: A-03-R01}
+      - snapshot: {name: demo_05_final, view: overview}
+
+  fault_suite:
+    description: >
+      Safety and fault-injection tests: registration failure, station unavailable, speed zone,
+      emergency stop, lidar failure, obstacle in the path, low battery, navigation failure,
+      storage full and communication loss. Each container must still end up stored.
+    stop_on_failure: false        # report every check, not only the first failure
+    steps:
+      # --- registration failure + inspection station outage (receiving faults) ---------------------
+      - fault: {type: REGISTRATION_FAILURE, value: 1}
+      - fault: {type: STATION_UNAVAILABLE, target: INSPECT, duration: 30}
+      - delivery: {supplier: "Cafe Roma", containers: [[DRUM_200L, 180]]}
+      - wait_for: {alert_since_step: REGISTRATION_FAILED, timeout: 60}
+      - wait_for: {received: 1, timeout: 60}
+      - wait_for: {alert_since_step: STATION_UNAVAILABLE, timeout: 120}
+      - expect: {holding: "==0"}                 # held at inspection while the station is down
+      - wait_for: {holding: 1, timeout: 180}
+      # --- speed zone + emergency stop during transport ------------------------------------------
+      - wait_for: {task_phase: PICKING, timeout: 400}
+      - expect: {speed_limit: "==0.4"}           # AGV at HOLD-01, receiving speed zone
+      - wait_for: {task_phase: TO_DROPOFF, agv_speed_above: 0.15, timeout: 120}
+      - estop: true
+      - sleep: 3
+      - expect: {safety_state: EMERGENCY_STOP, motion_allowed: false, agv_speed_below: 0.05}
+      - sleep: 8
+      - expect: {agv_speed_below: 0.05, agv_state: PAUSED}
+      - estop: false
+      - wait_for: {tasks_completed: 1, timeout: 600}
+      - expect: {alert_since_step: AGV_RESUMED, tasks_failed: "==0"}
+      # --- lidar failure during transport ----------------------------------------------------------
+      - delivery: {supplier: "Burger Hub", containers: [[DRUM_200L, 170]]}
+      - wait_for: {task_phase: TO_DROPOFF, agv_speed_above: 0.15, timeout: 600}
+      - fault: {type: SENSOR_FAILURE, target: lidar, duration: 8}
+      - sleep: 3
+      - expect: {alert_since_step: "SENSOR_FAULT:scan", motion_allowed: false, safety_state: ALARM}
+      - wait_for: {motion_allowed: true, timeout: 60}
+      - wait_for: {tasks_completed: 2, timeout: 600}
+      # --- obstacle appears in front of the moving AGV ---------------------------------------------
+      - delivery: {supplier: "Noodle Bar", containers: [[DRUM_200L, 190]]}    # drum: an IBC overhangs the deck
+      - wait_for: {task_phase: TO_DROPOFF, agv_speed_above: 0.2, timeout: 600}
+      - fault: {type: BLOCKED_PATH, target: AHEAD, duration: 20}
+      - wait_for: {alert_since_step: OBSTACLE, timeout: 30}
+      - wait_for: {tasks_completed: 3, timeout: 900}
+      # --- low battery while driving to a pick-up --------------------------------------------------
+      - delivery: {supplier: "Taco Place", containers: [[DRUM_200L, 185]]}
+      - wait_for: {task_phase: TO_PICKUP, agv_speed_above: 0.1, timeout: 600}
+      - fault: {type: LOW_BATTERY, value: 18}
+      - wait_for: {alert_since_step: BATTERY_LOW, timeout: 30}
+      - wait_for: {agv_state: [GOING_TO_CHARGE, CHARGING], timeout: 60}
+      - expect: {tasks_active: ">=1", tasks_failed: "==0"}    # task returned to the queue
+      - wait_for: {agv_state: CHARGING, timeout: 400}
+      - wait_for: {battery_above: 80, timeout: 600}
+      - wait_for: {tasks_completed: 4, timeout: 900}
+      # --- navigation failure + retry --------------------------------------------------------------
+      - fault: {type: NAVIGATION_FAILURE, value: 2}
+      - delivery: {supplier: "Sushi Corner", containers: [[DRUM_200L, 150]]}
+      - wait_for: {alert_since_step: TASK_RETRY, timeout: 400}
+      - wait_for: {tasks_completed: 5, timeout: 900}
+      - expect: {alert_since_step: NAVIGATION_FAILED, tasks_failed: "==0"}
+      # --- storage full ----------------------------------------------------------------------------
+      - fault: {type: STORAGE_FULL}
+      - delivery: {supplier: "Pizza Express", containers: [[DRUM_200L, 160]]}
+      - wait_for: {alert_since_step: STORAGE_UNAVAILABLE, timeout: 200}
+      - expect: {container_status: {UCO-0006: APPROVED}, holding: 1}
+      - fault: {type: STORAGE_FULL, active: false}
+      - wait_for: {tasks_completed: 6, timeout: 900}
+      # --- communication failure while moving ------------------------------------------------------
+      - move_agv: {location: A05, wait: false}
+      - wait_for: {agv_speed_above: 0.15, timeout: 120}
+      - fault: {type: COMMUNICATION_FAILURE, target: AGV-01, duration: 8}
+      - sleep: 6
+      - expect: {alert_since_step: HEARTBEAT_LOST, motion_allowed: false}
+      - wait_for: {motion_allowed: true, timeout: 60}
+      - expect: {alert_since_step: AGV_TIMEOUT}
+      - wait_for: {agv_at: A-05-R01, timeout: 300}
+      # --- final consistency -----------------------------------------------------------------------
+      - expect: {stored: 6, tasks_completed: 6, tasks_failed: "==0", tasks_active: "==0"}

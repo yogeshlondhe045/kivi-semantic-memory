@@ -8,6 +8,8 @@
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>rosgraph_msgs</depend>
   <exec_depend>uco_common</exec_depend>
   <exec_depend>uco_description</exec_depend>
   <exec_depend>ros_gz_sim</exec_depend>
