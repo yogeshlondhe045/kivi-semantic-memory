@@ -1,0 +1,30 @@
+# Conda (RoboStack) environment for ROS 2 Jazzy + Gazebo Harmonic.
+# Used when the official ROS apt repositories are not reachable.
+# Create with:  micromamba create -n ros_env -f env/robostack-jazzy.yml
+name: ros_env
+channels:
+  - conda-forge
+  - robostack-jazzy
+dependencies:
+  - python=3.12
+  - ros-jazzy-ros-base
+  - ros-jazzy-navigation2
+  - ros-jazzy-nav2-bringup
+  - ros-jazzy-ros-gz
+  - ros-jazzy-robot-state-publisher
+  - ros-jazzy-xacro
+  - ros-jazzy-rviz2
+  - ros-jazzy-rosidl-default-generators
+  - ros-jazzy-launch-testing-ament-cmake
+  - ros-jazzy-ament-cmake-pytest
+  - compilers
+  - cmake
+  - pkg-config
+  - make
+  - ninja
+  - colcon-common-extensions
+  - rosdep
+  - pytest
+  - matplotlib
+  - pyyaml
+  - numpy
