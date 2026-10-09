@@ -58,7 +58,7 @@ ros2 service call /safety/emergency_stop std_srvs/srv/SetBool "{data: true}"
 Tests:
 
 ```bash
-scripts/test.sh            # 111 unit + ROS integration tests (no Gazebo)
+scripts/test.sh            # 116 unit + ROS integration tests (no Gazebo)
 scripts/run_sim_tests.sh   # fault_suite scenario in Gazebo: every safety / fault behaviour
 ```
 
